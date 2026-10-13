@@ -55,6 +55,7 @@ CREATE TABLE question_types (
   name           VARCHAR(100) NOT NULL,             -- tên hiển thị
   skill          ENUM('reading','writing','listening','speaking') NOT NULL,
   scoring_method ENUM('auto','ai','manual') NOT NULL DEFAULT 'auto',
+  time_limit_s   INT UNSIGNED NULL,                  -- giới hạn thời gian mặc định (giây)
   description    TEXT NULL,
   is_active      TINYINT(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB;
@@ -70,7 +71,7 @@ CREATE TABLE questions (
   difficulty       TINYINT UNSIGNED NOT NULL DEFAULT 5, -- 1 (dễ) .. 10 (khó)
   image_url        VARCHAR(255) NULL,
   audio_url        VARCHAR(255) NULL,
-  status           ENUM('draft','review','published') NOT NULL DEFAULT 'draft',
+  status           ENUM('draft','review','published','archived') NOT NULL DEFAULT 'draft',
   created_by       BIGINT UNSIGNED NULL,
   created_at       TIMESTAMP NULL,
   updated_at       TIMESTAMP NULL,
@@ -89,6 +90,7 @@ CREATE TABLE practice_attempts (
   user_answer   TEXT NULL,
   user_audio    VARCHAR(255) NULL,                  -- file ghi âm của người dùng
   is_correct    TINYINT(1) NULL,                    -- NULL nếu chấm bằng AI
+  ai_status     ENUM('pending','done','failed') NULL,
   ai_score      DECIMAL(5,2) NULL,
   ai_feedback   TEXT NULL,
   time_spent_s  INT UNSIGNED NULL,
@@ -138,6 +140,7 @@ CREATE TABLE test_questions (
   user_answer  TEXT NULL,
   user_audio   VARCHAR(255) NULL,
   is_correct   TINYINT(1) NULL,
+  ai_status    ENUM('pending','done','failed') NULL,
   ai_score     DECIMAL(5,2) NULL,
   ai_feedback  TEXT NULL,
   served_at    TIMESTAMP NULL,
