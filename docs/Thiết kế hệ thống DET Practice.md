@@ -472,6 +472,8 @@ erDiagram
     enum skill
     enum scoring_method
     int time_limit_s
+    text description
+    tinyint is_active
   }
   categories {
     bigint id PK
@@ -490,9 +492,14 @@ erDiagram
     bigint id PK
     bigint user_id FK
     bigint question_id FK
+    text user_answer
+    varchar user_audio
     tinyint is_correct
     enum ai_status
     decimal ai_score
+    text ai_feedback
+    int time_spent_s
+    timestamp created_at
   }
   bookmarks {
     bigint id PK
@@ -512,7 +519,12 @@ erDiagram
     bigint test_id FK
     bigint question_id FK
     smallint position
+    text user_answer
+    varchar user_audio
+    tinyint is_correct
     enum ai_status
+    decimal ai_score
+    text ai_feedback
     timestamp served_at
     timestamp answered_at
   }
@@ -553,6 +565,8 @@ Sơ đồ chỉ liệt kê cột chính; đầy đủ cột nằm ở mã MySQL 
 | `categories` | Chủ đề câu hỏi | Xóa chủ đề thì `questions.category_id` về NULL |
 | `question_types` | Danh mục dạng bài, cách chấm, giới hạn thời gian | `code` duy nhất |
 | `questions` | Ngân hàng câu hỏi | `difficulty` 1-10 (CHECK); `status` gồm draft, review, published, archived; không xóa cứng câu đã có trong bài thi |
+| `practice_attempts` | Mỗi lượt làm ở chế độ luyện tập | Xóa người dùng thì xóa theo; `ai_status` theo dõi việc chấm AI (pending/done/failed) |
+| `test_questions` | Câu hỏi trong bài thi theo thứ tự | `(test_id, position)` và `(test_id, question_id)` duy nhất; `ai_status` theo dõi chấm AI; không có `ON DELETE` cho `question_id` |
 | `practice_attempts` | Mỗi lượt làm ở chế độ luyện tập | Xóa người dùng thì xóa theo; `ai_status` theo dõi việc chấm AI |
 | `bookmarks` | Câu hỏi được đánh dấu | `(user_id, question_id)` duy nhất |
 | `tests` | Một bài thi thử | Điểm tổng 10-160 và bốn điểm thành phần (CHECK); mỗi người một bài `in_progress` |
