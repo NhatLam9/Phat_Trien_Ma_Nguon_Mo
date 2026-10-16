@@ -112,6 +112,7 @@ Hệ thống gồm 7 phân hệ. Cột Mức: BB là bắt buộc (MVP), MR là 
 | MT06 | Báo cáo kết quả | Điểm tổng, điểm thành phần, số câu đúng theo dạng bài, đáp án và nhận xét từng câu | BB |
 | MT07 | Lịch sử thi | Danh sách các lần thi, so sánh điểm | BB |
 | MT08 | Bỏ dở bài thi | Chuyển `status = 'abandoned'` khi người học hủy hoặc bắt đầu bài mới | BB |
+| MT09 | Cấp chứng chỉ thi thử | Lưu vào `certificates` (mã chứng chỉ, điểm tổng, 4 điểm thành phần, cấp độ) | BB |
 
 ### 3.4. Phân hệ Chấm bài AI (AI)
 
@@ -162,13 +163,17 @@ Danh sách dưới đây trùng với dữ liệu mẫu trong mục 8 và cần 
 
 | Kỹ năng | Dạng bài | Cách chấm |
 | --- | --- | --- |
-| Đọc | Read and Complete, Read and Select, Interactive Reading | Tự động |
+| Đọc | Read and Select, Fill in the Blanks, Read and Complete, Interactive Reading | Tự động |
 | Nghe | Listen and Type | Tự động |
 | Nghe | Interactive Listening | AI |
-| Viết | Write About the Photo, Read Then Write, Writing Sample | AI |
+| Viết | Write About the Photo, Interactive Writing, Writing Sample | AI |
 | Nói | Read Aloud, Speak About the Photo, Read Then Speak, Listen Then Speak, Speaking Sample | AI |
 
 Ghi chú: Read and Complete cần ô nhập từng chữ cái, không có JavaScript thì không tự nhảy ô; thay bằng một ô nhập cho mỗi từ khuyết.
+
+**Interactive Reading** có 5 dạng câu hỏi con: Complete the Sentence, Complete the Passage, Highlight the Answer, Identify the Idea, Title the Passage.
+
+**Interactive Listening** có 3 phần: Listen and Complete, Listen and Respond, Summarise the Conversation.
 
 ## 4. Yêu cầu hệ thống và phi chức năng
 
@@ -240,7 +245,7 @@ flowchart LR
   MT --> MT2["Cấp câu theo năng lực"]
   MT --> MT3["Nộp câu, kiểm soát giờ"]
   MT --> MT4["Chốt bài, tính điểm"]
-  MT --> MT5["Báo cáo, lịch sử thi"]
+  MT --> MT5["Báo cáo, lịch sử thi, chứng chỉ"]
 
   ROOT --> AI["4. Chấm bài AI"]
   AI --> AI1["Chấm Writing"]
@@ -270,7 +275,7 @@ Bảng đối chiếu mã chức năng với nhánh trong sơ đồ:
 | --- | --- | --- |
 | Tài khoản | TK1-TK5 | TK01-TK08 |
 | Luyện tập | LT1-LT5 | LT01-LT09 |
-| Thi thử | MT1-MT5 | MT01-MT08 |
+| Thi thử | MT1-MT5 | MT01-MT09 |
 | Chấm bài AI | AI1-AI3 | AI01-AI06 |
 | AI Tutor | TU1-TU3 | TU01-TU04 |
 | Dashboard | DB1-DB3 | DB01-DB05 |
@@ -302,7 +307,7 @@ flowchart LR
 
 ### 6.2. DFD mức 1
 
-Kho dữ liệu: D1 Người dùng (`users`), D2 Ngân hàng câu hỏi (`questions`, `question_types`, `categories`), D3 Luyện tập (`practice_attempts`, `bookmarks`), D4 Thi thử (`tests`, `test_questions`), D5 Nhật ký AI (`ai_logs`, `ai_usage`), D6 Tiến độ (`user_progress`, `user_streaks`).
+Kho dữ liệu: D1 Người dùng (`users`), D2 Ngân hàng câu hỏi (`questions`, `question_types`, `categories`), D2a Câu hỏi con Interactive (`interactive_reading_questions`, `interactive_listening_questions`), D3 Luyện tập (`practice_attempts`, `bookmarks`), D4 Thi thử (`tests`, `test_questions`), D4a Chứng chỉ (`certificates`), D5 Nhật ký AI (`ai_logs`, `ai_usage`), D6 Tiến độ (`user_progress`, `user_streaks`).
 
 ```mermaid
 flowchart LR
@@ -321,8 +326,10 @@ flowchart LR
 
   D1[("D1 Người dùng")]
   D2[("D2 Ngân hàng câu hỏi")]
+  D2A[("D2a Câu hỏi con Interactive")]
   D3[("D3 Luyện tập")]
   D4[("D4 Thi thử")]
+  D4A[("D4a Chứng chỉ")]
   D5[("D5 Nhật ký AI")]
   D6[("D6 Tiến độ")]
 
@@ -334,6 +341,7 @@ flowchart LR
   HV -->|"chọn dạng bài, bài làm, đánh dấu"| P2
   P2 -->|"câu hỏi, đáp án, giải thích"| HV
   D2 -->|"câu hỏi đã xuất bản"| P2
+  D2A -->|"câu hỏi con"| P2
   P2 -->|"lượt làm, đánh dấu"| D3
   P2 -->|"kết quả mỗi lượt"| D6
   P2 -->|"bài cần chấm AI"| P4
@@ -341,9 +349,11 @@ flowchart LR
   HV -->|"bắt đầu, câu trả lời"| P3
   P3 -->|"câu kế tiếp, báo cáo điểm"| HV
   D2 -->|"câu theo độ khó"| P3
+  D2A -->|"câu hỏi con"| P3
   P3 <--> D4
   P3 -->|"bài cần chấm AI"| P4
   P3 -->|"điểm các lần thi"| D6
+  P3 -->|"cấp chứng chỉ"| D4A
 
   P4 -->|"bài làm"| AIS
   AIS -->|"điểm, nhận xét"| P4
@@ -364,6 +374,7 @@ flowchart LR
   QT -->|"câu hỏi, lệnh quản lý"| P7
   P7 -->|"thống kê, danh sách"| QT
   P7 <--> D2
+  P7 <--> D2A
   P7 <--> D1
   D5 -->|"lượt gọi AI"| P7
 ```
@@ -438,7 +449,7 @@ flowchart LR
 
 ## 7. Mô hình thực thể liên kết (ERD)
 
-Cơ sở dữ liệu có 12 bảng nghiệp vụ, khớp với 7 phân hệ (không còn bảng khóa học). Các bảng hệ thống của Laravel (`migrations`, `sessions`, `password_reset_tokens`, `cache`) do `php artisan migrate` tự tạo.
+Cơ sở dữ liệu có 15 bảng nghiệp vụ, khớp với 7 phân hệ. Các bảng hệ thống của Laravel (`migrations`, `sessions`, `password_reset_tokens`, `cache`) do `php artisan migrate` tự tạo.
 
 ```mermaid
 erDiagram
@@ -450,13 +461,17 @@ erDiagram
   users ||--o{ user_progress : "tiến độ"
   users ||--|| user_streaks : "chuỗi ngày"
   users ||--o{ questions : "tạo"
+  users ||--o{ certificates : "nhận chứng chỉ"
   question_types ||--o{ questions : "phân loại"
   question_types ||--o{ user_progress : "theo dạng"
   categories ||--o{ questions : "chủ đề"
   questions ||--o{ practice_attempts : "được làm"
   questions ||--o{ bookmarks : "được đánh dấu"
   questions ||--o{ test_questions : "được cấp"
+  questions ||--o{ interactive_reading_questions : "câu con"
+  questions ||--o{ interactive_listening_questions : "phần con"
   tests ||--|{ test_questions : "gồm"
+  tests ||--o{ certificates : "cấp chứng chỉ"
 
   users {
     bigint id PK
@@ -487,6 +502,26 @@ erDiagram
     json answer
     tinyint difficulty
     enum status
+  }
+  interactive_reading_questions {
+    bigint id PK
+    bigint question_id FK
+    tinyint position
+    enum type
+    text text
+    json options
+    text answer
+    text explanation
+  }
+  interactive_listening_questions {
+    bigint id PK
+    bigint question_id FK
+    tinyint position
+    enum type
+    text text
+    json options
+    text answer
+    text explanation
   }
   practice_attempts {
     bigint id PK
@@ -528,6 +563,19 @@ erDiagram
     timestamp served_at
     timestamp answered_at
   }
+  certificates {
+    bigint id PK
+    bigint user_id FK
+    bigint test_id FK
+    varchar certificate_code UK
+    smallint total_score
+    smallint literacy_score
+    smallint comprehension_score
+    smallint conversation_score
+    smallint production_score
+    varchar level
+    timestamp issued_at
+  }
   ai_logs {
     bigint id PK
     bigint user_id FK
@@ -565,12 +613,13 @@ Sơ đồ chỉ liệt kê cột chính; đầy đủ cột nằm ở mã MySQL 
 | `categories` | Chủ đề câu hỏi | Xóa chủ đề thì `questions.category_id` về NULL |
 | `question_types` | Danh mục dạng bài, cách chấm, giới hạn thời gian | `code` duy nhất |
 | `questions` | Ngân hàng câu hỏi | `difficulty` 1-10 (CHECK); `status` gồm draft, review, published, archived; không xóa cứng câu đã có trong bài thi |
+| `interactive_reading_questions` | Câu hỏi con của Interactive Reading (5 dạng) | `(question_id, position)` duy nhất; xóa câu hỏi cha thì xóa theo |
+| `interactive_listening_questions` | Phần con của Interactive Listening (3 phần) | `(question_id, position)` duy nhất; xóa câu hỏi cha thì xóa theo |
 | `practice_attempts` | Mỗi lượt làm ở chế độ luyện tập | Xóa người dùng thì xóa theo; `ai_status` theo dõi việc chấm AI (pending/done/failed) |
-| `test_questions` | Câu hỏi trong bài thi theo thứ tự | `(test_id, position)` và `(test_id, question_id)` duy nhất; `ai_status` theo dõi chấm AI; không có `ON DELETE` cho `question_id` |
-| `practice_attempts` | Mỗi lượt làm ở chế độ luyện tập | Xóa người dùng thì xóa theo; `ai_status` theo dõi việc chấm AI |
 | `bookmarks` | Câu hỏi được đánh dấu | `(user_id, question_id)` duy nhất |
 | `tests` | Một bài thi thử | Điểm tổng 10-160 và bốn điểm thành phần (CHECK); mỗi người một bài `in_progress` |
-| `test_questions` | Câu hỏi trong bài thi theo thứ tự | `(test_id, position)` và `(test_id, question_id)` duy nhất; không có `ON DELETE` cho `question_id` |
+| `test_questions` | Câu hỏi trong bài thi theo thứ tự | `(test_id, position)` và `(test_id, question_id)` duy nhất; `ai_status` theo dõi chấm AI; không có `ON DELETE` cho `question_id` |
+| `certificates` | Chứng chỉ thi thử | `certificate_code` duy nhất; xóa người dùng hoặc bài thi thì xóa theo |
 | `ai_logs` | Nhật ký mọi lần gọi AI | Lưu mô hình và số token để đối soát |
 | `ai_usage` | Hạn mức AI theo ngày | `(user_id, usage_date)` duy nhất |
 | `user_progress` | Tổng hợp theo (người dùng, dạng bài) | `(user_id, question_type_id)` duy nhất; cập nhật bằng trigger |
@@ -581,9 +630,11 @@ Sơ đồ chỉ liệt kê cột chính; đầy đủ cột nằm ở mã MySQL 
 | Dạng bài | `options` | `answer` |
 | --- | --- | --- |
 | Read and Select | `["word1", "word2", ...]` | `["word1"]` (các từ thật) |
+| Fill in the Blanks | không dùng | `{"blanks": ["word1", "word2"]}` theo thứ tự câu |
 | Read and Complete | không dùng | `{"blanks": ["tion", "er"]}` theo thứ tự ô |
 | Listen and Type | không dùng | `{"text": "câu chuẩn"}` |
-| Interactive Reading | `{"q1": ["A", "B", "C", "D"]}` | `{"q1": "B"}` |
 | Dạng chấm AI | không dùng | `{"rubric": "tiêu chí chấm", "sample": "bài mẫu"}` |
+
+Ghi chú: Interactive Reading và Interactive Listening KHÔNG dùng JSON mà lưu vào bảng con `interactive_reading_questions` và `interactive_listening_questions` (mỗi câu hỏi con là một dòng riêng).
 
 Cấu trúc này là đề xuất; cần chốt khi viết bộ nhập câu hỏi cho Admin.
