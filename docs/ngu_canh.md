@@ -7,7 +7,7 @@ Khi truy cập vào trang chủ DET Practice, một người dùng mới vai tr�
 - **Thanh điều hướng chỉ gồm:** Trang chủ, Đăng nhập, Đăng ký
 - **Trang giới thiệu** hiển thị:
   - Giới thiệu về kỳ thi Duolingo English Test
-  - Các tính năng chính của nền tảng (Luyện tập, Mock Test, AI chấm bài, Khóa học)
+  - Các tính năng chính của nền tảng (Luyện tập, Mock Test, AI chấm bài, Chứng chỉ thi thử)
   - Nút "Bắt đầu ngay" dẫn đến trang Đăng ký
 - **Không thể:**
   - Xem danh sách câu hỏi
@@ -25,7 +25,6 @@ Sau khi đăng nhập bằng tài khoản có `role = 'admin'`, **Quản trị v
   - Thêm câu hỏi mới (chọn dạng bài, chủ đề, độ khó, nội dung, đáp án, giải thích)
   - Sửa, ẩn (archive), hoặc xóa câu hỏi
   - Tải lên hình ảnh và file audio cho câu hỏi
-  - Kiểm duyệt câu hỏi do người dùng đóng góp
 
 - **Quản lý dạng bài:**
   - Bật/tắt dạng bài (`is_active`)
@@ -45,6 +44,6 @@ Sau khi đăng nhập bằng tài khoản có `role = 'admin'`, **Quản trị v
   - Số lượt thi, số lượt gọi AI theo ngày
   - Xem nhật ký AI
 
-- **Kiểm soát khóa học:**
-  - Tạo, chỉnh sửa, xuất bản khóa học
-  - Quản lý bài học trong khóa học
+- **Kiểm soát chứng chỉ:**
+  - Xem danh sách chứng chỉ thi thử
+  - Tra cứu chứng chỉ theo mã

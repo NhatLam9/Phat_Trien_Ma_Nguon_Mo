@@ -71,7 +71,44 @@ CREATE TABLE questions (
   CONSTRAINT fk_q_creator  FOREIGN KEY (created_by)       REFERENCES users(id)      ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
--- Bài làm ở chế độ Practice
+-- ---------------------------------------------------------------------
+-- 2.1 CÂU HỎI CON (INTERACTIVE READING / LISTENING)
+-- ---------------------------------------------------------------------
+-- Interactive Reading: 5 dạng câu hỏi con
+CREATE TABLE interactive_reading_questions (
+  id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, -- Khóa chính tự tăng
+  question_id BIGINT UNSIGNED NOT NULL,                    -- Câu hỏi cha (FK → questions)
+  position    TINYINT UNSIGNED NOT NULL,                   -- Thứ tự câu con (1, 2, 3, 4, 5)
+  type        ENUM('complete_sentence','complete_passage','highlight_answer','identify_idea','title_passage') NOT NULL, -- Loại câu hỏi con
+  text        TEXT NOT NULL,                               -- Nội dung câu hỏi con
+  options     JSON NULL,                                   -- Các lựa chọn (nếu có)
+  answer      TEXT NULL,                                   -- Đáp án
+  explanation TEXT NULL,                                   -- Giải thích
+  created_at  TIMESTAMP NULL,                              -- Thời gian tạo
+  updated_at  TIMESTAMP NULL,                              -- Thời gian cập nhật cuối
+  INDEX idx_irq_question (question_id, position),          -- Index tìm câu con theo câu cha + thứ tự
+  CONSTRAINT fk_irq_question FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Interactive Listening: 3 phần
+CREATE TABLE interactive_listening_questions (
+  id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, -- Khóa chính tự tăng
+  question_id BIGINT UNSIGNED NOT NULL,                    -- Câu hỏi cha (FK → questions)
+  position    TINYINT UNSIGNED NOT NULL,                   -- Thứ tự phần (1, 2, 3)
+  type        ENUM('listen_and_complete','listen_and_respond','summarise_conversation') NOT NULL, -- Loại phần
+  text        TEXT NOT NULL,                               -- Nội dung câu hỏi / đoạn hội thoại
+  options     JSON NULL,                                   -- Các lựa chọn (nếu có)
+  answer      TEXT NULL,                                   -- Đáp án
+  explanation TEXT NULL,                                   -- Giải thích
+  created_at  TIMESTAMP NULL,                              -- Thời gian tạo
+  updated_at  TIMESTAMP NULL,                              -- Thời gian cập nhật cuối
+  INDEX idx_ilq_question (question_id, position),          -- Index tìm phần theo câu cha + thứ tự
+  CONSTRAINT fk_ilq_question FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- 3. BÀI LÀM LUYỆN TẬP
+-- ---------------------------------------------------------------------
 CREATE TABLE practice_attempts (
   id            BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, -- Khóa chính tự tăng
   user_id       BIGINT UNSIGNED NOT NULL,                    -- Người làm bài (FK → users)
@@ -101,7 +138,7 @@ CREATE TABLE bookmarks (
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- 3. MOCK TEST
+-- 4. MOCK TEST
 -- ---------------------------------------------------------------------
 CREATE TABLE tests (
   id                  BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, -- Khóa chính tự tăng
@@ -141,44 +178,28 @@ CREATE TABLE test_questions (
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- 4. KHÓA HỌC
+-- 5. CHỨNG CHỈ (CERTIFICATE)
 -- ---------------------------------------------------------------------
-CREATE TABLE courses (
-  id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, -- Khóa chính tự tăng
-  title       VARCHAR(200) NOT NULL,                       -- Tên khóa học
-  description TEXT NULL,                                   -- Mô tả khóa học
-  thumbnail   VARCHAR(255) NULL,                           -- Ảnh đại diện khóa học
-  level       ENUM('beginner','intermediate','advanced') NOT NULL DEFAULT 'beginner', -- Cấp độ khóa học
-  is_published TINYINT(1) NOT NULL DEFAULT 0,             -- 0=nháp, 1=xuất bản
-  created_at  TIMESTAMP NULL,                              -- Thời gian tạo
-  updated_at  TIMESTAMP NULL                               -- Thời gian cập nhật cuối
-) ENGINE=InnoDB;
-
-CREATE TABLE lessons (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,  -- Khóa chính tự tăng
-  course_id  BIGINT UNSIGNED NOT NULL,                     -- Khóa học chứa bài này (FK → courses)
-  title      VARCHAR(200) NOT NULL,                        -- Tên bài học
-  content    LONGTEXT NULL,                                -- Nội dung bài học (HTML)
-  sort_order INT UNSIGNED NOT NULL DEFAULT 0,              -- Thứ tự bài trong khóa (1, 2, 3...)
-  video_url  VARCHAR(255) NULL,                            -- Link video YouTube (nếu có)
-  created_at TIMESTAMP NULL,                               -- Thời gian tạo
-  updated_at TIMESTAMP NULL,                               -- Thời gian cập nhật cuối
-  INDEX idx_l_course (course_id, sort_order),              -- Index tìm bài theo khóa + thứ tự
-  CONSTRAINT fk_l_course FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
-CREATE TABLE lesson_progress (
-  id           BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, -- Khóa chính tự tăng
-  user_id      BIGINT UNSIGNED NOT NULL,                    -- Người học (FK → users)
-  lesson_id    BIGINT UNSIGNED NOT NULL,                    -- Bài học (FK → lessons)
-  completed_at TIMESTAMP NULL,                              -- Thời gian hoàn thành
-  UNIQUE KEY uq_lp (user_id, lesson_id),                    -- Không trùng bài đã hoàn thành
-  CONSTRAINT fk_lp_user   FOREIGN KEY (user_id)   REFERENCES users(id)   ON DELETE CASCADE,
-  CONSTRAINT fk_lp_lesson FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE
+CREATE TABLE certificates (
+  id                BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, -- Khóa chính tự tăng
+  user_id           BIGINT UNSIGNED NOT NULL,              -- Người nhận (FK → users)
+  test_id           BIGINT UNSIGNED NOT NULL,              -- Bài thi liên quan (FK → tests)
+  certificate_code  VARCHAR(100) NULL UNIQUE,              -- Mã chứng chỉ (vd: DET-2026-00001)
+  total_score       SMALLINT UNSIGNED NOT NULL,            -- Điểm tổng (10-160)
+  literacy_score    SMALLINT UNSIGNED NULL,                -- Điểm Literacy
+  comprehension_score SMALLINT UNSIGNED NULL,               -- Điểm Comprehension
+  conversation_score SMALLINT UNSIGNED NULL,                -- Điểm Conversation
+  production_score  SMALLINT UNSIGNED NULL,                -- Điểm Production
+  level             VARCHAR(50) NULL,                      -- Cấp độ (vd: Advanced, Intermediate)
+  issued_at         TIMESTAMP NULL,                        -- Ngày cấp
+  created_at        TIMESTAMP NULL,                        -- Thời gian tạo
+  INDEX idx_cert_user (user_id, issued_at),                -- Index tìm theo người + ngày cấp
+  CONSTRAINT fk_cert_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_cert_test FOREIGN KEY (test_id) REFERENCES tests(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- 5. AI (Correction + Tutor)
+-- 6. AI (Correction + Tutor)
 -- ---------------------------------------------------------------------
 CREATE TABLE ai_logs (
   id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, -- Khóa chính tự tăng
@@ -205,7 +226,7 @@ CREATE TABLE ai_usage (
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- 6. DASHBOARD
+-- 7. DASHBOARD
 -- ---------------------------------------------------------------------
 -- Tiến độ theo từng dạng bài
 CREATE TABLE user_progress (
@@ -236,19 +257,20 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- DỮ LIỆU MẪU
 -- ---------------------------------------------------------------------
 INSERT INTO question_types (code, name, skill, scoring_method) VALUES
-('read_and_complete',   'Read and Complete',   'reading',   'auto'),
-('read_and_select',     'Read and Select',     'reading',   'auto'),
-('listen_and_type',     'Listen and Type',     'listening', 'auto'),
-('interactive_reading', 'Interactive Reading', 'reading',   'auto'),
-('interactive_listening','Interactive Listening','listening','ai'),
-('read_aloud',          'Read Aloud',          'speaking',  'ai'),
-('write_about_photo',   'Write About the Photo','writing',  'ai'),
-('speak_about_photo',   'Speak About the Photo','speaking', 'ai'),
-('read_then_write',     'Read, Then Write',    'writing',   'ai'),
-('read_then_speak',     'Read, Then Speak',    'speaking',  'ai'),
-('listen_then_speak',   'Listen, Then Speak',  'speaking',  'ai'),
-('writing_sample',      'Writing Sample',      'writing',   'ai'),
-('speaking_sample',     'Speaking Sample',     'speaking',  'ai');
+('read_and_select',      'Read and Select',      'reading',   'auto'),
+('fill_in_the_blanks',   'Fill in the Blanks',   'reading',   'auto'),
+('read_and_complete',    'Read and Complete',    'reading',   'auto'),
+('listen_and_type',      'Listen and Type',      'listening', 'auto'),
+('interactive_reading',  'Interactive Reading',  'reading',   'auto'),
+('interactive_listening','Interactive Listening','listening', 'ai'),
+('read_aloud',           'Read Aloud',           'speaking',  'ai'),
+('write_about_photo',    'Write About the Photo','writing',   'ai'),
+('speak_about_photo',    'Speak About the Photo','speaking',  'ai'),
+('interactive_writing',  'Interactive Writing',  'writing',   'ai'),
+('read_then_speak',      'Read, Then Speak',     'speaking',  'ai'),
+('listen_then_speak',    'Listen, Then Speak',   'speaking',  'ai'),
+('writing_sample',       'Writing Sample',       'writing',   'ai'),
+('speaking_sample',      'Speaking Sample',      'speaking',  'ai');
 
 INSERT INTO categories (name) VALUES
 ('Đời sống'), ('Giáo dục'), ('Khoa học'), ('Công nghệ'), ('Môi trường'), ('Xã hội');
