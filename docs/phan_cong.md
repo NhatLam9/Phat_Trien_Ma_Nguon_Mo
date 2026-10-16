@@ -34,15 +34,15 @@
 
 | Thành viên | Module chính | Module phụ (nếu còn thời gian) |
 |---|---|---|
-| **Thành viên 1** | Auth + Practice | - |
-| **Thành viên 2** | Mock Test + Dashboard | - |
-| **Thành viên 3** | Admin | AI (phần cuối) |
+| **Thành viên 1 : Thế Hào** | Auth + Practice | - |
+| **Thành viên 2: Nhật Lâm** | Mock Test + Dashboard | - |
+| **Thành viên 3: Phi Phong** | Admin | AI  |
 
 ---
 
 ## 4. Chi tiết từng thành viên
 
-### Thành viên 1: Auth + Practice
+### Thành viên 1-Thế Hào: Auth + Practice
 
 | Công việc | Chi tiết |
 |---|---|
@@ -56,11 +56,11 @@
 
 ---
 
-### Thành viên 2: Mock Test + Dashboard
+### Thành viên 2-Nhật Lâm: Mock Test + Dashboard
 
 | Công việc | Chi tiết |
 |---|---|
-| **Database** | Tạo bảng tests, test_questions, user_progress, user_streaks, certificates |
+| **Database** | Tạo bảng tests, test_questions, user_progress, user_streaks |
 | **Mock Test** | Bắt đầu thi, adaptive, chấm điểm, báo cáo kết quả |
 | **Dashboard** | Thống kê, biểu đồ, streak, tiến độ |
 | **View** | Trang thi, báo cáo, dashboard |
@@ -70,7 +70,7 @@
 
 ---
 
-### Thành viên 3: Admin + AI (phần cuối)
+### Thành viên 3-PhiPhong: Admin + AI (phần cuối)
 
 | Công việc | Chi tiết |
 |---|---|
@@ -170,7 +170,7 @@
 |---|---|---|---|---|---|
 | Auth + Practice | TV1 | 3 | 2 | 6 | 🔴 Bắt buộc |
 | Mock Test + Dashboard | TV2 | 5 | 3 | 6 | 🟡 Quan trọng |
-| Admin | TV3 | 5 | 1 | 4 | 🟢 Cần thiết |
+| Admin | TV3 | 7 | 1 | 4 | 🟢 Cần thiết |
 | AI | TV3 | 2 | 1 | 2 | ⚪ Phần cuối |
 
 ---
@@ -191,7 +191,6 @@
 - [ ] Mock Test: Adaptive câu hỏi
 - [ ] Mock Test: Chấm điểm
 - [ ] Mock Test: Báo cáo kết quả
-- [ ] Mock Test: Cấp chứng chỉ
 - [ ] Dashboard: Thống kê
 - [ ] Dashboard: Biểu đồ
 - [ ] Test: Unit test mock test + dashboard

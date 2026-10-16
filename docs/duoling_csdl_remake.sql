@@ -4,24 +4,29 @@ COLLATE utf8mb4_unicode_ci;
 
 USE duoling_csdl_remake;
 
--- 1. Bảng người dùng
+-- =====================================================================
+-- 1. BẢNG NGƯỜI DÙNG
+-- =====================================================================
 CREATE TABLE nguoidung (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã người dùng',
     hoten VARCHAR(100) NOT NULL COMMENT 'Họ và tên',
     email VARCHAR(150) NOT NULL UNIQUE COMMENT 'Email đăng nhập',
     email_xacthuc DATETIME DEFAULT NULL COMMENT 'Thời gian xác thực email',
-    matkhau VARCHAR(255) DEFAULT NULL COMMENT 'Mật khẩu đã mã hóa',
+    matkhau VARCHAR(255) DEFAULT NULL COMMENT 'Mật khẩu đã mã hóa (NULL nếu chỉ dùng Google)',
     google_id VARCHAR(150) DEFAULT NULL UNIQUE COMMENT 'Mã tài khoản Google',
-    vaitro ENUM('admin', 'user') NOT NULL DEFAULT 'user' COMMENT 'Vai trò',
+    vaitro ENUM('user','admin') NOT NULL DEFAULT 'user' COMMENT 'Vai trò: user=học viên, admin=quản trị',
     anh VARCHAR(255) DEFAULT NULL COMMENT 'Ảnh đại diện',
-    muctieu SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Mục tiêu điểm DET',
-    trangthai ENUM('hoatdong', 'khoa') NOT NULL DEFAULT 'hoatdong' COMMENT 'Trạng thái',
+    muctieu SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Mục tiêu điểm DET (10-160)',
+    trangthai ENUM('active','locked') NOT NULL DEFAULT 'active' COMMENT 'Trạng thái: active=hoạt động, locked=bị khóa',
+    remember_token VARCHAR(100) DEFAULT NULL COMMENT 'Token ghi nhớ đăng nhập',
     ngaytao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Ngày tạo',
     ngaycapnhat DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
         ON UPDATE CURRENT_TIMESTAMP COMMENT 'Ngày cập nhật'
 );
 
--- 2. Bảng danh mục
+-- =====================================================================
+-- 2. BẢNG DANH MỤC
+-- =====================================================================
 CREATE TABLE danhmuc (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã danh mục',
     ten VARCHAR(100) NOT NULL COMMENT 'Tên chủ đề',
@@ -31,19 +36,23 @@ CREATE TABLE danhmuc (
         ON UPDATE CURRENT_TIMESTAMP COMMENT 'Ngày cập nhật'
 );
 
--- 3. Bảng loại câu hỏi
+-- =====================================================================
+-- 3. BẢNG LOẠI CÂU HỎI
+-- =====================================================================
 CREATE TABLE loaicauhoi (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã loại câu hỏi',
-    ma VARCHAR(50) NOT NULL UNIQUE COMMENT 'Mã loại',
+    ma VARCHAR(50) NOT NULL UNIQUE COMMENT 'Mã loại (vd: read_aloud)',
     ten VARCHAR(100) NOT NULL COMMENT 'Tên loại câu hỏi',
     kynang ENUM('reading','listening','writing','speaking') NOT NULL COMMENT 'Kỹ năng',
-    cachcham ENUM('tudong','ai','thugcong') NOT NULL DEFAULT 'tudong' COMMENT 'Cách chấm điểm',
+    cachcham ENUM('auto','ai','manual') NOT NULL DEFAULT 'auto' COMMENT 'Cách chấm: auto=tự động, ai=AI, manual=thủ công',
     thoigian INT UNSIGNED DEFAULT NULL COMMENT 'Thời gian mặc định tính bằng giây',
     mota TEXT DEFAULT NULL COMMENT 'Mô tả',
-    trangthai ENUM('hoatdong','an') NOT NULL DEFAULT 'hoatdong' COMMENT 'Trạng thái'
+    is_active TINYINT(1) NOT NULL DEFAULT 1 COMMENT '1=bật, 0=tắt'
 );
 
--- 4. Bảng câu hỏi
+-- =====================================================================
+-- 4. BẢNG CÂU HỎI
+-- =====================================================================
 CREATE TABLE cauhoi (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã câu hỏi',
     loai_id BIGINT UNSIGNED NOT NULL COMMENT 'Mã loại câu hỏi',
@@ -53,10 +62,9 @@ CREATE TABLE cauhoi (
     dokho TINYINT UNSIGNED NOT NULL DEFAULT 5 COMMENT 'Độ khó từ 1 đến 10',
     anh VARCHAR(255) DEFAULT NULL COMMENT 'Hình ảnh câu hỏi',
     audio VARCHAR(255) DEFAULT NULL COMMENT 'File âm thanh',
-    dapandung TEXT DEFAULT NULL COMMENT 'Đáp án đúng nếu có',
     thoigian INT UNSIGNED DEFAULT NULL COMMENT 'Thời gian làm câu tính bằng giây',
     diem DECIMAL(6,2) NOT NULL DEFAULT 1 COMMENT 'Điểm câu hỏi',
-    trangthai ENUM('nhap','choduyet','hoatdong','luutru') NOT NULL DEFAULT 'nhap' COMMENT 'Trạng thái câu hỏi',
+    trangthai ENUM('draft','review','published','archived') NOT NULL DEFAULT 'draft' COMMENT 'Trạng thái câu hỏi',
     nguoitao BIGINT UNSIGNED DEFAULT NULL COMMENT 'Người tạo câu hỏi',
     ngaytao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Ngày tạo',
     ngaycapnhat DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -72,23 +80,43 @@ CREATE TABLE cauhoi (
     CHECK (dokho BETWEEN 1 AND 10)
 );
 
--- 5. Bảng lựa chọn
+-- =====================================================================
+-- 5. BẢNG LỰA CHỌN (A/B/C/D) - câu trắc nghiệm
+-- =====================================================================
 CREATE TABLE luachon (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã lựa chọn',
     cauhoi_id BIGINT UNSIGNED NOT NULL COMMENT 'Mã câu hỏi',
     noidung TEXT NOT NULL COMMENT 'Nội dung lựa chọn',
-    ladung BOOLEAN NOT NULL DEFAULT FALSE COMMENT '1 đúng, 0 sai',
+    ladung TINYINT(1) NOT NULL DEFAULT 0 COMMENT '1 đúng, 0 sai',
     thutu SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Thứ tự lựa chọn',
+
+    INDEX idx_luachon_cauhoi (cauhoi_id),
 
     FOREIGN KEY (cauhoi_id) REFERENCES cauhoi(id) ON DELETE CASCADE
 );
 
--- 6. Bảng câu hỏi con
-CREATE TABLE cauhoicon (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã câu hỏi con',
+-- =====================================================================
+-- 6. BẢNG ĐÁP ÁN - các dạng không phải trắc nghiệm
+-- =====================================================================
+CREATE TABLE dap_an (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã đáp án',
+    cauhoi_id BIGINT UNSIGNED NOT NULL COMMENT 'Mã câu hỏi',
+    noidung TEXT NOT NULL COMMENT 'Nội dung đáp án',
+    ladung TINYINT(1) NOT NULL DEFAULT 0 COMMENT '1 đúng, 0 sai',
+    thutu SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Thứ tự đáp án',
+
+    INDEX idx_dapan_cauhoi (cauhoi_id),
+
+    FOREIGN KEY (cauhoi_id) REFERENCES cauhoi(id) ON DELETE CASCADE
+);
+
+-- =====================================================================
+-- 7. BẢNG CÂU HỎI CON - INTERACTIVE READING
+-- =====================================================================
+CREATE TABLE cauhoi_doc (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã câu hỏi con (đọc)',
     cauhoi_id BIGINT UNSIGNED NOT NULL COMMENT 'Mã câu hỏi cha',
-    nhom ENUM('interactive_reading','interactive_listening') NOT NULL COMMENT 'Nhóm câu hỏi tương tác',
-    loai VARCHAR(50) NOT NULL COMMENT 'Loại câu hỏi con',
+    loai ENUM('complete_sentence','complete_passage','highlight_answer','identify_idea','title_passage') NOT NULL COMMENT 'Loại câu hỏi con',
     noidung TEXT NOT NULL COMMENT 'Nội dung câu hỏi con',
     dapandung TEXT DEFAULT NULL COMMENT 'Đáp án đúng',
     giaithich TEXT DEFAULT NULL COMMENT 'Giải thích',
@@ -99,18 +127,56 @@ CREATE TABLE cauhoicon (
     FOREIGN KEY (cauhoi_id) REFERENCES cauhoi(id) ON DELETE CASCADE
 );
 
--- 7. Bảng lựa chọn câu hỏi con
-CREATE TABLE luachoncon (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã lựa chọn câu con',
-    cauhoicon_id BIGINT UNSIGNED NOT NULL COMMENT 'Mã câu hỏi con',
-    noidung TEXT NOT NULL COMMENT 'Nội dung lựa chọn',
-    ladung BOOLEAN NOT NULL DEFAULT FALSE COMMENT '1 đúng, 0 sai',
-    thutu SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Thứ tự',
+-- =====================================================================
+-- 8. BẢNG CÂU HỎI CON - INTERACTIVE LISTENING
+-- =====================================================================
+CREATE TABLE cauhoi_nghe (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã câu hỏi con (nghe)',
+    cauhoi_id BIGINT UNSIGNED NOT NULL COMMENT 'Mã câu hỏi cha',
+    loai ENUM('listen_and_complete','listen_and_respond','summarise_conversation') NOT NULL COMMENT 'Loại câu hỏi con',
+    noidung TEXT NOT NULL COMMENT 'Nội dung câu hỏi con',
+    dapandung TEXT DEFAULT NULL COMMENT 'Đáp án đúng',
+    giaithich TEXT DEFAULT NULL COMMENT 'Giải thích',
+    thutu SMALLINT UNSIGNED NOT NULL COMMENT 'Thứ tự câu hỏi con',
 
-    FOREIGN KEY (cauhoicon_id) REFERENCES cauhoicon(id) ON DELETE CASCADE
+    UNIQUE (cauhoi_id, thutu),
+
+    FOREIGN KEY (cauhoi_id) REFERENCES cauhoi(id) ON DELETE CASCADE
 );
 
--- 8. Bảng luyện tập
+-- =====================================================================
+-- 9. BẢNG LỰA CHỌN CÂU HỎI CON (ĐỌC)
+-- =====================================================================
+CREATE TABLE luachon_doc (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã lựa chọn câu con (đọc)',
+    cauhoi_doc_id BIGINT UNSIGNED NOT NULL COMMENT 'Mã câu hỏi con (cauhoi_doc)',
+    noidung TEXT NOT NULL COMMENT 'Nội dung lựa chọn',
+    ladung TINYINT(1) NOT NULL DEFAULT 0 COMMENT '1 đúng, 0 sai',
+    thutu SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Thứ tự',
+
+    INDEX idx_luachondoc_cauhoidoc (cauhoi_doc_id),
+
+    FOREIGN KEY (cauhoi_doc_id) REFERENCES cauhoi_doc(id) ON DELETE CASCADE
+);
+
+-- =====================================================================
+-- 10. BẢNG LỰA CHỌN CÂU HỎI CON (NGHE)
+-- =====================================================================
+CREATE TABLE luachon_nghe (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã lựa chọn câu con (nghe)',
+    cauhoi_nghe_id BIGINT UNSIGNED NOT NULL COMMENT 'Mã câu hỏi con (cauhoi_nghe)',
+    noidung TEXT NOT NULL COMMENT 'Nội dung lựa chọn',
+    ladung TINYINT(1) NOT NULL DEFAULT 0 COMMENT '1 đúng, 0 sai',
+    thutu SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Thứ tự',
+
+    INDEX idx_luachonnghe_cauhoinghe (cauhoi_nghe_id),
+
+    FOREIGN KEY (cauhoi_nghe_id) REFERENCES cauhoi_nghe(id) ON DELETE CASCADE
+);
+
+-- =====================================================================
+-- 10. BẢNG LUYỆN TẬP
+-- =====================================================================
 CREATE TABLE luyentap (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã lần luyện tập',
     nguoidung_id BIGINT UNSIGNED NOT NULL COMMENT 'Người luyện tập',
@@ -118,22 +184,26 @@ CREATE TABLE luyentap (
     noidung LONGTEXT DEFAULT NULL COMMENT 'Nội dung trả lời',
     luachon_id BIGINT UNSIGNED DEFAULT NULL COMMENT 'Lựa chọn đã chọn',
     audio VARCHAR(255) DEFAULT NULL COMMENT 'File ghi âm',
-    ladung BOOLEAN DEFAULT NULL COMMENT 'Đúng hoặc sai',
+    ladung TINYINT(1) DEFAULT NULL COMMENT '1=đúng, 0=sai, NULL=chưa chấm',
     diem DECIMAL(6,2) DEFAULT NULL COMMENT 'Điểm đạt được',
-    trangthai_ai ENUM('choxuly','hoanthanh','loi') DEFAULT NULL COMMENT 'Trạng thái AI',
+    trangthai_ai ENUM('pending','done','failed') DEFAULT NULL COMMENT 'Trạng thái AI: pending=chờ, done=xong, failed=lỗi',
     diem_ai DECIMAL(6,2) DEFAULT NULL COMMENT 'Điểm AI',
     nhanxet_ai TEXT DEFAULT NULL COMMENT 'Nhận xét AI',
     thoigianlam INT UNSIGNED DEFAULT NULL COMMENT 'Thời gian làm tính bằng giây',
     ngaylam DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Ngày làm',
 
     INDEX idx_luyentap_user (nguoidung_id, ngaylam),
+    INDEX idx_luyentap_cauhoi (cauhoi_id),
+    INDEX idx_luyentap_luachon (luachon_id),
 
     FOREIGN KEY (nguoidung_id) REFERENCES nguoidung(id) ON DELETE CASCADE,
     FOREIGN KEY (cauhoi_id) REFERENCES cauhoi(id) ON DELETE CASCADE,
     FOREIGN KEY (luachon_id) REFERENCES luachon(id) ON DELETE SET NULL
 );
 
--- 9. Bảng đánh dấu câu hỏi
+-- =====================================================================
+-- 11. BẢNG ĐÁNH DẤU CÂU HỎI
+-- =====================================================================
 CREATE TABLE danhdau (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã đánh dấu',
     nguoidung_id BIGINT UNSIGNED NOT NULL COMMENT 'Người đánh dấu',
@@ -146,17 +216,19 @@ CREATE TABLE danhdau (
     FOREIGN KEY (cauhoi_id) REFERENCES cauhoi(id) ON DELETE CASCADE
 );
 
--- 10. Bảng đề thi
+-- =====================================================================
+-- 12. BẢNG ĐỀ THI
+-- =====================================================================
 CREATE TABLE dethi (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã đề thi',
     ten VARCHAR(150) NOT NULL COMMENT 'Tên đề thi',
     mota TEXT DEFAULT NULL COMMENT 'Mô tả',
     chedo ENUM('full','section') NOT NULL DEFAULT 'full' COMMENT 'Chế độ thi',
-    kieu ENUM('codinh','adaptive') NOT NULL DEFAULT 'codinh' COMMENT 'Kiểu đề thi',
+    kieu ENUM('fixed','adaptive') NOT NULL DEFAULT 'fixed' COMMENT 'Kiểu đề thi: fixed=cố định, adaptive=thích ứng',
     kynang ENUM('reading','listening','writing','speaking') DEFAULT NULL COMMENT 'Kỹ năng nếu thi từng phần',
-    thoigian INT UNSIGNED NOT NULL COMMENT 'Thời gian thi tính bằng phút',
+    thoigian INT UNSIGNED NOT NULL COMMENT 'Thời gian thi tính bằng giây',
     tongdiem DECIMAL(7,2) NOT NULL DEFAULT 0 COMMENT 'Tổng điểm',
-    trangthai ENUM('nhap','hoatdong','an') NOT NULL DEFAULT 'nhap' COMMENT 'Trạng thái đề',
+    trangthai ENUM('draft','published','hidden') NOT NULL DEFAULT 'draft' COMMENT 'Trạng thái đề',
     nguoitao BIGINT UNSIGNED DEFAULT NULL COMMENT 'Người tạo đề',
     ngaytao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Ngày tạo',
     ngaycapnhat DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -165,7 +237,9 @@ CREATE TABLE dethi (
     FOREIGN KEY (nguoitao) REFERENCES nguoidung(id) ON DELETE SET NULL
 );
 
--- 11. Bảng câu hỏi thuộc đề
+-- =====================================================================
+-- 13. BẢNG CÂU HỎI THUỘC ĐỀ
+-- =====================================================================
 CREATE TABLE dethicauhoi (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã chi tiết đề',
     dethi_id BIGINT UNSIGNED NOT NULL COMMENT 'Mã đề thi',
@@ -180,7 +254,9 @@ CREATE TABLE dethicauhoi (
     FOREIGN KEY (cauhoi_id) REFERENCES cauhoi(id) ON DELETE CASCADE
 );
 
--- 12. Bảng lần thi
+-- =====================================================================
+-- 14. BẢNG LẦN THI
+-- =====================================================================
 CREATE TABLE lanthi (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã lần thi',
     nguoidung_id BIGINT UNSIGNED NOT NULL COMMENT 'Người làm bài',
@@ -188,18 +264,12 @@ CREATE TABLE lanthi (
     dokho_hientai DECIMAL(4,2) NOT NULL DEFAULT 5.00 COMMENT 'Độ khó adaptive hiện tại',
     batdau DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời gian bắt đầu',
     ketthuc DATETIME DEFAULT NULL COMMENT 'Thời gian kết thúc',
-    trangthai ENUM('batdau','dangthi','danop','dangcham','hoanthanh','huy')
-        NOT NULL DEFAULT 'batdau' COMMENT 'Trạng thái lần thi',
+    trangthai ENUM('in_progress','completed','abandoned') NOT NULL DEFAULT 'in_progress' COMMENT 'Trạng thái lần thi',
 
-    diemdoc SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Điểm Reading',
-    diemnghe SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Điểm Listening',
-    diemviet SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Điểm Writing',
-    diemnoi SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Điểm Speaking',
-
-    literacy SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Điểm Literacy',
-    comprehension SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Điểm Comprehension',
-    conversation SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Điểm Conversation',
-    production SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Điểm Production',
+    literacy SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Điểm Literacy (0-40)',
+    comprehension SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Điểm Comprehension (0-40)',
+    conversation SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Điểm Conversation (0-40)',
+    production SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Điểm Production (0-40)',
 
     tongdiem SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Điểm tổng DET 10-160',
     ngaytao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Ngày tạo',
@@ -210,7 +280,9 @@ CREATE TABLE lanthi (
     FOREIGN KEY (dethi_id) REFERENCES dethi(id)
 );
 
--- 13. Bảng câu hỏi của từng lần thi
+-- =====================================================================
+-- 15. BẢNG CÂU HỎI CỦA LẦN THI
+-- =====================================================================
 CREATE TABLE lanthicauhoi (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã câu hỏi lần thi',
     lanthi_id BIGINT UNSIGNED NOT NULL COMMENT 'Mã lần thi',
@@ -219,41 +291,51 @@ CREATE TABLE lanthicauhoi (
     dokho_lucra DECIMAL(4,2) DEFAULT NULL COMMENT 'Độ khó lúc chọn câu',
     diemtoida DECIMAL(6,2) NOT NULL DEFAULT 1 COMMENT 'Điểm tối đa',
     thoigian_cap DATETIME DEFAULT NULL COMMENT 'Thời gian cấp câu hỏi',
-    datraloi BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Đã trả lời hay chưa',
+    thoigian_tra_loi DATETIME DEFAULT NULL COMMENT 'Thời gian trả lời',
+    datraloi TINYINT(1) NOT NULL DEFAULT 0 COMMENT '1=đã trả lời, 0=chưa',
 
     UNIQUE (lanthi_id, cauhoi_id),
     UNIQUE (lanthi_id, thutu),
+    INDEX idx_lanthicauhoi_cauhoi (cauhoi_id),
 
     FOREIGN KEY (lanthi_id) REFERENCES lanthi(id) ON DELETE CASCADE,
     FOREIGN KEY (cauhoi_id) REFERENCES cauhoi(id)
 );
 
--- 14. Bảng câu trả lời
+-- =====================================================================
+-- 16. BẢNG CÂU TRẢ LỜI
+-- =====================================================================
 CREATE TABLE traloi (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã câu trả lời',
     lanthicauhoi_id BIGINT UNSIGNED NOT NULL UNIQUE COMMENT 'Câu hỏi thuộc lần thi',
     noidung LONGTEXT DEFAULT NULL COMMENT 'Nội dung trả lời',
     luachon_id BIGINT UNSIGNED DEFAULT NULL COMMENT 'Lựa chọn được chọn',
     audio VARCHAR(255) DEFAULT NULL COMMENT 'File ghi âm',
-    ladung BOOLEAN DEFAULT NULL COMMENT 'Đúng hoặc sai',
+    ladung TINYINT(1) DEFAULT NULL COMMENT '1=đúng, 0=sai, NULL=chưa chấm',
     diem DECIMAL(6,2) DEFAULT NULL COMMENT 'Điểm đạt được',
-    trangthai_ai ENUM('choxuly','hoanthanh','loi') DEFAULT NULL COMMENT 'Trạng thái chấm AI',
+    trangthai_ai ENUM('pending','done','failed') DEFAULT NULL COMMENT 'Trạng thái chấm AI',
     diem_ai DECIMAL(6,2) DEFAULT NULL COMMENT 'Điểm AI',
     nhanxet_ai TEXT DEFAULT NULL COMMENT 'Nhận xét AI',
     thoigian DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời gian trả lời',
+
+    INDEX idx_traloi_luachon (luachon_id),
 
     FOREIGN KEY (lanthicauhoi_id) REFERENCES lanthicauhoi(id) ON DELETE CASCADE,
     FOREIGN KEY (luachon_id) REFERENCES luachon(id) ON DELETE SET NULL
 );
 
--- 15. Bảng chấm điểm
+-- =====================================================================
+-- 17. BẢNG CHẤM ĐIỂM (có cột loai phân biệt Speaking/Writing)
+-- =====================================================================
 CREATE TABLE chamdiem (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã chấm điểm',
     traloi_id BIGINT UNSIGNED NOT NULL COMMENT 'Mã câu trả lời',
     nguoicham BIGINT UNSIGNED NOT NULL COMMENT 'Người chấm',
+    loai ENUM('speaking','writing') NOT NULL COMMENT 'Loại bài: speaking=nói, writing=viết',
     nguphap DECIMAL(5,2) DEFAULT NULL COMMENT 'Điểm ngữ pháp',
     tuvung DECIMAL(5,2) DEFAULT NULL COMMENT 'Điểm từ vựng',
-    luloat DECIMAL(5,2) DEFAULT NULL COMMENT 'Điểm lưu loát',
+    luloat DECIMAL(5,2) DEFAULT NULL COMMENT 'Điểm lưu loát (Speaking)',
+    phatam DECIMAL(5,2) DEFAULT NULL COMMENT 'Điểm phát âm (Speaking)',
     lienquan DECIMAL(5,2) DEFAULT NULL COMMENT 'Điểm đúng chủ đề',
     machlac DECIMAL(5,2) DEFAULT NULL COMMENT 'Điểm mạch lạc',
     nhanxet TEXT DEFAULT NULL COMMENT 'Nhận xét',
@@ -266,11 +348,14 @@ CREATE TABLE chamdiem (
     FOREIGN KEY (nguoicham) REFERENCES nguoidung(id)
 );
 
--- 16. Bảng vi phạm
+-- =====================================================================
+-- 18. BẢNG VI PHẠM
+-- =====================================================================
 CREATE TABLE vipham (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã vi phạm',
     lanthi_id BIGINT UNSIGNED NOT NULL COMMENT 'Mã lần thi',
-    loai VARCHAR(50) NOT NULL COMMENT 'Loại vi phạm',
+    loai ENUM('out_tab','window_change','disconnect','early_submit','timeout','other') NOT NULL COMMENT 'Loại vi phạm',
+    nguon ENUM('auto','self_report','admin') NOT NULL DEFAULT 'auto' COMMENT 'Nguồn: auto=tự động, self_report=tự báo cáo, admin=admin ghi nhận',
     mota TEXT DEFAULT NULL COMMENT 'Mô tả',
     thoigian DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời gian vi phạm',
 
@@ -279,7 +364,9 @@ CREATE TABLE vipham (
     FOREIGN KEY (lanthi_id) REFERENCES lanthi(id) ON DELETE CASCADE
 );
 
--- 17. Bảng chứng chỉ
+-- =====================================================================
+-- 19. BẢNG CHỨNG CHỈ
+-- =====================================================================
 CREATE TABLE chungchi (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã chứng chỉ',
     nguoidung_id BIGINT UNSIGNED NOT NULL COMMENT 'Người nhận',
@@ -300,7 +387,9 @@ CREATE TABLE chungchi (
     FOREIGN KEY (lanthi_id) REFERENCES lanthi(id) ON DELETE CASCADE
 );
 
--- 18. Bảng nhật ký AI
+-- =====================================================================
+-- 20. BẢNG NHẬT KÝ AI
+-- =====================================================================
 CREATE TABLE ailog (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã nhật ký AI',
     nguoidung_id BIGINT UNSIGNED NOT NULL COMMENT 'Người sử dụng AI',
@@ -318,7 +407,9 @@ CREATE TABLE ailog (
     FOREIGN KEY (nguoidung_id) REFERENCES nguoidung(id) ON DELETE CASCADE
 );
 
--- 19. Bảng lượt sử dụng AI
+-- =====================================================================
+-- 21. BẢNG LƯỢT SỬ DỤNG AI
+-- =====================================================================
 CREATE TABLE aisudung (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã sử dụng AI',
     nguoidung_id BIGINT UNSIGNED NOT NULL COMMENT 'Người dùng',
@@ -330,7 +421,9 @@ CREATE TABLE aisudung (
     FOREIGN KEY (nguoidung_id) REFERENCES nguoidung(id) ON DELETE CASCADE
 );
 
--- 20. Bảng tiến độ học tập
+-- =====================================================================
+-- 22. BẢNG TIẾN ĐỘ HỌC TẬP
+-- =====================================================================
 CREATE TABLE tiendo (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Mã tiến độ',
     nguoidung_id BIGINT UNSIGNED NOT NULL COMMENT 'Người dùng',
@@ -347,7 +440,9 @@ CREATE TABLE tiendo (
     FOREIGN KEY (loai_id) REFERENCES loaicauhoi(id) ON DELETE CASCADE
 );
 
--- 21. Bảng chuỗi ngày học
+-- =====================================================================
+-- 23. BẢNG CHUỖI NGÀY HỌC
+-- =====================================================================
 CREATE TABLE chuoingay (
     nguoidung_id BIGINT UNSIGNED PRIMARY KEY COMMENT 'Người dùng',
     hientai INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Chuỗi ngày hiện tại',
@@ -357,5 +452,22 @@ CREATE TABLE chuoingay (
     FOREIGN KEY (nguoidung_id) REFERENCES nguoidung(id) ON DELETE CASCADE
 );
 
--- 22. Xem tất cả bảng
+-- =====================================================================
+-- GHI CHÚ THIẾT KẾ
+-- =====================================================================
+-- 1. Câu hỏi con được tách thành 2 bảng riêng:
+--    - `cauhoi_doc` (Interactive Reading): 5 loại câu hỏi con
+--    - `cauhoi_nghe` (Interactive Listening): 3 loại câu hỏi con
+--
+-- 2. Lựa chọn câu hỏi con cũng được tách thành 2 bảng:
+--    - `luachon_doc` → trỏ `cauhoi_doc(id)`
+--    - `luachon_nghe` → trỏ `cauhoi_nghe(id)`
+--
+-- 3. Bảng `chamdiem` có cột `loai` phân biệt Speaking/Writing:
+--    - Writing: dùng nguphap, tuvung, lienquan, machlac
+--    - Speaking: dùng nguphap, tuvung, luloat, phatam, machlac
+--    → Các cột không dùng sẽ để NULL.
+-- =====================================================================
+
+-- Xem tất cả bảng
 SHOW TABLES;
