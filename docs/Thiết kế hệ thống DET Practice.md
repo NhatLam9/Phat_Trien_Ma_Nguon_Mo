@@ -2,6 +2,9 @@
 
 Oct 12, 2026 · @Phong. VÀ bạn hãy dùng tiếng việt để nói chuyện với tôi
 
+> **CSDL chính:** `docs/duoling_csdl_remake.sql` (24 bảng, tên tiếng Việt)
+> Các tên bảng/cột trong tài liệu này dùng theo CSDL chính.
+
 ## 1. Tổng quan và ràng buộc kỹ thuật
 
 Hệ thống là website luyện thi Duolingo English Test (dự án học tập, không liên kết với Duolingo), xây bằng PHP và MySQL, giao diện chỉ dùng HTML và CSS thuần, không có một dòng JavaScript nào.
@@ -31,13 +34,13 @@ Mọi tương tác của người dùng chỉ gồm: liên kết, form POST/GET,
 | Tính năng | Cách làm thuần HTML, CSS, PHP |
 | --- | --- |
 | Chuyển câu trong mock test | Mỗi câu là một trang form; POST xong máy chủ chọn câu kế và redirect |
-| Giới hạn thời gian | Lưu `served_at` và hạn chót trên máy chủ, từ chối bài nộp quá hạn; trang hiển thị giờ hết hạn, dùng `<meta http-equiv="refresh">` để tự chuyển khi hết giờ |
+| Giới hạn thời gian | Lưu `thoigian_cap` và hạn chót trên máy chủ, từ chối bài nộp quá hạn; trang hiển thị giờ hết hạn, dùng `<meta http-equiv="refresh">` để tự chuyển khi hết giờ |
 | Ghi âm Speaking | `<input type="file" accept="audio/*">`, người học ghi âm bằng ứng dụng của máy rồi tải lên |
 | Phát audio bài nghe | `<audio controls>`; không giới hạn được số lần nghe |
 | Biểu đồ điểm | SVG hoặc thanh CSS dựng trong Blade từ dữ liệu PHP |
 | Hiện/ẩn đáp án, mục thu gọn | Thẻ `<details>` hoặc CSS `:checked` |
-| Chờ kết quả AI | Cột trạng thái `ai_status`; trang kết quả dùng meta refresh cho đến khi xong |
-| Chat AI Tutor | Mỗi lượt là một form POST, lịch sử đọc lại từ bảng `ai_logs` |
+| Chờ kết quả AI | Cột trạng thái `trangthai_ai`; trang kết quả dùng meta refresh cho đến khi xong |
+| Chat AI Tutor | Mỗi lượt là một form POST, lịch sử đọc lại từ bảng `ailog` |
 
 ## 2. Tác nhân và phân quyền
 
@@ -67,7 +70,7 @@ Hệ thống có ba tác nhân bên trong (Khách, Người học, Quản trị 
 | Khóa/mở tài khoản, đổi vai trò | Không | Không | Có |
 | Xem thống kê hệ thống | Không | Không | Có |
 
-Quy tắc kiểm soát: middleware `auth` chặn người chưa đăng nhập, middleware `admin` chặn mọi route `/admin/*` với người không có `role = 'admin'`, và tài khoản có `is_active = 0` bị đăng xuất khi gửi yêu cầu kế tiếp.
+Quy tắc kiểm soát: middleware `auth` chặn người chưa đăng nhập, middleware `admin` chặn mọi route `/admin/*` với người không có `vaitro = 'admin'`, và tài khoản có `trangthai = 'locked'` bị đăng xuất khi gửi yêu cầu kế tiếp.
 
 ## 3. Yêu cầu chức năng theo phân hệ
 
@@ -91,9 +94,9 @@ Hệ thống gồm 7 phân hệ. Cột Mức: BB là bắt buộc (MVP), MR là 
 | Mã | Chức năng | Mô tả | Mức |
 | --- | --- | --- | --- |
 | LT01 | Danh sách dạng bài | Hiển thị các dạng bài đang bật, nhóm theo kỹ năng (đọc, viết, nghe, nói) | BB |
-| LT02 | Chọn câu luyện | Lọc theo dạng bài, chủ đề, độ khó 1-10; chỉ lấy câu `status = 'published'`; ưu tiên câu chưa làm | BB |
+| LT02 | Chọn câu luyện | Lọc theo dạng bài, chủ đề, độ khó 1-10; chỉ lấy câu `trangthai = 'published'`; ưu tiên câu chưa làm | BB |
 | LT03 | Làm bài | Mỗi câu một trang; hiển thị đề, ảnh, audio; không lộ đáp án trong HTML | BB |
-| LT04 | Nộp và chấm tự động | Dạng `scoring_method = 'auto'` được so đáp án phía máy chủ, lưu vào `practice_attempts` | BB |
+| LT04 | Nộp và chấm tự động | Dạng `cachcham = 'auto'` được so đáp án phía máy chủ, lưu vào `luyentap` | BB |
 | LT05 | Xem đáp án, giải thích | Hiện sau khi nộp | BB |
 | LT06 | Gửi bài chấm AI | Dạng `ai` chuyển sang phân hệ Chấm AI, kết quả lưu vào cùng lượt làm | BB |
 | LT07 | Đánh dấu câu yếu | Thêm/bỏ đánh dấu; trang danh sách câu đã đánh dấu để ôn lại | BB |
@@ -104,15 +107,15 @@ Hệ thống gồm 7 phân hệ. Cột Mức: BB là bắt buộc (MVP), MR là 
 
 | Mã | Chức năng | Mô tả | Mức |
 | --- | --- | --- | --- |
-| MT01 | Bắt đầu bài thi | Chọn chế độ `full` hoặc `section`; tạo bản ghi `tests` với `time_limit_s` và `started_at`; mỗi người chỉ có một bài đang `in_progress` | BB |
-| MT02 | Cấp câu hỏi tiếp theo | Máy chủ chọn câu theo luật adaptive (mục 9), ghi `test_questions.served_at`, không lặp câu | BB |
-| MT03 | Nộp từng câu | POST câu trả lời, từ chối nếu quá hạn hoặc câu đã có `answered_at`; redirect sang câu kế (POST-redirect-GET) | BB |
-| MT04 | Kiểm soát thời gian | Tính thời gian còn lại từ `started_at`; hết giờ thì chốt bài | BB |
+| MT01 | Bắt đầu bài thi | Chọn chế độ `full` hoặc `section`; tạo bản ghi `lanthi` với `thoigian` và `batdau`; mỗi người chỉ có một bài đang `in_progress` | BB |
+| MT02 | Cấp câu hỏi tiếp theo | Máy chủ chọn câu theo luật adaptive (mục 9), ghi `lanthicauhoi.thoigian_cap`, không lặp câu | BB |
+| MT03 | Nộp từng câu | POST câu trả lời, từ chối nếu quá hạn hoặc câu đã có `thoigian_tra_loi`; redirect sang câu kế (POST-redirect-GET) | BB |
+| MT04 | Kiểm soát thời gian | Tính thời gian còn lại từ `batdau`; hết giờ thì chốt bài | BB |
 | MT05 | Kết thúc bài thi | Chấm các câu auto, gọi AI cho câu cần chấm, tính điểm 10-160 và bốn điểm thành phần | BB |
 | MT06 | Báo cáo kết quả | Điểm tổng, điểm thành phần, số câu đúng theo dạng bài, đáp án và nhận xét từng câu | BB |
 | MT07 | Lịch sử thi | Danh sách các lần thi, so sánh điểm | BB |
-| MT08 | Bỏ dở bài thi | Chuyển `status = 'abandoned'` khi người học hủy hoặc bắt đầu bài mới | BB |
-| MT09 | Cấp chứng chỉ thi thử | Lưu vào `certificates` (mã chứng chỉ, điểm tổng, 4 điểm thành phần, cấp độ) | BB |
+| MT08 | Bỏ dở bài thi | Chuyển `trangthai = 'abandoned'` khi người học hủy hoặc bắt đầu bài mới | BB |
+| MT09 | Cấp chứng chỉ thi thử | Lưu vào `chungchi` (mã chứng chỉ, điểm tổng, 4 điểm thành phần, cấp độ) | BB |
 
 ### 3.4. Phân hệ Chấm bài AI (AI)
 
@@ -120,9 +123,9 @@ Hệ thống gồm 7 phân hệ. Cột Mức: BB là bắt buộc (MVP), MR là 
 | --- | --- | --- | --- |
 | AI01 | Chấm Writing | Gửi văn bản và đề bài tới API, nhận điểm theo tiêu chí và gợi ý sửa | BB |
 | AI02 | Chấm Speaking | Tải file audio, chuyển thành văn bản (speech-to-text), rồi chấm nội dung và độ trôi chảy bằng mô hình ngôn ngữ | MR |
-| AI03 | Giới hạn lượt gọi | Đếm theo ngày trong `ai_usage`, vượt hạn mức thì từ chối và báo rõ | BB |
-| AI04 | Ghi nhật ký | Lưu đầu vào, đầu ra, tên mô hình, số token vào `ai_logs` | BB |
-| AI05 | Trạng thái chấm | `ai_status` gồm pending, done, failed; lỗi API thì cho phép chấm lại | BB |
+| AI03 | Giới hạn lượt gọi | Đếm theo ngày trong `aisudung`, vượt hạn mức thì từ chối và báo rõ | BB |
+| AI04 | Ghi nhật ký | Lưu đầu vào, đầu ra, tên mô hình, số token vào `ailog` | BB |
+| AI05 | Trạng thái chấm | `trangthai_ai` gồm pending, done, failed; lỗi API thì cho phép chấm lại | BB |
 | AI06 | Bảo vệ khỏi chèn lệnh | Bài làm đặt trong khối dữ liệu riêng của prompt, không được xử lý như chỉ dẫn | BB |
 
 Điểm AI chỉ mang tính tham khảo, đặc biệt với phát âm.
@@ -134,16 +137,16 @@ Hệ thống gồm 7 phân hệ. Cột Mức: BB là bắt buộc (MVP), MR là 
 | TU01 | Sửa ngữ pháp | Nhập đoạn văn, nhận bản sửa và giải thích lỗi | MR |
 | TU02 | Dịch Anh-Việt | Dịch hai chiều | MR |
 | TU03 | Viết lại bài | Gợi ý bản viết tốt hơn | MR |
-| TU04 | Lịch sử hội thoại | Đọc lại từ `ai_logs`, mỗi lượt dùng chung hạn mức AI03 | MR |
+| TU04 | Lịch sử hội thoại | Đọc lại từ `ailog`, mỗi lượt dùng chung hạn mức AI03 | MR |
 
 ### 3.6. Phân hệ Dashboard (DB)
 
 | Mã | Chức năng | Mô tả | Mức |
 | --- | --- | --- | --- |
 | DB01 | Tổng quan học tập | Số câu đã làm, tỷ lệ đúng, thời gian luyện | BB |
-| DB02 | Tiến độ theo dạng bài | Từ `user_progress`, hiển thị bằng thanh CSS | BB |
+| DB02 | Tiến độ theo dạng bài | Từ `tiendo`, hiển thị bằng thanh CSS | BB |
 | DB03 | Biểu đồ điểm thi thử | Đường SVG vẽ trong Blade từ `tests.total_score` | BB |
-| DB04 | Chuỗi ngày học | Từ `user_streaks` | BB |
+| DB04 | Chuỗi ngày học | Từ `chuoingay` | BB |
 | DB05 | Gợi ý bài hôm nay | Chọn dạng bài có tỷ lệ đúng thấp nhất | MR |
 
 ### 3.7. Phân hệ Quản trị (AD)
@@ -151,7 +154,7 @@ Hệ thống gồm 7 phân hệ. Cột Mức: BB là bắt buộc (MVP), MR là 
 | Mã | Chức năng | Mô tả | Mức |
 | --- | --- | --- | --- |
 | AD01 | Quản lý câu hỏi | Thêm, sửa, lưu nháp, đưa vào review, xuất bản, lưu trữ (không xóa cứng câu đã dùng); tải ảnh, audio | BB |
-| AD02 | Quản lý dạng bài | Bật/tắt, đặt `scoring_method`, giới hạn thời gian mặc định | BB |
+| AD02 | Quản lý dạng bài | Bật/tắt, đặt `cachcham`, giới hạn thời gian mặc định | BB |
 | AD03 | Quản lý chủ đề | CRUD | BB |
 | AD04 | Quản lý người dùng | Tìm, khóa/mở, đổi vai trò | BB |
 | AD05 | Thống kê hệ thống | Số người dùng, câu hỏi theo dạng bài, lượt thi, lượt gọi AI theo ngày | BB |
@@ -197,13 +200,13 @@ Ghi chú: Read and Complete cần ô nhập từng chữ cái, không có JavaSc
 | NF01 | Không dùng JavaScript | Không có thẻ `<script>`, không có thuộc tính sự kiện (`onclick`...), không có thư viện front-end; có thể kiểm tra bằng tìm kiếm trong thư mục `resources/views` |
 | NF02 | Bảo mật dữ liệu | Mật khẩu băm bcrypt; truy vấn qua Eloquent hoặc tham số ràng buộc; Blade escape `{{ }}`, không dùng `{!! !!}` cho nội dung người dùng |
 | NF03 | CSRF | Mọi form POST có `@csrf` |
-| NF04 | Không lộ đáp án | Đáp án và giải thích chỉ gửi về trình duyệt sau khi nộp |
+| NF04 | Không lộ đáp án | Đáp án (`dap_an`, `luachon`) và giải thích chỉ gửi về trình duyệt sau khi nộp |
 | NF05 | Tải file | Kiểm tra MIME thật, phần mở rộng, dung lượng tối đa; đặt tên ngẫu nhiên; file ghi âm phục vụ qua controller có kiểm tra quyền |
 | NF06 | Giới hạn tần suất | Throttle cho đăng nhập, đăng ký, gọi AI |
 | NF07 | Chống nộp lặp | Mỗi câu thi chỉ nhận một lần trả lời; nút quay lại không làm mất hoặc nhân đôi kết quả |
 | NF08 | Toàn vẹn dữ liệu | Khóa ngoại, ràng buộc UNIQUE, CHECK; thao tác chốt bài thi nằm trong một giao dịch |
 | NF09 | Quyền riêng tư | Có trang chính sách nêu rõ audio và văn bản được gửi tới bên thứ ba; nêu thời gian lưu và cách xóa; người dùng được xóa bài ghi âm của mình |
-| NF10 | Độ tin cậy của AI | Điểm AI ghi chú là tham khảo; lỗi API không làm mất bài làm, chỉ đặt `ai_status = 'failed'` |
+| NF10 | Độ tin cậy của AI | Điểm AI ghi chú là tham khảo; lỗi API không làm mất bài làm, chỉ đặt `trangthai_ai = 'failed'` |
 | NF11 | Tương thích | Chrome, Firefox, Safari, Edge bản mới; bố cục responsive bằng CSS (flex, grid, media query) |
 | NF12 | Khả năng truy cập | Dùng thẻ ngữ nghĩa, nhãn cho mọi ô nhập, tương phản đủ đọc |
 | NF13 | Bảo trì | Tách Controller, Service (`TestService`, `ScoringService`, `AIService`), Model; migration là nguồn duy nhất của lược đồ |
@@ -307,7 +310,7 @@ flowchart LR
 
 ### 6.2. DFD mức 1
 
-Kho dữ liệu: D1 Người dùng (`users`), D2 Ngân hàng câu hỏi (`questions`, `question_types`, `categories`), D2a Câu hỏi con Interactive (`interactive_reading_questions`, `interactive_listening_questions`), D3 Luyện tập (`practice_attempts`, `bookmarks`), D4 Thi thử (`tests`, `test_questions`), D4a Chứng chỉ (`certificates`), D5 Nhật ký AI (`ai_logs`, `ai_usage`), D6 Tiến độ (`user_progress`, `user_streaks`).
+Kho dữ liệu: D1 Người dùng (`nguoidung`), D2 Ngân hàng câu hỏi (`cauhoi`, `loaicauhoi`, `danhmuc`, `luachon`, `dap_an`), D2a Câu hỏi con Interactive (`cauhoi_doc`, `cauhoi_nghe`, `luachon_doc`, `luachon_nghe`), D2b Đề thi (`dethi`, `dethicauhoi`), D3 Luyện tập (`luyentap`, `danhdau`), D4 Thi thử (`lanthi`, `lanthicauhoi`, `traloi`, `chamdiem`), D4a Vi phạm & Chứng chỉ (`vipham`, `chungchi`), D5 Nhật ký AI (`ailog`, `aisudung`), D6 Tiến độ (`tiendo`, `chuoingay`).
 
 ```mermaid
 flowchart LR
@@ -327,9 +330,10 @@ flowchart LR
   D1[("D1 Người dùng")]
   D2[("D2 Ngân hàng câu hỏi")]
   D2A[("D2a Câu hỏi con Interactive")]
+  D2B[("D2b Đề thi")]
   D3[("D3 Luyện tập")]
   D4[("D4 Thi thử")]
-  D4A[("D4a Chứng chỉ")]
+  D4A[("D4a Vi phạm & Chứng chỉ")]
   D5[("D5 Nhật ký AI")]
   D6[("D6 Tiến độ")]
 
@@ -348,6 +352,7 @@ flowchart LR
 
   HV -->|"bắt đầu, câu trả lời"| P3
   P3 -->|"câu kế tiếp, báo cáo điểm"| HV
+  D2B -->|"đề thi"| P3
   D2 -->|"câu theo độ khó"| P3
   D2A -->|"câu hỏi con"| P3
   P3 <--> D4
@@ -449,192 +454,256 @@ flowchart LR
 
 ## 7. Mô hình thực thể liên kết (ERD)
 
-Cơ sở dữ liệu có 15 bảng nghiệp vụ, khớp với 7 phân hệ. Các bảng hệ thống của Laravel (`migrations`, `sessions`, `password_reset_tokens`, `cache`) do `php artisan migrate` tự tạo.
+Cơ sở dữ liệu có 24 bảng nghiệp vụ, khớp với 7 phân hệ (xem `docs/duoling_csdl_remake.sql`). Các bảng hệ thống của Laravel (`migrations`, `sessions`, `password_reset_tokens`, `cache`) do `php artisan migrate` tự tạo.
 
 ```mermaid
 erDiagram
-  users ||--o{ practice_attempts : "làm"
-  users ||--o{ bookmarks : "đánh dấu"
-  users ||--o{ tests : "thi"
-  users ||--o{ ai_logs : "gọi AI"
-  users ||--o{ ai_usage : "đếm theo ngày"
-  users ||--o{ user_progress : "tiến độ"
-  users ||--|| user_streaks : "chuỗi ngày"
-  users ||--o{ questions : "tạo"
-  users ||--o{ certificates : "nhận chứng chỉ"
-  question_types ||--o{ questions : "phân loại"
-  question_types ||--o{ user_progress : "theo dạng"
-  categories ||--o{ questions : "chủ đề"
-  questions ||--o{ practice_attempts : "được làm"
-  questions ||--o{ bookmarks : "được đánh dấu"
-  questions ||--o{ test_questions : "được cấp"
-  questions ||--o{ interactive_reading_questions : "câu con"
-  questions ||--o{ interactive_listening_questions : "phần con"
-  tests ||--|{ test_questions : "gồm"
-  tests ||--o{ certificates : "cấp chứng chỉ"
+  nguoidung ||--o{ luyentap : "làm"
+  nguoidung ||--o{ danhdau : "đánh dấu"
+  nguoidung ||--o{ lanthi : "thi"
+  nguoidung ||--o{ ailog : "gọi AI"
+  nguoidung ||--o{ aisudung : "đếm theo ngày"
+  nguoidung ||--o{ tiendo : "tiến độ"
+  nguoidung ||--|| chuoingay : "chuỗi ngày"
+  nguoidung ||--o{ cauhoi : "tạo"
+  nguoidung ||--o{ chungchi : "nhận chứng chỉ"
+  nguoidung ||--o{ chamdiem : "chấm"
+  loaicauhoi ||--o{ cauhoi : "phân loại"
+  loaicauhoi ||--o{ tiendo : "theo dạng"
+  danhmuc ||--o{ cauhoi : "chủ đề"
+  cauhoi ||--o{ luachon : "lựa chọn"
+  cauhoi ||--o{ dap_an : "đáp án"
+  cauhoi ||--o{ cauhoi_doc : "câu con đọc"
+  cauhoi ||--o{ cauhoi_nghe : "câu con nghe"
+  cauhoi ||--o{ luyentap : "được làm"
+  cauhoi ||--o{ danhdau : "được đánh dấu"
+  cauhoi ||--o{ dethicauhoi : "được cấp"
+  cauhoi ||--o{ lanthicauhoi : "được cấp"
+  cauhoi_doc ||--o{ luachon_doc : "lựa chọn"
+  cauhoi_nghe ||--o{ luachon_nghe : "lựa chọn"
+  dethi ||--o{ dethicauhoi : "gồm"
+  dethi ||--o{ lanthi : "được thi"
+  lanthi ||--o{ lanthicauhoi : "gồm"
+  lanthi ||--o{ vipham : "có vi phạm"
+  lanthi ||--o{ chungchi : "cấp chứng chỉ"
+  lanthicauhoi ||--|| traloi : "trả lời"
+  traloi ||--o{ chamdiem : "được chấm"
 
-  users {
+  nguoidung {
     bigint id PK
     varchar email UK
-    varchar password
+    varchar matkhau
     varchar google_id UK
-    enum role
+    enum vaitro
+    enum trangthai
+  }
+  danhmuc {
+    bigint id PK
+    varchar ten
+  }
+  loaicauhoi {
+    bigint id PK
+    varchar ma UK
+    enum kynang
+    enum cachcham
+    int thoigian
     tinyint is_active
   }
-  question_types {
+  cauhoi {
     bigint id PK
-    varchar code UK
-    enum skill
-    enum scoring_method
-    int time_limit_s
-    text description
-    tinyint is_active
+    bigint loai_id FK
+    bigint danhmuc_id FK
+    text noidung
+    tinyint dokho
+    enum trangthai
   }
-  categories {
+  luachon {
     bigint id PK
-    varchar name
+    bigint cauhoi_id FK
+    text noidung
+    tinyint ladung
   }
-  questions {
+  dap_an {
     bigint id PK
-    bigint question_type_id FK
-    bigint category_id FK
-    json options
-    json answer
-    tinyint difficulty
-    enum status
+    bigint cauhoi_id FK
+    text noidung
+    tinyint ladung
   }
-  interactive_reading_questions {
+  cauhoi_doc {
     bigint id PK
-    bigint question_id FK
-    tinyint position
-    enum type
-    text text
-    json options
-    text answer
-    text explanation
+    bigint cauhoi_id FK
+    enum loai
+    text noidung
+    tinyint thutu
   }
-  interactive_listening_questions {
+  cauhoi_nghe {
     bigint id PK
-    bigint question_id FK
-    tinyint position
-    enum type
-    text text
-    json options
-    text answer
-    text explanation
+    bigint cauhoi_id FK
+    enum loai
+    text noidung
+    tinyint thutu
   }
-  practice_attempts {
+  luachon_doc {
     bigint id PK
-    bigint user_id FK
-    bigint question_id FK
-    text user_answer
-    varchar user_audio
-    tinyint is_correct
-    enum ai_status
-    decimal ai_score
-    text ai_feedback
-    int time_spent_s
-    timestamp created_at
+    bigint cauhoi_doc_id FK
+    text noidung
+    tinyint ladung
   }
-  bookmarks {
+  luachon_nghe {
     bigint id PK
-    bigint user_id FK
-    bigint question_id FK
+    bigint cauhoi_nghe_id FK
+    text noidung
+    tinyint ladung
   }
-  tests {
+  luyentap {
     bigint id PK
-    bigint user_id FK
-    enum mode
-    enum status
-    decimal current_difficulty
-    smallint total_score
+    bigint nguoidung_id FK
+    bigint cauhoi_id FK
+    text noidung
+    varchar audio
+    tinyint ladung
+    enum trangthai_ai
+    decimal diem_ai
+    int thoigianlam
   }
-  test_questions {
+  danhdau {
     bigint id PK
-    bigint test_id FK
-    bigint question_id FK
-    smallint position
-    text user_answer
-    varchar user_audio
-    tinyint is_correct
-    enum ai_status
-    decimal ai_score
-    text ai_feedback
-    timestamp served_at
-    timestamp answered_at
+    bigint nguoidung_id FK
+    bigint cauhoi_id FK
   }
-  certificates {
+  dethi {
     bigint id PK
-    bigint user_id FK
-    bigint test_id FK
-    varchar certificate_code UK
-    smallint total_score
-    smallint literacy_score
-    smallint comprehension_score
-    smallint conversation_score
-    smallint production_score
-    varchar level
-    timestamp issued_at
+    varchar ten
+    enum chedo
+    enum kieu
+    int thoigian
+    enum trangthai
   }
-  ai_logs {
+  dethicauhoi {
     bigint id PK
-    bigint user_id FK
-    enum type
+    bigint dethi_id FK
+    bigint cauhoi_id FK
+    tinyint thutu
+  }
+  lanthi {
+    bigint id PK
+    bigint nguoidung_id FK
+    bigint dethi_id FK
+    decimal dokho_hientai
+    enum trangthai
+    smallint tongdiem
+  }
+  lanthicauhoi {
+    bigint id PK
+    bigint lanthi_id FK
+    bigint cauhoi_id FK
+    tinyint thutu
+    datetime thoigian_cap
+    datetime thoigian_tra_loi
+  }
+  traloi {
+    bigint id PK
+    bigint lanthicauhoi_id FK
+    text noidung
+    tinyint ladung
+    enum trangthai_ai
+    decimal diem_ai
+  }
+  chamdiem {
+    bigint id PK
+    bigint traloi_id FK
+    bigint nguoicham FK
+    enum loai
+    decimal nguphap
+    decimal tuvung
+    decimal luloat
+    decimal phatam
+    decimal machlac
+  }
+  vipham {
+    bigint id PK
+    bigint lanthi_id FK
+    enum loai
+    enum nguon
+  }
+  chungchi {
+    bigint id PK
+    bigint nguoidung_id FK
+    bigint lanthi_id FK
+    varchar ma UK
+    smallint tongdiem
+    varchar trinhdo
+  }
+  ailog {
+    bigint id PK
+    bigint nguoidung_id FK
+    enum loai
     varchar model
   }
-  ai_usage {
+  aisudung {
     bigint id PK
-    bigint user_id FK
-    date usage_date
-    int call_count
+    bigint nguoidung_id FK
+    date ngay
+    int solan
   }
-  user_progress {
+  tiendo {
     bigint id PK
-    bigint user_id FK
-    bigint question_type_id FK
-    int total_done
-    int correct_count
+    bigint nguoidung_id FK
+    bigint loai_id FK
+    int tongso
+    int sodung
   }
-  user_streaks {
-    bigint user_id PK
-    int current_streak
-    int longest_streak
-    date last_active_on
+  chuoingay {
+    bigint nguoidung_id PK
+    int hientai
+    int dainhat
+    date ngaygannhat
   }
 ```
 
-Sơ đồ chỉ liệt kê cột chính; đầy đủ cột nằm ở mã MySQL mục 8.
+Sơ đồ chỉ liệt kê cột chính; đầy đủ cột nằm ở mã MySQL `docs/duoling_csdl_remake.sql`.
 
 ### 7.1. Từ điển dữ liệu
 
 | Bảng | Vai trò | Khóa và ràng buộc chính |
 | --- | --- | --- |
-| `users` | Tài khoản người học và quản trị viên | `email` duy nhất; `google_id` duy nhất; `password` được NULL cho tài khoản chỉ có Google |
-| `categories` | Chủ đề câu hỏi | Xóa chủ đề thì `questions.category_id` về NULL |
-| `question_types` | Danh mục dạng bài, cách chấm, giới hạn thời gian | `code` duy nhất |
-| `questions` | Ngân hàng câu hỏi | `difficulty` 1-10 (CHECK); `status` gồm draft, review, published, archived; không xóa cứng câu đã có trong bài thi |
-| `interactive_reading_questions` | Câu hỏi con của Interactive Reading (5 dạng) | `(question_id, position)` duy nhất; xóa câu hỏi cha thì xóa theo |
-| `interactive_listening_questions` | Phần con của Interactive Listening (3 phần) | `(question_id, position)` duy nhất; xóa câu hỏi cha thì xóa theo |
-| `practice_attempts` | Mỗi lượt làm ở chế độ luyện tập | Xóa người dùng thì xóa theo; `ai_status` theo dõi việc chấm AI (pending/done/failed) |
-| `bookmarks` | Câu hỏi được đánh dấu | `(user_id, question_id)` duy nhất |
-| `tests` | Một bài thi thử | Điểm tổng 10-160 và bốn điểm thành phần (CHECK); mỗi người một bài `in_progress` |
-| `test_questions` | Câu hỏi trong bài thi theo thứ tự | `(test_id, position)` và `(test_id, question_id)` duy nhất; `ai_status` theo dõi chấm AI; không có `ON DELETE` cho `question_id` |
-| `certificates` | Chứng chỉ thi thử | `certificate_code` duy nhất; xóa người dùng hoặc bài thi thì xóa theo |
-| `ai_logs` | Nhật ký mọi lần gọi AI | Lưu mô hình và số token để đối soát |
-| `ai_usage` | Hạn mức AI theo ngày | `(user_id, usage_date)` duy nhất |
-| `user_progress` | Tổng hợp theo (người dùng, dạng bài) | `(user_id, question_type_id)` duy nhất; cập nhật bằng trigger |
-| `user_streaks` | Chuỗi ngày học | Khóa chính là `user_id` |
+| `nguoidung` | Tài khoản người học và quản trị viên | `email` duy nhất; `google_id` duy nhất; `matkhau` được NULL cho tài khoản chỉ có Google |
+| `danhmuc` | Chủ đề câu hỏi | Xóa chủ đề thì `cauhoi.danhmuc_id` về NULL |
+| `loaicauhoi` | Danh mục dạng bài, cách chấm, giới hạn thời gian | `ma` duy nhất |
+| `cauhoi` | Ngân hàng câu hỏi | `dokho` 1-10 (CHECK); `trangthai` gồm draft, review, published, archived; không xóa cứng câu đã có trong bài thi |
+| `luachon` | Lựa chọn A/B/C/D cho câu trắc nghiệm | Xóa câu hỏi thì xóa theo |
+| `dap_an` | Đáp án cho các dạng không phải trắc nghiệm | Xóa câu hỏi thì xóa theo |
+| `cauhoi_doc` | Câu hỏi con Interactive Reading (5 dạng) | `(cauhoi_id, thutu)` duy nhất; xóa câu hỏi cha thì xóa theo |
+| `cauhoi_nghe` | Câu hỏi con Interactive Listening (3 phần) | `(cauhoi_id, thutu)` duy nhất; xóa câu hỏi cha thì xóa theo |
+| `luachon_doc` | Lựa chọn cho câu hỏi con đọc | Xóa câu con thì xóa theo |
+| `luachon_nghe` | Lựa chọn cho câu hỏi con nghe | Xóa câu con thì xóa theo |
+| `luyentap` | Mỗi lượt làm ở chế độ luyện tập | Xóa người dùng thì xóa theo; `trangthai_ai` theo dõi việc chấm AI (pending/done/failed) |
+| `danhdau` | Câu hỏi được đánh dấu | `(nguoidung_id, cauhoi_id)` duy nhất |
+| `dethi` | Đề thi (tên, chế độ, kiểu, thời gian) | `nguoitao` trỏ `nguoidung` |
+| `dethicauhoi` | Câu hỏi thuộc đề thi | `(dethi_id, cauhoi_id)` và `(dethi_id, thutu)` duy nhất |
+| `lanthi` | Một lần thi thử | Điểm tổng 10-160 và bốn điểm thành phần; mỗi người một lần `in_progress` |
+| `lanthicauhoi` | Câu hỏi trong lần thi theo thứ tự | `(lanthi_id, thutu)` và `(lanthi_id, cauhoi_id)` duy nhất; `thoigian_cap`, `thoigian_tra_loi` |
+| `traloi` | Câu trả lời của từng câu | `lanthicauhoi_id` duy nhất (chống nộp lặp); `trangthai_ai` theo dõi chấm AI |
+| `chamdiem` | Chấm điểm chi tiết (Speaking/Writing) | `(traloi_id, nguoicham)` duy nhất; `loai` phân biệt speaking/writing |
+| `vipham` | Ghi nhận vi phạm trong lần thi | `(lanthi_id, thoigian)` có index; `nguon` phân biệt auto/self_report/admin |
+| `chungchi` | Chứng chỉ thi thử | `ma` duy nhất; `lanthi_id` duy nhất |
+| `ailog` | Nhật ký mọi lần gọi AI | Lưu mô hình và số token để đối soát |
+| `aisudung` | Hạn mức AI theo ngày | `(nguoidung_id, ngay)` duy nhất |
+| `tiendo` | Tổng hợp theo (người dùng, dạng bài) | `(nguoidung_id, loai_id)` duy nhất; cập nhật bằng trigger |
+| `chuoingay` | Chuỗi ngày học | Khóa chính là `nguoidung_id` |
 
-### 7.2. Cấu trúc JSON của `options` và `answer`
+### 7.2. Cấu trúc dữ liệu của câu hỏi
 
-| Dạng bài | `options` | `answer` |
+| Dạng bài | Lưu ở đâu | Ghi chú |
 | --- | --- | --- |
-| Read and Select | `["word1", "word2", ...]` | `["word1"]` (các từ thật) |
-| Fill in the Blanks | không dùng | `{"blanks": ["word1", "word2"]}` theo thứ tự câu |
-| Read and Complete | không dùng | `{"blanks": ["tion", "er"]}` theo thứ tự ô |
-| Listen and Type | không dùng | `{"text": "câu chuẩn"}` |
-| Dạng chấm AI | không dùng | `{"rubric": "tiêu chí chấm", "sample": "bài mẫu"}` |
+| Read and Select | `luachon` | Các từ, `ladung = 1` cho từ thật |
+| Fill in the Blanks | `dap_an` | Các từ điền vào, theo thứ tự câu |
+| Read and Complete | `dap_an` | Các phần điền vào ô, theo thứ tự |
+| Listen and Type | `dap_an` | `{"text": "câu chuẩn"}` |
+| Interactive Reading | `cauhoi_doc` + `luachon_doc` | 5 câu con, mỗi câu có lựa chọn riêng |
+| Interactive Listening | `cauhoi_nghe` + `luachon_nghe` | 3 phần, mỗi phần có lựa chọn riêng |
+| Dạng chấm AI | `dap_an` | `{"rubric": "tiêu chí chấm", "sample": "bài mẫu"}` |
 
-Ghi chú: Interactive Reading và Interactive Listening KHÔNG dùng JSON mà lưu vào bảng con `interactive_reading_questions` và `interactive_listening_questions` (mỗi câu hỏi con là một dòng riêng).
+Ghi chú: Câu hỏi con và lựa chọn câu con được tách thành bảng riêng (mỗi câu con là một dòng).
 
 Cấu trúc này là đề xuất; cần chốt khi viết bộ nhập câu hỏi cho Admin.

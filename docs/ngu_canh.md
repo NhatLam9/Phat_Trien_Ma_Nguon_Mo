@@ -1,5 +1,7 @@
 # Ngữ cảnh sử dụng hệ thống DET Practice
 
+> **CSDL chính:** `docs/duoling_csdl_remake.sql` (24 bảng, tên tiếng Việt)
+
 ## 1. Ngữ cảnh: Khách (chưa đăng nhập)
 
 Khi truy cập vào trang chủ DET Practice, một người dùng mới vai trò **Khách** sẽ thấy:
@@ -19,7 +21,7 @@ Khi truy cập vào trang chủ DET Practice, một người dùng mới vai tr�
 
 ## 2. Ngữ cảnh: Quản trị viên (Admin)
 
-Sau khi đăng nhập bằng tài khoản có `role = 'admin'`, **Quản trị viên** được phép:
+Sau khi đăng nhập bằng tài khoản có `vaitro = 'admin'`, **Quản trị viên** được phép:
 
 - **Quản lý câu hỏi:**
   - Thêm câu hỏi mới (chọn dạng bài, chủ đề, độ khó, nội dung, đáp án, giải thích)
@@ -28,14 +30,14 @@ Sau khi đăng nhập bằng tài khoản có `role = 'admin'`, **Quản trị v
 
 - **Quản lý dạng bài:**
   - Bật/tắt dạng bài (`is_active`)
-  - Đặt giới hạn thời gian mặc định (`time_limit_s`)
+  - Đặt giới hạn thời gian mặc định (`thoigian`)
   - Chọn cách chấm (tự động / AI)
 
 - **Quản lý chủ đề:** Thêm, sửa, xóa chủ đề câu hỏi
 
 - **Quản lý người dùng:**
   - Xem danh sách người dùng
-  - Khóa/mở tài khoản (`is_active`)
+  - Khóa/mở tài khoản (`trangthai`)
   - Thêm người dùng mới
   - Xóa người dùng (nếu không có dữ liệu liên quan)
 
