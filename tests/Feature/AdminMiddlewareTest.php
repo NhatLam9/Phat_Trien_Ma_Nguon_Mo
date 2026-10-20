@@ -50,4 +50,9 @@ class AdminMiddlewareTest extends TestCase
 
         $this->assertSame('ok', $response->getContent());
     }
+
+    public function test_route_admin_tra_401_cho_khach(): void
+    {
+        $this->get('/admin')->assertStatus(401);
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -17,6 +18,11 @@ class Admin
         $user = $request->user();
 
         if ($user === null) {
+            // Khi TV1 đã có route đăng nhập thì chuyển hướng, ngược lại trả 401.
+            if (Route::has('login')) {
+                return redirect()->route('login');
+            }
+
             abort(401, 'Bạn cần đăng nhập để truy cập trang quản trị.');
         }
 

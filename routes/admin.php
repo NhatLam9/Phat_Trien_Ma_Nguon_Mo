@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 | Tiền tố URL: /admin, tên route: admin.*
 */
 
-Route::middleware(['auth', 'admin'])
+Route::middleware('admin')
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
