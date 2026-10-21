@@ -32,79 +32,113 @@
             </p>
         </div>
 
+
         <section class="session-card">
-            <div class="session-heading">
-                <div>
-                    <span class="eyebrow">THÔNG TIN PHIÊN THI</span>
-                    <h2>Lần thi #{{ $lanThi->id }}</h2>
-                </div>
-                <span class="status-pill">
-                    {{ match($lanThi->trangthai) {
-                        'in_progress' => 'Đang diễn ra',
-                        'completed' => 'Đã hoàn thành',
-                        'abandoned' => 'Đã bỏ dở',
-                        default => $lanThi->trangthai
-                    } }}
-                </span>
-            </div>
 
-            <div class="info-grid">
-                <div>
-                    <small>Đề thi</small>
-                    <strong>{{ $deThi->ten ?? 'Không xác định' }}</strong>
+            @if ($errors->any())
+                <div class="alert" role="alert">
+                    {{ $errors->first() }}
                 </div>
+            @endif
 
-                <div>
-                    <small>Hình thức</small>
-                    <strong>
-                        {{ $deThi?->kieu === 'adaptive'
-                            ? 'Adaptive' : 'Fixed' }}
-                    </strong>
+            @if ($lanThi->trangthai !== 'in_progress')
+
+                <h2>Phiên thi không còn hoạt động</h2>
+                <p>Trạng thái: {{ $lanThi->trangthai }}</p>
+
+            @elseif ($cauDuocCap && $cauHoi)
+
+                <div class="session-heading">
+                    <div>
+                        <span class="eyebrow">
+                            CÂU HỎI {{ $cauDuocCap->thutu }}
+                        </span>
+                        <h2>{{ $cauHoi->tenloai }}</h2>
+                    </div>
+
+                    <span class="status-pill">
+                        {{ ucfirst($cauHoi->kynang ?? 'Luyện tập') }}
+                    </span>
                 </div>
 
-                <div>
-                    <small>Thời gian quy định</small>
-                    <strong>
-                        {{ $deThi ? ceil($deThi->thoigian / 60) : '—' }}
-                        phút
-                    </strong>
+                <div class="question-content">
+                    <p class="question-label">Nội dung câu hỏi</p>
+
+                    <div class="question-text">
+                        {{ $cauHoi->noidung }}
+                    </div>
                 </div>
 
-                <div>
-                    <small>Thời điểm bắt đầu</small>
-                    <strong>
-                        {{ $lanThi->batdau?->format('d/m/Y H:i:s') }}
-                    </strong>
-                </div>
-
-                <div>
-                    <small>Độ khó hiện tại</small>
-                    <strong>{{ $lanThi->dokho_hientai }}</strong>
-                </div>
-
-                <div>
-                    <small>Trạng thái</small>
-                    <strong>{{ $lanThi->trangthai }}</strong>
-                </div>
-            </div>
-
-            <div class="session-notice">
-                @if ($lanThi->trangthai === 'in_progress')
-                    Phiên thi đã được khởi tạo thành công.
-                    Chức năng nhận câu hỏi và trả lời sẽ
-                    được phát triển trong MT02 và MT03.
-                @else
-                    Phiên thi này không còn ở trạng thái đang diễn ra.
+                @if ($cauHoi->anh)
+                    <p class="media-note">
+                        Câu hỏi có hình ảnh; đang chờ tích hợp
+                        đường dẫn media của TV3.
+                    </p>
                 @endif
-            </div>
+
+                @if ($cauHoi->audio)
+                    <p class="media-note">
+                        Câu hỏi có âm thanh; đang chờ tích hợp
+                        đường dẫn audio của TV3.
+                    </p>
+                @endif
+
+                @if ($luaChon->isNotEmpty())
+                    <div class="answer-options">
+                        <h3>Danh sách lựa chọn</h3>
+
+                        @foreach ($luaChon as $item)
+                            <div class="answer-option">
+                                <span class="option-letter">
+                                    {{ $loop->iteration }}
+                                </span>
+                                <span>{{ $item->noidung }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
+                <div class="session-notice">
+                    Câu hỏi đã được cấp thành công.
+                    Chức năng trả lời sẽ được phát triển ở MT03.
+                </div>
+
+            @elseif ($soCauHopLeConLai === 0)
+
+                <h2>Không còn câu hỏi có thể cấp</h2>
+                <p>
+                    Đề thi chưa có câu hỏi được xuất bản
+                    hoặc tất cả câu hỏi hợp lệ đã được cấp.
+                </p>
+
+            @else
+
+                <h2>Sẵn sàng nhận câu hỏi?</h2>
+                <p>
+                    Hệ thống sẽ lựa chọn câu hỏi tiếp theo
+                    theo hình thức đề thi.
+                </p>
+
+                <form method="POST"
+                    action="{{ route('mock-test.question.next', $lanThi->id) }}">
+                    @csrf
+
+                    <button type="submit" class="btn btn-primary">
+                        Nhận câu hỏi →
+                    </button>
+                </form>
+
+            @endif
 
             <div class="session-actions">
-                <a class="btn btn-dark"
-                   href="{{ route('mock-test.index') }}">
+                <a href="{{ route('mock-test.index') }}"
+                class="btn btn-dark">
                     ← Danh sách đề thi
                 </a>
             </div>
+
         </section>
+
     </main>
 
     <footer class="site-footer">

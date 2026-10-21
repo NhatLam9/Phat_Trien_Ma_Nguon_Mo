@@ -352,3 +352,67 @@ button {
         padding: 20px;
     }
 }
+
+/* MT02 - Hien thi cau hoi */
+
+.question-content {
+    margin: 28px 0;
+}
+
+.question-label {
+    color: #77869a;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.question-text {
+    padding: 25px;
+    background: #f7fafc;
+    border: 1px solid #e5ebf0;
+    border-radius: 12px;
+    font-size: 18px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+}
+
+.answer-options {
+    margin-top: 30px;
+}
+
+.answer-options h3 {
+    font-size: 17px;
+    margin-bottom: 15px;
+}
+
+.answer-option {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 17px;
+    margin-bottom: 12px;
+    border: 2px solid #e5ebf0;
+    border-radius: 12px;
+}
+
+.option-letter {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    background: #e5fad9;
+    border-radius: 8px;
+    color: #46a302;
+    font-weight: 800;
+}
+
+.media-note {
+    margin-top: 12px;
+    padding: 12px;
+    color: #6c7e93;
+    border: 1px dashed #c9d6e2;
+    border-radius: 9px;
+    font-size: 13px;
+}

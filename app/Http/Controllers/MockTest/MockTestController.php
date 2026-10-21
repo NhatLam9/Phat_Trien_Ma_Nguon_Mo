@@ -58,10 +58,13 @@ class MockTestController extends Controller
     }
 
     // Chi chu so huu moi duoc xem lan thi
+
+    // MT02: Hien thi cau hoi cua lan thi
     public function show(Request $request, int $id)
     {
-        $lanThi = Lanthi::query()->findOrFail($id);
+        $lanThi = Lanthi::findOrFail($id);
 
+        // Chi chu so huu moi duoc xem lan thi
         abort_unless(
             (int) $lanThi->nguoidung_id ===
             (int) $request->user()->getAuthIdentifier(),
@@ -72,9 +75,90 @@ class MockTestController extends Controller
             ->where('id', $lanThi->dethi_id)
             ->first();
 
+        // Tim cau hoi dang cho tra loi
+        $cauDuocCap = DB::table('lanthicauhoi')
+            ->where('lanthi_id', $lanThi->id)
+            ->where('datraloi', 0)
+            ->orderBy('thutu')
+            ->first();
+
+        $cauHoi = null;
+        $luaChon = collect();
+
+        if ($cauDuocCap) {
+            $cauHoi = DB::table('cauhoi')
+                ->join(
+                    'loaicauhoi',
+                    'loaicauhoi.id',
+                    '=',
+                    'cauhoi.loai_id'
+                )
+                ->where('cauhoi.id', $cauDuocCap->cauhoi_id)
+                ->select(
+                    'cauhoi.id',
+                    'cauhoi.noidung',
+                    'cauhoi.anh',
+                    'cauhoi.audio',
+                    'cauhoi.thoigian',
+                    'loaicauhoi.ten as tenloai',
+                    'loaicauhoi.kynang'
+                )
+                ->firstOrFail();
+
+            // Khong truy van cot ladung
+            $luaChon = DB::table('luachon')
+                ->where('cauhoi_id', $cauHoi->id)
+                ->orderBy('thutu')
+                ->orderBy('id')
+                ->get(['id', 'noidung']);
+        }
+
+        $soCauDaCap = DB::table('lanthicauhoi')
+            ->where('lanthi_id', $lanThi->id)
+            ->count();
+
+        $soCauTrongDe = DB::table('dethicauhoi')
+            ->where('dethi_id', $lanThi->dethi_id)
+            ->count();
+
+        // Dem so cau hop le con lai
+        $soCauHopLeConLai = DB::table('dethicauhoi as dc')
+            ->join('cauhoi as ch', 'ch.id', '=', 'dc.cauhoi_id')
+            ->where('dc.dethi_id', $lanThi->dethi_id)
+            ->where('ch.trangthai', 'published')
+            ->whereNotIn('ch.id', function ($query) use ($lanThi) {
+                $query->select('cauhoi_id')
+                    ->from('lanthicauhoi')
+                    ->where('lanthi_id', $lanThi->id);
+            })
+            ->count();
+
         return view('mock-test.question', compact(
             'lanThi',
-            'deThi'
+            'deThi',
+            'cauDuocCap',
+            'cauHoi',
+            'luaChon',
+            'soCauDaCap',
+            'soCauTrongDe',
+            'soCauHopLeConLai'
         ));
     }
+
+    // MT02: Cap cau hoi tiep theo
+    public function capCauHoi(
+        Request $request,
+        int $id,
+        TestService $service
+    ) {
+        $service->capCauHoiTiepTheo(
+            $id,
+            (int) $request->user()->getAuthIdentifier()
+        );
+
+        return redirect()->route('mock-test.show', [
+            'id' => $id,
+        ]);
+    }
+
 }
