@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
             NguoidungSeeder::class,
             AdminNguoidungSeeder::class,
             AdminCatalogSeeder::class,
+            MockTestDataSeeder::class,
             LuyentapSeeder::class,
             DanhdauSeeder::class,
         ]);
