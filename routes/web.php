@@ -22,6 +22,10 @@ Route::middleware('auth')->group(function () {
         MockTestController::class, 'show'
     ])->whereNumber('id')->name('mock-test.show');
 
+    // MT08 - Bo do bai thi
+    Route::post('/mock-test/{id}/abandon', [
+        MockTestController::class, 'abandon'
+    ])->whereNumber('id')->name('mock-test.abandon');
 });
 
 // MT02: Cap cau hoi

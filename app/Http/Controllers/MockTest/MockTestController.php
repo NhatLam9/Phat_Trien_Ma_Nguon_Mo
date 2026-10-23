@@ -161,4 +161,23 @@ class MockTestController extends Controller
         ]);
     }
 
+    // MT08 - Xu ly yeu cau bo do bai thi
+    public function abandon(
+        Request $request,
+        int $id,
+        TestService $service
+    ) {
+        $service->boDoBaiThi(
+            $id,
+            (int) $request->user()->getAuthIdentifier()
+        );
+
+        return redirect()
+            ->route('mock-test.show', ['id' => $id])
+            ->with(
+                'success',
+                'Ban da bo do bai thi. Ket qua se khong duoc tinh diem.'
+            );
+    }
+
 }

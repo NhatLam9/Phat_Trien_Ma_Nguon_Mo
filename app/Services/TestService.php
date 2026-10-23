@@ -192,5 +192,45 @@ class TestService
 
         }, 3);
     }
+    public function boDoBaiThi(
+        int $lanThiId,
+        int $nguoiDungId
+    ): Lanthi {
+        return DB::transaction(function () use (
+            $lanThiId,
+            $nguoiDungId
+        ) {
+            // Khoa ban ghi de tranh xu ly dong thoi
+            $lanThi = Lanthi::query()
+                ->whereKey($lanThiId)
+                ->lockForUpdate()
+                ->firstOrFail();
 
+            // Ngan nguoi khac thay doi lan thi
+            abort_unless(
+                (int) $lanThi->nguoidung_id === $nguoiDungId,
+                403,
+                'Ban khong co quyen bo do lan thi nay.'
+            );
+
+            // Da bo do: khong cap nhat thoi gian lan nua
+            if ($lanThi->trangthai === 'abandoned') {
+                return $lanThi;
+            }
+
+            // Khong duoc bo do bai thi da hoan thanh
+            if ($lanThi->trangthai !== 'in_progress') {
+                throw ValidationException::withMessages([
+                    'lanthi' => 'Bai thi khong con o trang thai dang thi.',
+                ]);
+            }
+
+            // Chuyen trang thai va ghi thoi diem ket thuc
+            $lanThi->trangthai = 'abandoned';
+            $lanThi->ketthuc = now();
+            $lanThi->save();
+
+            return $lanThi;
+        }, 3);
+    }
 }
