@@ -11,6 +11,9 @@
     <header class="site-header">
         <div class="container header-inner">
             <a href="{{ url('/') }}" class="logo">
+                <img src="{{ asset('images/fox-logo.jpg') }}"
+                    alt="DET Practice"
+                    class="fox-logo">
                 DET <span>Practice</span>
             </a>
             <a href="{{ url('/') }}" class="back-link">
