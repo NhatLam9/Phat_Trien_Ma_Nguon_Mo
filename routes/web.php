@@ -30,13 +30,25 @@ Route::middleware('auth')->group(function () {
         MockTestController::class, 'capCauHoi'
     ])->whereNumber('id')->name('mock-test.question.next');
 
+    // MT02 - Bo qua cau hoi
+    Route::post('/mock-test/{id}/skip', [
+        MockTestController::class, 'skip'
+    ])->whereNumber('id')->name('mock-test.skip');
+
     // MT03 - Nop tung cau tra loi
     Route::post('/mock-test/{id}/submit', [
         MockTestController::class, 'submit'
     ])->whereNumber('id')->name('mock-test.submit');
 
+    // MT05 - Chot bai thi
+    Route::post('/mock-test/{id}/finish', [
+    MockTestController::class, 'finish'
+    ])->whereNumber('id')->name('mock-test.finish');
+
     // MT08 / MT04 - Bo do hoac xu ly het gio
     Route::post('/mock-test/{id}/abandon', [
         MockTestController::class, 'abandon'
     ])->whereNumber('id')->name('mock-test.abandon');
+
+
 });

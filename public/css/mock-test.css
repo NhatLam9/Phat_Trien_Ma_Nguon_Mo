@@ -959,3 +959,34 @@ summary:focus-visible {
     justify-content: flex-end;
     margin-top: 22px;
 }
+
+.finish-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.finish-overlay:target {
+    display: flex;
+}
+
+.finish-modal {
+    width: 100%;
+    max-width: 450px;
+    padding: 30px;
+    border-radius: 22px;
+    background: #fffaf5;
+    color: #493226;
+}
+
+.finish-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+}

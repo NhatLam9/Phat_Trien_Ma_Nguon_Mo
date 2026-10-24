@@ -120,7 +120,7 @@
         @endif
 
         {{-- Noi dung phien thi --}}
-        <section class="session-card">
+        <section class="session-card" id="question-area">
 
             {{-- MT04 / MT08: Phien thi da bi dong --}}
             @if ($lanThi->trangthai === 'abandoned')
@@ -209,7 +209,53 @@
 
             {{-- MT02: Cau hoi dang lam --}}
             @elseif ($cauDuocCap && $cauHoi)
-            <form method="POST"
+
+                <div class="session-heading">
+                    <div>
+                        <span class="eyebrow">
+                            CÂU HỎI {{ $cauDuocCap->thutu }}
+                        </span>
+
+                        <h2>
+                            {{ $cauHoi->tenloai }}
+                        </h2>
+                    </div>
+
+                    <span class="status-pill">
+                        {{ ucfirst(
+                            $cauHoi->kynang ?? 'Luyện tập'
+                        ) }}
+                    </span>
+                </div>
+
+                <div class="question-content">
+                    <p class="question-label">
+                        Nội dung câu hỏi
+                    </p>
+
+                    <div class="question-text">
+                        {{ $cauHoi->noidung }}
+                    </div>
+                </div>
+
+                {{-- Tai nguyen media: cho tich hop TV3 --}}
+                @if ($cauHoi->anh)
+                    <div class="media-note">
+                        Câu hỏi có hình ảnh đính kèm.
+                        Nội dung media sẽ được tích hợp
+                        từ kho dữ liệu câu hỏi.
+                    </div>
+                @endif
+
+                @if ($cauHoi->audio)
+                    <div class="media-note">
+                        Câu hỏi có âm thanh đính kèm.
+                        Chức năng phát audio sẽ được
+                        tích hợp từ kho dữ liệu câu hỏi.
+                    </div>
+                @endif
+
+                <form method="POST"
                 action="{{ route('mock-test.submit', $lanThi->id) }}"
                 class="answer-form">
 
@@ -264,90 +310,41 @@
                         Nộp câu trả lời
                     </button>
                 </div>
-
             </form>
 
-                <div class="session-heading">
-                    <div>
-                        <span class="eyebrow">
-                            CÂU HỎI {{ $cauDuocCap->thutu }}
-                        </span>
+            {{-- MT02 - Bo qua cau hoi --}}
+            <form method="POST"
+                action="{{ route('mock-test.skip', $lanThi->id) }}"
+                class="skip-form">
+                @csrf
 
-                        <h2>
-                            {{ $cauHoi->tenloai }}
-                        </h2>
-                    </div>
+                <input type="hidden"
+                    name="lanthicauhoi_id"
+                    value="{{ $cauDuocCap->id }}">
 
-                    <span class="status-pill">
-                        {{ ucfirst(
-                            $cauHoi->kynang ?? 'Luyện tập'
-                        ) }}
-                    </span>
-                </div>
-
-                <div class="question-content">
-                    <p class="question-label">
-                        Nội dung câu hỏi
-                    </p>
-
-                    <div class="question-text">
-                        {{ $cauHoi->noidung }}
-                    </div>
-                </div>
-
-                {{-- Tai nguyen media: cho tich hop TV3 --}}
-                @if ($cauHoi->anh)
-                    <div class="media-note">
-                        Câu hỏi có hình ảnh đính kèm.
-                        Nội dung media sẽ được tích hợp
-                        từ kho dữ liệu câu hỏi.
-                    </div>
-                @endif
-
-                @if ($cauHoi->audio)
-                    <div class="media-note">
-                        Câu hỏi có âm thanh đính kèm.
-                        Chức năng phát audio sẽ được
-                        tích hợp từ kho dữ liệu câu hỏi.
-                    </div>
-                @endif
-
-                {{-- Danh sach lua chon --}}
-                @if ($luaChon->isNotEmpty())
-                    <div class="answer-options">
-                        <h3>Danh sách lựa chọn</h3>
-
-                        @foreach ($luaChon as $item)
-                            <div class="answer-option">
-                                <span class="option-letter">
-                                    {{ $loop->iteration }}
-                                </span>
-
-                                <span>
-                                    {{ $item->noidung }}
-                                </span>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
-
-                <div class="session-notice">
-                    Câu hỏi đã được cấp thành công.
-                    Chức năng nộp đáp án sẽ được
-                    triển khai trong MT03.
-                </div>
+                <button type="submit" class="btn btn-dark">
+                    Bỏ qua / Câu tiếp theo →
+                </button>
+            </form>
 
             {{-- Chua co cau hoi hop le --}}
             @elseif ($soCauHopLeConLai === 0)
-
                 <div class="session-notice">
-                    <h2>Không còn câu hỏi có thể cấp</h2>
-
-                    <p>
-                        Đề thi chưa có câu hỏi được xuất bản
-                        hoặc toàn bộ câu hỏi hợp lệ đã được cấp.
-                    </p>
+                    @if ($soCauDaCap > 0)
+                        <span class="eyebrow">
+                            MT05 · FINISH
+                        </span>
+                        <h2>Đã hoàn thành các câu hỏi</h2>
+                        <p> Bạn có thể chốt và nộp bài thi. </p>
+                    @else
+                        <h2>Đề thi chưa có câu hỏi</h2>
+                        <p>
+                            Hiện không có câu hỏi hợp lệ.
+                            Vui lòng chọn đề thi khác.
+                        </p>
+                    @endif
                 </div>
+
 
             {{-- San sang cap cau hoi --}}
             @else
@@ -381,8 +378,109 @@
                         </button>
                     </form>
                 </div>
-
             @endif
+
+            {{-- MT05: Xac nhan nop bai --}}
+            @if ($lanThi->trangthai === 'in_progress')
+                <div class="finish-section">
+                    <a href="#confirm-finish"
+                    class="btn btn-primary">
+                        Chốt bài thi
+                    </a>
+                </div>
+
+                <div id="confirm-finish" class="finish-overlay">
+                    <div class="finish-modal" role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="finish-title">
+
+                        <h2 id="finish-title">Xác nhận nộp bài</h2>
+
+                    @php
+                        $soCauChuaCap = $soCauHopLeConLai;
+                    @endphp
+
+                    @if ($cauChuaTraLoi->count() > 0 || $soCauChuaCap > 0)
+
+                        <p>
+                            Bạn vẫn còn câu hỏi chưa hoàn thành.
+                        </p>
+
+                        @if ($cauChuaTraLoi->isNotEmpty())
+                            <p>
+                                Câu
+                                <strong>{{ $cauChuaTraLoi->pluck('thutu')->implode(', ') }}</strong>
+                                chưa chọn đáp án.
+                            </p>
+                        @endif
+
+                        @if ($soCauChuaCap > 0)
+                            <p>
+                                Bạn còn <strong>{{ $soCauChuaCap }}</strong>
+                                câu hỏi chưa được cấp.
+                            </p>
+                        @endif
+
+                        <p>
+                            Bạn vẫn muốn nộp bài?
+                            Các câu chưa làm sẽ được tính là bỏ trống.
+                        </p>
+
+
+            @else
+                <p>Bạn có chắc chắn muốn nộp bài thi?</p>
+            @endif
+
+            @if ($cauChuaTraLoi->isNotEmpty())
+            <div class="question-links">
+                @foreach ($cauChuaTraLoi as $item)
+                    <a href="{{ route('mock-test.show', [
+                        'id' => $lanThi->id,
+                        'cau' => $item->id
+                    ]) }}#question-area" class="btn btn-dark">
+                        Câu {{ $item->thutu }}
+                    </a>
+                @endforeach
+            </div>
+            @endif
+            <div class="finish-actions">
+
+            @if ($cauChuaTraLoi->isNotEmpty())
+                <a href="{{ route('mock-test.show', [
+                    'id' => $lanThi->id,
+                    'cau' => $cauChuaTraLoi->first()->id
+                ]) }}#question-area" class="btn btn-dark">
+                    Đi đến câu {{ $cauChuaTraLoi->first()->thutu }}
+                </a>
+            @elseif ($soCauHopLeConLai > 0)
+                <form method="POST"
+                    action="{{ route('mock-test.question.next', $lanThi->id) }}">
+                    @csrf
+                    <button type="submit" class="btn btn-dark">
+                        Nhận câu tiếp theo
+                    </button>
+                </form>
+            @else
+                <a href="#question-area" class="btn btn-dark">
+                    Quay lại
+                </a>
+            @endif
+                    <form
+                        method="POST"
+                        action="{{ route('mock-test.finish', $lanThi->id) }}">
+                        @csrf
+                        <input
+                            type="hidden"
+                            name="xac_nhan_bo_trong"
+                            value="1">
+                        <button type="submit" class="btn btn-primary">
+                            Nộp bài
+                        </button>
+                    </form>
+                </div>
+                </div> {{-- Dong finish-modal --}}
+                </div> {{-- Dong finish-overlay --}}
+            @endif {{-- Dong dieu kien MT05 in_progress --}}
 
             {{-- MT08: Xac nhan bo do --}}
             @if ($lanThi->trangthai === 'in_progress')

@@ -71,28 +71,21 @@ class MockTestController extends Controller
             (int) $validated['dethi_id']
         );
 
-        return redirect()->route('mock-test.show', [
-            'id' => $lanThi->id,
-        ]);
+        return redirect()
+            ->route('mock-test.show', ['id' => $lanThi->id])
+            ->with('success', 'Da bat dau hoac tiep tuc bai thi.');
     }
 
     /**
      * MT02 - Hien thi cau hoi.
      * MT04 - Kiem tra timeout truoc khi hien thi.
      */
-    public function show(
-        Request $request,
-        int $id,
-        TestService $service
-    ) {
+    public function show(Request $request, int $id, TestService $service) {
         $nguoiDungId = (int) $request->user()
             ->getAuthIdentifier();
 
         // Service khoa ban ghi, kiem tra quyen va timeout.
-        $lanThi = $service->kiemTraHetHan(
-            $id,
-            $nguoiDungId
-        );
+        $lanThi = $service->kiemTraHetHan($id, $nguoiDungId);
 
         $deThi = DB::table('dethi')
             ->where('id', $lanThi->dethi_id)
@@ -126,11 +119,28 @@ class MockTestController extends Controller
 
         // Khong hien thi cau hoi neu phien da dong.
         if ($lanThi->trangthai === 'in_progress') {
-            $cauDuocCap = DB::table('lanthicauhoi')
-                ->where('lanthi_id', $lanThi->id)
-                ->where('datraloi', 0)
-                ->orderBy('thutu')
-                ->first();
+        $cauYeuCau = $request->query('cau');
+
+        $query = DB::table('lanthicauhoi')
+            ->where('lanthi_id', $lanThi->id)
+            ->where('datraloi', false);
+
+        if ($cauYeuCau !== null) {
+            abort_unless(
+                is_string($cauYeuCau) &&
+                ctype_digit($cauYeuCau) &&
+                (int) $cauYeuCau > 0,
+                404
+            );
+
+            $query->where('id', (int) $cauYeuCau);
+        }
+
+        $cauDuocCap = $query->orderByDesc('thutu')->first();
+
+        if ($cauYeuCau !== null && !$cauDuocCap) {
+            abort(404, 'Cau hoi khong ton tai hoac da duoc nop.');
+        }
 
             if ($cauDuocCap) {
                 $cauHoi = DB::table('cauhoi')
@@ -191,6 +201,12 @@ class MockTestController extends Controller
                 ->count();
         }
 
+        $cauChuaTraLoi = DB::table('lanthicauhoi')
+            ->where('lanthi_id', $lanThi->id)
+            ->where('datraloi', false)
+            ->orderBy('thutu')
+            ->get(['id', 'thutu']);
+
         return view('mock-test.question', compact(
             'lanThi',
             'deThi',
@@ -202,7 +218,8 @@ class MockTestController extends Controller
             'soCauHopLeConLai',
             'hanThi',
             'soGiayConLai',
-            'biHetGio'
+            'biHetGio',
+            'cauChuaTraLoi'
         ));
     }
 
@@ -210,11 +227,7 @@ class MockTestController extends Controller
      * MT02 - Cap cau hoi tiep theo.
      * MT04 - TestService se chan neu het gio.
      */
-    public function capCauHoi(
-        Request $request,
-        int $id,
-        TestService $service
-    ) {
+    public function capCauHoi(Request $request, int $id, TestService $service) {
         $service->capCauHoiTiepTheo(
             $id,
             (int) $request->user()->getAuthIdentifier()
@@ -225,15 +238,34 @@ class MockTestController extends Controller
         ]);
     }
 
+    /* MT02 - Bo qua cau hoi hien tai. */
+    public function skip(Request $request, int $id, TestService $service) {
+    $data = $request->validate([
+        'lanthicauhoi_id' => ['required', 'integer'],
+    ]);
+
+    $cauTiepTheo = $service->capCauHoiTiepTheo(
+        $id,
+        (int) $request->user()->getAuthIdentifier(),
+        true,
+        (int) $data['lanthicauhoi_id']
+    );
+
+    if (!$cauTiepTheo) {
+        return redirect()->route('mock-test.show', ['id' => $id]);
+    }
+
+    return redirect()->route('mock-test.show', [
+        'id' => $id,
+        'cau' => $cauTiepTheo->id,
+    ]);
+}
+
     /**
      * MT03 - Nop cau tra loi.
      * POST -> Redirect -> GET.
      */
-    public function submit(
-        Request $request,
-        int $id,
-        TestService $service
-    ) {
+    public function submit(Request $request, int $id, TestService $service) {
         $validated = $request->validate([
             'lanthicauhoi_id' => [
                 'required',
@@ -278,20 +310,25 @@ class MockTestController extends Controller
             );
     }
 
+    public function finish(Request $request, int $id, TestService $service) {
+        $request->validate(['xac_nhan_bo_trong' => ['nullable', 'in:1'],]);
+
+        $lanThi = $service->chotBaiThi(
+            $id,
+            (int) $request->user()->getAuthIdentifier(),
+            $request->input('xac_nhan_bo_trong') === '1'
+        );
+
+        return redirect()
+            ->route('mock-test.show', ['id' => $lanThi->id]);
+    }
 
     /**
      * MT08 - Bo do bai thi.
      * MT04 - Phan biet timeout voi bo do thu cong.
      */
-    public function abandon(
-        Request $request,
-        int $id,
-        TestService $service
-    ) {
-        $lanThi = $service->boDoBaiThi(
-            $id,
-            (int) $request->user()->getAuthIdentifier()
-        );
+    public function abandon(Request $request, int $id, TestService $service) {
+        $lanThi = $service->boDoBaiThi($id, (int) $request->user()->getAuthIdentifier());
 
         $biHetGio = DB::table('vipham')
             ->where('lanthi_id', $lanThi->id)
