@@ -3,30 +3,42 @@
 namespace App\Services;
 
 use App\Models\Lanthi;
+use App\Models\Lanthicauhoi;
+use App\Models\Vipham;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use App\Models\Lanthicauhoi;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TestService
 {
-    public function batDauThi(int $nguoiDungId, int $deThiId): Lanthi
-    {
-        return DB::transaction(function () use ($nguoiDungId, $deThiId) {
-
-            // Khoa nguoi dung de tranh tao lan thi dong thoi
+    /**
+     * MT01 - Bat dau hoac tiep tuc bai thi.
+     */
+    public function batDauThi(
+        int $nguoiDungId,
+        int $deThiId
+    ): Lanthi {
+        return DB::transaction(function () use (
+            $nguoiDungId,
+            $deThiId
+        ) {
+            // 1. Khoa nguoi dung de tranh tao nhieu lan thi dong thoi.
             $nguoiDung = DB::table('nguoidung')
                 ->where('id', $nguoiDungId)
                 ->lockForUpdate()
                 ->first();
 
-            if (!$nguoiDung || $nguoiDung->trangthai !== 'active') {
+            if (
+                !$nguoiDung ||
+                $nguoiDung->trangthai !== 'active'
+            ) {
                 throw ValidationException::withMessages([
-                    'nguoidung' => 'Tai khoan khong ton tai hoac da bi khoa.',
+                    'nguoidung' =>
+                        'Tai khoan khong ton tai hoac da bi khoa.',
                 ]);
             }
 
-            // Kiem tra de thi
+            // 2. Kiem tra de thi da duoc xuat ban.
             $deThi = DB::table('dethi')
                 ->where('id', $deThiId)
                 ->where('trangthai', 'published')
@@ -34,32 +46,48 @@ class TestService
 
             if (!$deThi) {
                 throw ValidationException::withMessages([
-                    'dethi_id' => 'De thi khong ton tai hoac chua duoc xuat ban.',
+                    'dethi_id' =>
+                        'De thi khong ton tai hoac chua duoc xuat ban.',
                 ]);
             }
 
-            // Tim lan thi chua hoan thanh
+            if ((int) $deThi->thoigian <= 0) {
+                throw ValidationException::withMessages([
+                    'dethi_id' =>
+                        'De thi chua co thoi gian hop le.',
+                ]);
+            }
+
+            // 3. Tim lan thi dang dien ra.
             $lanThiDangMo = Lanthi::query()
                 ->where('nguoidung_id', $nguoiDungId)
                 ->where('trangthai', 'in_progress')
+                ->lockForUpdate()
                 ->first();
 
+            // MT04: Dong phien cu neu da het gio.
+            if ($lanThiDangMo) {
+                if ($this->xuLyHetGio($lanThiDangMo)) {
+                    $lanThiDangMo = null;
+                }
+            }
+
+            // 4. Neu van con phien dang thi.
             if ($lanThiDangMo) {
 
-                // Cung de thi: tiep tuc phien cu
+                // Cung de thi: tiep tuc phien cu.
                 if ((int) $lanThiDangMo->dethi_id === $deThiId) {
                     return $lanThiDangMo;
                 }
 
-                // Khac de thi: yeu cau xu ly phien cu
                 throw ValidationException::withMessages([
                     'dethi_id' =>
                         'Ban dang co mot bai thi chua hoan thanh. '
-                        . 'Hay tiep tuc hoac ket thuc bai thi do.',
+                        . 'Hay tiep tuc hoac bo do bai thi do.',
                 ]);
             }
 
-            // Tao lan thi moi
+            // 5. Tao lan thi moi.
             return Lanthi::create([
                 'nguoidung_id' => $nguoiDungId,
                 'dethi_id' => $deThiId,
@@ -67,41 +95,49 @@ class TestService
                 'batdau' => now(),
                 'trangthai' => 'in_progress',
             ]);
-
         }, 3);
     }
 
-    // MT02: Cap cau hoi tiep theo
+    /**
+     * MT02 - Cap cau hoi tiep theo.
+     *
+     * Fixed: chon theo thu tu cau hoi trong de.
+     * Adaptive: chon do kho gan voi do kho hien tai.
+     *
+     * Tra ve null neu het cau hoi hoac vua timeout.
+     */
     public function capCauHoiTiepTheo(
         int $lanThiId,
         int $nguoiDungId
     ): ?Lanthicauhoi {
-
-        return DB::transaction(function () use (
-            $lanThiId,
-            $nguoiDungId
-        ) {
-
-            // 1. Khoa lan thi de tranh cap cau hoi trung
+        return DB::transaction(function () use ($lanThiId, $nguoiDungId) {
+            // 1. Khoa lan thi tranh cap cau trung.
             $lanThi = Lanthi::query()
                 ->whereKey($lanThiId)
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            // 2. Kiem tra quyen so huu
+            // 2. Kiem tra quyen so huu.
             abort_unless(
-                (int) $lanThi->nguoidung_id === $nguoiDungId,
-                403
+                (int) $lanThi->nguoidung_id ===
+                $nguoiDungId,
+                403,
+                'Ban khong co quyen truy cap lan thi nay.'
             );
 
-            // 3. Kiem tra trang thai lan thi
+            // 3. MT04: Xu ly neu da het gio.
+            if ($this->xuLyHetGio($lanThi)) {
+                return null;
+            }
+
+            // 4. Chan cap cau hoi cho phien da dong.
             if ($lanThi->trangthai !== 'in_progress') {
                 throw ValidationException::withMessages([
                     'lanthi' => 'Lan thi khong con hoat dong.',
                 ]);
             }
 
-            // 4. Neu co cau chua tra loi, tra ve cau do
+            // 5. Tra ve cau dang lam neu chua tra loi.
             $cauDangLam = Lanthicauhoi::query()
                 ->where('lanthi_id', $lanThiId)
                 ->where('datraloi', 0)
@@ -112,7 +148,7 @@ class TestService
                 return $cauDangLam;
             }
 
-            // 5. Lay thong tin de thi
+            // 6. Lay thong tin de thi.
             $deThi = DB::table('dethi')
                 ->where('id', $lanThi->dethi_id)
                 ->first();
@@ -123,7 +159,7 @@ class TestService
                 ]);
             }
 
-            // 6. Loc cac cau hoi chua duoc cap
+            // 7. Lay nhung cau hoi thuoc de, da published va chua tung duoc cap.
             $ungVien = DB::table('dethicauhoi as dc')
                 ->join(
                     'cauhoi as ch',
@@ -131,13 +167,19 @@ class TestService
                     '=',
                     'dc.cauhoi_id'
                 )
-                ->where('dc.dethi_id', $lanThi->dethi_id)
+                ->where(
+                    'dc.dethi_id',
+                    $lanThi->dethi_id
+                )
                 ->where('ch.trangthai', 'published')
-                ->whereNotIn('ch.id', function ($query) use ($lanThiId) {
-                    $query->select('cauhoi_id')
-                        ->from('lanthicauhoi')
-                        ->where('lanthi_id', $lanThiId);
-                })
+                ->whereNotIn(
+                    'ch.id',
+                    function ($query) use ($lanThiId) {
+                        $query->select('cauhoi_id')
+                            ->from('lanthicauhoi')
+                            ->where('lanthi_id', $lanThiId);
+                    }
+                )
                 ->select(
                     'dc.cauhoi_id',
                     'dc.thutu',
@@ -145,7 +187,7 @@ class TestService
                     'ch.dokho'
                 );
 
-            // 7. Chon cau hoi theo kieu de
+            // 8. Chon cau hoi theo kieu de.
             if ($deThi->kieu === 'fixed') {
 
                 $cauHoi = $ungVien
@@ -163,23 +205,24 @@ class TestService
                     ->first();
 
             } else {
-
                 throw ValidationException::withMessages([
                     'dethi' => 'Kieu de thi khong hop le.',
                 ]);
             }
 
-            // 8. Het cau hoi
+            // 9. Khong con cau hoi hop le.
             if (!$cauHoi) {
                 return null;
             }
 
-            // 9. Xac dinh thu tu cau hoi trong lan thi
-            $thuTu = (int) Lanthicauhoi::query()
-                ->where('lanthi_id', $lanThiId)
-                ->max('thutu') + 1;
+            // 10. Xac dinh thu tu cau trong lan thi.
+            $thuTu = (
+                (int) Lanthicauhoi::query()
+                    ->where('lanthi_id', $lanThiId)
+                    ->max('thutu')
+            ) + 1;
 
-            // 10. Luu cau hoi vao lan thi
+            // 11. Luu cau hoi duoc cap.
             return Lanthicauhoi::create([
                 'lanthi_id' => $lanThiId,
                 'cauhoi_id' => $cauHoi->cauhoi_id,
@@ -189,9 +232,124 @@ class TestService
                 'thoigian_cap' => now(),
                 'datraloi' => false,
             ]);
-
         }, 3);
     }
+
+    /**
+     * MT04 - Lay thoi diem het han.
+     *
+     * Han thi = batdau + dethi.thoigian (giay).
+     */
+    public function layHanThi(Lanthi $lanThi): Carbon
+    {
+        $deThi = DB::table('dethi')
+            ->where('id', $lanThi->dethi_id)
+            ->first();
+
+        if (
+            !$deThi ||
+            (int) $deThi->thoigian <= 0
+        ) {
+            throw ValidationException::withMessages([
+                'dethi' =>
+                    'De thi chua co thoi gian hop le.',
+            ]);
+        }
+
+        return Carbon::parse(
+            $lanThi->batdau,
+            config('app.timezone')
+        )->addSeconds((int) $deThi->thoigian);
+    }
+
+    /**
+     * MT04 - Xu ly bai thi het gio.
+     *
+     * CHI goi khi dang trong DB::transaction()
+     * va ban ghi lanthi da duoc lockForUpdate().
+     *
+     * Tra ve:
+     * true  - Vua xu ly timeout.
+     * false - Chua het gio hoac da ket thuc truoc do.
+     */
+    private function xuLyHetGio(Lanthi $lanThi): bool
+    {
+        // Chi xu ly phien dang thi.
+        if ($lanThi->trangthai !== 'in_progress') {
+            return false;
+        }
+
+        $hanThi = $this->layHanThi($lanThi);
+
+        // Chua toi han.
+        if (now()->lt($hanThi)) {
+            return false;
+        }
+
+        // Da het gio.
+        // Ghi dung moc het han, khong phai
+        // thoi diem nguoi dung truy cap lai.
+        $lanThi->trangthai = 'abandoned';
+        $lanThi->ketthuc = $hanThi;
+        $lanThi->save();
+
+        // Ghi nhat ky timeout.
+        Vipham::create([
+            'lanthi_id' => $lanThi->id,
+            'loai' => 'timeout',
+            'nguon' => 'auto',
+            'mota' =>
+                'Bai thi tu dong ket thuc do het thoi gian.',
+            'thoigian' => now(),
+        ]);
+
+        return true;
+    }
+
+    /**
+     * MT04 - Kiem tra va dong lan thi het han.
+     *
+     * Duoc su dung khi:
+     * - Mo trang thi.
+     * - Mo danh sach de thi.
+     * - Kiem tra tinh trang phien thi.
+     */
+    public function kiemTraHetHan(
+        int $lanThiId,
+        int $nguoiDungId
+    ): Lanthi {
+        return DB::transaction(function () use (
+            $lanThiId,
+            $nguoiDungId
+        ) {
+            // Khoa ban ghi de tranh xu ly trung.
+            $lanThi = Lanthi::query()
+                ->whereKey($lanThiId)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            // Kiem tra quyen.
+            abort_unless(
+                (int) $lanThi->nguoidung_id ===
+                $nguoiDungId,
+                403,
+                'Ban khong co quyen xem lan thi nay.'
+            );
+
+            // Xu ly neu qua han.
+            $this->xuLyHetGio($lanThi);
+
+            return $lanThi->refresh();
+        }, 3);
+    }
+
+    /**
+     * MT08 - Bo do bai thi.
+     *
+     * Chi chu so huu moi duoc bo do.
+     * Neu da het gio thi uu tien ghi timeout.
+     * Khong cap nhat lai phien da bo do.
+     */
     public function boDoBaiThi(
         int $lanThiId,
         int $nguoiDungId
@@ -200,32 +358,40 @@ class TestService
             $lanThiId,
             $nguoiDungId
         ) {
-            // Khoa ban ghi de tranh xu ly dong thoi
+            // 1. Khoa lan thi.
             $lanThi = Lanthi::query()
                 ->whereKey($lanThiId)
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            // Ngan nguoi khac thay doi lan thi
+            // 2. Kiem tra quyen so huu.
             abort_unless(
-                (int) $lanThi->nguoidung_id === $nguoiDungId,
+                (int) $lanThi->nguoidung_id ===
+                $nguoiDungId,
                 403,
                 'Ban khong co quyen bo do lan thi nay.'
             );
 
-            // Da bo do: khong cap nhat thoi gian lan nua
+            // 3. MT04: Neu da het gio,
+            // ghi nhan timeout thay vi bo do thu cong.
+            if ($this->xuLyHetGio($lanThi)) {
+                return $lanThi;
+            }
+
+            // 4. Neu da bo do, khong cap nhat lai.
             if ($lanThi->trangthai === 'abandoned') {
                 return $lanThi;
             }
 
-            // Khong duoc bo do bai thi da hoan thanh
+            // 5. Khong duoc bo do bai da completed.
             if ($lanThi->trangthai !== 'in_progress') {
                 throw ValidationException::withMessages([
-                    'lanthi' => 'Bai thi khong con o trang thai dang thi.',
+                    'lanthi' =>
+                        'Bai thi khong con o trang thai dang thi.',
                 ]);
             }
 
-            // Chuyen trang thai va ghi thoi diem ket thuc
+            // 6. Bo do thu cong.
             $lanThi->trangthai = 'abandoned';
             $lanThi->ketthuc = now();
             $lanThi->save();

@@ -10,8 +10,11 @@ use Illuminate\Support\Facades\DB;
 
 class MockTestController extends Controller
 {
-    // Danh sach cac de thi da xuat ban
-    public function index(Request $request)
+    /**
+     * MT01 - Danh sach de thi.
+     * MT04 - Kiem tra phien dang mo da het gio hay chua.
+     */
+    public function index(Request $request, TestService $service)
     {
         $deThi = DB::table('dethi')
             ->where('trangthai', 'published')
@@ -21,13 +24,24 @@ class MockTestController extends Controller
         $lanThiDangMo = null;
 
         if ($request->user()) {
+            $nguoiDungId = (int) $request->user()
+                ->getAuthIdentifier();
+
             $lanThiDangMo = Lanthi::query()
-                ->where(
-                    'nguoidung_id',
-                    $request->user()->getAuthIdentifier()
-                )
+                ->where('nguoidung_id', $nguoiDungId)
                 ->where('trangthai', 'in_progress')
                 ->first();
+
+            if ($lanThiDangMo) {
+                $lanThiDangMo = $service->kiemTraHetHan(
+                    $lanThiDangMo->id,
+                    $nguoiDungId
+                );
+
+                if ($lanThiDangMo->trangthai !== 'in_progress') {
+                    $lanThiDangMo = null;
+                }
+            }
         }
 
         return view('mock-test.start', compact(
@@ -36,7 +50,9 @@ class MockTestController extends Controller
         ));
     }
 
-    // Bat dau hoac tiep tuc lan thi
+    /**
+     * MT01 - Bat dau hoac tiep tuc bai thi.
+     */
     public function start(Request $request, TestService $service)
     {
         $validated = $request->validate([
@@ -47,8 +63,11 @@ class MockTestController extends Controller
             ],
         ]);
 
+        $nguoiDungId = (int) $request->user()
+            ->getAuthIdentifier();
+
         $lanThi = $service->batDauThi(
-            (int) $request->user()->getAuthIdentifier(),
+            $nguoiDungId,
             (int) $validated['dethi_id']
         );
 
@@ -57,60 +76,88 @@ class MockTestController extends Controller
         ]);
     }
 
-    // Chi chu so huu moi duoc xem lan thi
+    /**
+     * MT02 - Hien thi cau hoi.
+     * MT04 - Kiem tra timeout truoc khi hien thi.
+     */
+    public function show(
+        Request $request,
+        int $id,
+        TestService $service
+    ) {
+        $nguoiDungId = (int) $request->user()
+            ->getAuthIdentifier();
 
-    // MT02: Hien thi cau hoi cua lan thi
-    public function show(Request $request, int $id)
-    {
-        $lanThi = Lanthi::findOrFail($id);
-
-        // Chi chu so huu moi duoc xem lan thi
-        abort_unless(
-            (int) $lanThi->nguoidung_id ===
-            (int) $request->user()->getAuthIdentifier(),
-            403
+        // Service khoa ban ghi, kiem tra quyen va timeout.
+        $lanThi = $service->kiemTraHetHan(
+            $id,
+            $nguoiDungId
         );
 
         $deThi = DB::table('dethi')
             ->where('id', $lanThi->dethi_id)
             ->first();
 
-        // Tim cau hoi dang cho tra loi
-        $cauDuocCap = DB::table('lanthicauhoi')
-            ->where('lanthi_id', $lanThi->id)
-            ->where('datraloi', 0)
-            ->orderBy('thutu')
-            ->first();
+        abort_if(!$deThi, 404, 'Khong tim thay de thi.');
 
+        // MT04 - Thoi diem het han.
+        $hanThi = $service->layHanThi($lanThi);
+
+        // So giay con lai khi phien dang hoat dong.
+        $soGiayConLai = $lanThi->trangthai === 'in_progress'
+            ? max(0, (int) ceil(
+                now()->diffInSeconds($hanThi, false)
+            ))
+            : 0;
+
+        // Phan biet het gio voi bo do thu cong.
+        $biHetGio = false;
+
+        if ($lanThi->trangthai === 'abandoned') {
+            $biHetGio = DB::table('vipham')
+                ->where('lanthi_id', $lanThi->id)
+                ->where('loai', 'timeout')
+                ->exists();
+        }
+
+        $cauDuocCap = null;
         $cauHoi = null;
         $luaChon = collect();
 
-        if ($cauDuocCap) {
-            $cauHoi = DB::table('cauhoi')
-                ->join(
-                    'loaicauhoi',
-                    'loaicauhoi.id',
-                    '=',
-                    'cauhoi.loai_id'
-                )
-                ->where('cauhoi.id', $cauDuocCap->cauhoi_id)
-                ->select(
-                    'cauhoi.id',
-                    'cauhoi.noidung',
-                    'cauhoi.anh',
-                    'cauhoi.audio',
-                    'cauhoi.thoigian',
-                    'loaicauhoi.ten as tenloai',
-                    'loaicauhoi.kynang'
-                )
-                ->firstOrFail();
-
-            // Khong truy van cot ladung
-            $luaChon = DB::table('luachon')
-                ->where('cauhoi_id', $cauHoi->id)
+        // Khong hien thi cau hoi neu phien da dong.
+        if ($lanThi->trangthai === 'in_progress') {
+            $cauDuocCap = DB::table('lanthicauhoi')
+                ->where('lanthi_id', $lanThi->id)
+                ->where('datraloi', 0)
                 ->orderBy('thutu')
-                ->orderBy('id')
-                ->get(['id', 'noidung']);
+                ->first();
+
+            if ($cauDuocCap) {
+                $cauHoi = DB::table('cauhoi')
+                    ->join(
+                        'loaicauhoi',
+                        'loaicauhoi.id',
+                        '=',
+                        'cauhoi.loai_id'
+                    )
+                    ->where('cauhoi.id', $cauDuocCap->cauhoi_id)
+                    ->select(
+                        'cauhoi.id',
+                        'cauhoi.noidung',
+                        'cauhoi.anh',
+                        'cauhoi.audio',
+                        'cauhoi.thoigian',
+                        'loaicauhoi.ten as tenloai',
+                        'loaicauhoi.kynang'
+                    )
+                    ->firstOrFail();
+
+                $luaChon = DB::table('luachon')
+                    ->where('cauhoi_id', $cauHoi->id)
+                    ->orderBy('thutu')
+                    ->orderBy('id')
+                    ->get(['id', 'noidung']);
+            }
         }
 
         $soCauDaCap = DB::table('lanthicauhoi')
@@ -121,17 +168,28 @@ class MockTestController extends Controller
             ->where('dethi_id', $lanThi->dethi_id)
             ->count();
 
-        // Dem so cau hop le con lai
-        $soCauHopLeConLai = DB::table('dethicauhoi as dc')
-            ->join('cauhoi as ch', 'ch.id', '=', 'dc.cauhoi_id')
-            ->where('dc.dethi_id', $lanThi->dethi_id)
-            ->where('ch.trangthai', 'published')
-            ->whereNotIn('ch.id', function ($query) use ($lanThi) {
-                $query->select('cauhoi_id')
-                    ->from('lanthicauhoi')
-                    ->where('lanthi_id', $lanThi->id);
-            })
-            ->count();
+        $soCauHopLeConLai = 0;
+
+        if ($lanThi->trangthai === 'in_progress') {
+            $soCauHopLeConLai = DB::table('dethicauhoi as dc')
+                ->join(
+                    'cauhoi as ch',
+                    'ch.id',
+                    '=',
+                    'dc.cauhoi_id'
+                )
+                ->where('dc.dethi_id', $lanThi->dethi_id)
+                ->where('ch.trangthai', 'published')
+                ->whereNotIn(
+                    'ch.id',
+                    function ($query) use ($lanThi) {
+                        $query->select('cauhoi_id')
+                            ->from('lanthicauhoi')
+                            ->where('lanthi_id', $lanThi->id);
+                    }
+                )
+                ->count();
+        }
 
         return view('mock-test.question', compact(
             'lanThi',
@@ -141,11 +199,17 @@ class MockTestController extends Controller
             'luaChon',
             'soCauDaCap',
             'soCauTrongDe',
-            'soCauHopLeConLai'
+            'soCauHopLeConLai',
+            'hanThi',
+            'soGiayConLai',
+            'biHetGio'
         ));
     }
 
-    // MT02: Cap cau hoi tiep theo
+    /**
+     * MT02 - Cap cau hoi tiep theo.
+     * MT04 - TestService se chan neu het gio.
+     */
     public function capCauHoi(
         Request $request,
         int $id,
@@ -161,23 +225,31 @@ class MockTestController extends Controller
         ]);
     }
 
-    // MT08 - Xu ly yeu cau bo do bai thi
+    /**
+     * MT08 - Bo do bai thi.
+     * MT04 - Phan biet timeout voi bo do thu cong.
+     */
     public function abandon(
         Request $request,
         int $id,
         TestService $service
     ) {
-        $service->boDoBaiThi(
+        $lanThi = $service->boDoBaiThi(
             $id,
             (int) $request->user()->getAuthIdentifier()
         );
 
+        $biHetGio = DB::table('vipham')
+            ->where('lanthi_id', $lanThi->id)
+            ->where('loai', 'timeout')
+            ->exists();
+
+        $thongBao = $biHetGio
+            ? 'Bai thi da het thoi gian quy dinh.'
+            : 'Ban da bo do bai thi. Ket qua se khong duoc tinh diem.';
+
         return redirect()
             ->route('mock-test.show', ['id' => $id])
-            ->with(
-                'success',
-                'Ban da bo do bai thi. Ket qua se khong duoc tinh diem.'
-            );
+            ->with('success', $thongBao);
     }
-
 }
