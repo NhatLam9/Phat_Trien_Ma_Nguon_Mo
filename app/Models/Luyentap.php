@@ -19,6 +19,7 @@ class Luyentap extends Model
         'luachon_id',
         'audio',
         'ladung',
+        'diem',
         'trangthai_ai',
         'diem_ai',
         'nhanxet_ai',

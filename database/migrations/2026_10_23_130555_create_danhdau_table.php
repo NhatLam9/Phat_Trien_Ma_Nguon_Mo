@@ -17,6 +17,13 @@ return new class extends Migration
             // Đảm bảo mỗi người dùng chỉ đánh dấu 1 câu hỏi 1 lần duy nhất
             $table->unique(['nguoidung_id', 'cauhoi_id'], 'uk_user_cauhoi');
         });
+
+        // Bổ sung khóa ngoại nếu bảng cauhoi của TV3 đã tồn tại
+        if (Schema::hasTable('cauhoi')) {
+            Schema::table('danhdau', function (Blueprint $table) {
+                $table->foreign('cauhoi_id')->references('id')->on('cauhoi')->onDelete('cascade');
+            });
+        }
     }
 
     public function down(): void
