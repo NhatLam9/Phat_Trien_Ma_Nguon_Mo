@@ -226,6 +226,60 @@ class MockTestController extends Controller
     }
 
     /**
+     * MT03 - Nop cau tra loi.
+     * POST -> Redirect -> GET.
+     */
+    public function submit(
+        Request $request,
+        int $id,
+        TestService $service
+    ) {
+        $validated = $request->validate([
+            'lanthicauhoi_id' => [
+                'required',
+                'integer',
+            ],
+            'luachon_id' => [
+                'nullable',
+                'integer',
+            ],
+            'noidung' => [
+                'nullable',
+                'string',
+                'max:10000',
+            ],
+        ]);
+
+        $traLoi = $service->nopCauTraLoi(
+            $id,
+            (int) $request->user()->getAuthIdentifier(),
+            (int) $validated['lanthicauhoi_id'],
+            isset($validated['luachon_id'])
+                ? (int) $validated['luachon_id']
+                : null,
+            $validated['noidung'] ?? null
+        );
+
+        if ($traLoi === null) {
+            return redirect()
+                ->route('mock-test.show', ['id' => $id])
+                ->with(
+                    'success',
+                    'Bai thi da het thoi gian. '
+                    . 'Cau tra loi khong duoc ghi nhan.'
+                );
+        }
+
+        return redirect()
+            ->route('mock-test.show', ['id' => $id])
+            ->with(
+                'success',
+                'Da luu cau tra loi thanh cong.'
+            );
+    }
+
+
+    /**
      * MT08 - Bo do bai thi.
      * MT04 - Phan biet timeout voi bo do thu cong.
      */

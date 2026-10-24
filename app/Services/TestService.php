@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Lanthi;
 use App\Models\Lanthicauhoi;
 use App\Models\Vipham;
+use App\Models\Traloi;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -397,6 +398,168 @@ class TestService
             $lanThi->save();
 
             return $lanThi;
+        }, 3);
+    }
+
+    /**
+     * MT03 - Nop cau tra loi.
+     *
+     * Tra ve null neu lan thi vua het gio.
+     * ValidationException neu du lieu khong hop le.
+     */
+    public function nopCauTraLoi(
+        int $lanThiId,
+        int $nguoiDungId,
+        int $lanThiCauHoiId,
+        ?int $luaChonId,
+        ?string $noiDung
+    ): ?Traloi {
+        return DB::transaction(function () use (
+            $lanThiId,
+            $nguoiDungId,
+            $lanThiCauHoiId,
+            $luaChonId,
+            $noiDung
+        ) {
+            // 1. Khoa lan thi va kiem tra quyen.
+            $lanThi = Lanthi::query()
+                ->whereKey($lanThiId)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            abort_unless(
+                (int) $lanThi->nguoidung_id === $nguoiDungId,
+                403,
+                'Ban khong co quyen nop bai thi nay.'
+            );
+
+            // 2. MT04 - Kiem tra timeout.
+            if ($this->xuLyHetGio($lanThi)) {
+                return null;
+            }
+
+            if ($lanThi->trangthai !== 'in_progress') {
+                throw ValidationException::withMessages([
+                    'lanthi' => 'Lan thi khong con hoat dong.',
+                ]);
+            }
+
+            // 3. Khoa cau hoi duoc cap.
+            $lanThiCauHoi = Lanthicauhoi::query()
+                ->whereKey($lanThiCauHoiId)
+                ->where('lanthi_id', $lanThiId)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            // 4. Chong nop trung.
+            if (
+                $lanThiCauHoi->datraloi ||
+                Traloi::query()
+                    ->where(
+                        'lanthicauhoi_id',
+                        $lanThiCauHoi->id
+                    )
+                    ->exists()
+            ) {
+                throw ValidationException::withMessages([
+                    'traloi' => 'Cau hoi nay da duoc nop truoc do.',
+                ]);
+            }
+
+            // 5. Phan biet trac nghiem va tu luan.
+            $coLuaChon = DB::table('luachon')
+                ->where('cauhoi_id', $lanThiCauHoi->cauhoi_id)
+                ->exists();
+
+            $noiDung = trim($noiDung ?? '');
+
+            $laDung = null;
+            $diem = null;
+
+            if ($coLuaChon) {
+                // Cau trac nghiem bat buoc chon mot dap an.
+                if ($luaChonId === null || $noiDung !== '') {
+                    throw ValidationException::withMessages([
+                        'luachon_id' =>
+                            'Vui long chon mot dap an hop le.',
+                    ]);
+                }
+
+                // Khong tin luachon_id do client gui len.
+                // Chi lay lua chon thuoc dung cau hoi.
+                $luaChon = DB::table('luachon')
+                    ->where('id', $luaChonId)
+                    ->where(
+                        'cauhoi_id',
+                        $lanThiCauHoi->cauhoi_id
+                    )
+                    ->first();
+
+                if (!$luaChon) {
+                    throw ValidationException::withMessages([
+                        'luachon_id' =>
+                            'Dap an khong thuoc cau hoi nay.',
+                    ]);
+                }
+
+                $laDung = (bool) $luaChon->ladung;
+                $diem = $laDung
+                    ? (float) $lanThiCauHoi->diemtoida
+                    : 0.0;
+
+            } else {
+                // Cau tu luan: luu noi dung, chua cham diem.
+                if ($luaChonId !== null || $noiDung === '') {
+                    throw ValidationException::withMessages([
+                        'noidung' =>
+                            'Vui long nhap noi dung tra loi.',
+                    ]);
+                }
+            }
+
+            // 6. Luu dap an.
+            $traLoi = Traloi::create([
+                'lanthicauhoi_id' => $lanThiCauHoi->id,
+                'luachon_id' => $coLuaChon
+                    ? $luaChonId
+                    : null,
+                'noidung' => $coLuaChon
+                    ? null
+                    : $noiDung,
+                'ladung' => $laDung,
+                'diem' => $diem,
+                'thoigian' => now(),
+            ]);
+
+            // 7. Danh dau cau hoi da duoc tra loi.
+            $lanThiCauHoi->datraloi = true;
+            $lanThiCauHoi->thoigian_tra_loi = now();
+            $lanThiCauHoi->save();
+
+            // 8. Cap nhat do kho cho de Adaptive,
+            // chi khi da cham duoc trac nghiem.
+            $deThi = DB::table('dethi')
+                ->where('id', $lanThi->dethi_id)
+                ->first();
+
+            if (
+                $deThi &&
+                $deThi->kieu === 'adaptive' &&
+                $laDung !== null
+            ) {
+                $doKho = (float) $lanThi->dokho_hientai;
+
+                $doKho += $laDung ? 1.0 : -1.0;
+
+                $lanThi->dokho_hientai = max(
+                    1.0,
+                    min(10.0, $doKho)
+                );
+
+                $lanThi->save();
+            }
+
+            return $traLoi;
         }, 3);
     }
 }

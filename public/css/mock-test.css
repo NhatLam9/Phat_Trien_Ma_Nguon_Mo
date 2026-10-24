@@ -876,4 +876,86 @@ summary:focus-visible {
     .exam-card {
         transition: none;
     }
+
+}
+
+/* MT03 - Nop cau tra loi */
+.answer-form {
+    margin-top: 24px;
+}
+
+.answer-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+.answer-options legend {
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.answer-option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    border: 1px solid #ead4c5;
+    border-radius: 14px;
+    background: #fffaf6;
+    cursor: pointer;
+}
+
+.answer-option:hover {
+    border-color: #e58a55;
+    background: #fff1e7;
+}
+
+.answer-option input[type="radio"] {
+    accent-color: #dc7336;
+}
+
+.answer-option:has(input:checked) {
+    background: #ffe5d3;
+    border-color: #dc7336;
+}
+
+.answer-option:has(input:focus-visible) {
+    outline: 2px solid #dc7336;
+    outline-offset: 2px;
+}
+
+.option-letter {
+    font-weight: 700;
+    color: #bb683b;
+}
+
+.option-content {
+    flex: 1;
+    overflow-wrap: anywhere;
+}
+
+.answer-text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.answer-text-group textarea {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid #ead4c5;
+    border-radius: 14px;
+    font: inherit;
+    resize: vertical;
+    background: #fffaf6;
+}
+
+.answer-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 22px;
 }

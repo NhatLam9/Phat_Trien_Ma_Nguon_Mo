@@ -209,6 +209,63 @@
 
             {{-- MT02: Cau hoi dang lam --}}
             @elseif ($cauDuocCap && $cauHoi)
+            <form method="POST"
+                action="{{ route('mock-test.submit', $lanThi->id) }}"
+                class="answer-form">
+
+                @csrf
+
+                <input type="hidden"
+                    name="lanthicauhoi_id"
+                    value="{{ $cauDuocCap->id }}">
+
+                @if ($luaChon->isNotEmpty())
+
+                    <fieldset class="answer-options">
+                        <legend>Chọn đáp án của bạn</legend>
+
+                        @foreach ($luaChon as $item)
+                            <label class="answer-option">
+                                <input type="radio"
+                                    name="luachon_id"
+                                    value="{{ $item->id }}"
+                                    {{ old('luachon_id') == $item->id ? 'checked' : '' }}
+                                    required>
+
+                                <span class="option-letter">
+                                    {{ $loop->iteration }}
+                                </span>
+
+                                <span class="option-content">
+                                    {{ $item->noidung }}
+                                </span>
+                            </label>
+                        @endforeach
+                    </fieldset>
+
+                @else
+
+                    <div class="answer-text-group">
+                        <label for="noidung">Câu trả lời của bạn</label>
+
+                        <textarea
+                            id="noidung"
+                            name="noidung"
+                            rows="6"
+                            maxlength="10000"
+                            placeholder="Nhập câu trả lời..."
+                            required>{{ old('noidung') }}</textarea>
+                    </div>
+
+                @endif
+
+                <div class="answer-actions">
+                    <button type="submit" class="btn btn-primary">
+                        Nộp câu trả lời
+                    </button>
+                </div>
+
+            </form>
 
                 <div class="session-heading">
                     <div>
