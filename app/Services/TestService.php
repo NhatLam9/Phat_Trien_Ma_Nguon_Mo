@@ -259,7 +259,7 @@
 
         /* MT04 - Xu ly bai thi het gio. */
         private function xuLyHetGio(Lanthi $lanThi): bool
-    {
+        {
             // Chi xu ly phien dang thi.
             if ($lanThi->trangthai !== 'in_progress') {
                 return false;
@@ -270,9 +270,9 @@
                 return false;
             }
             // Da het gio.
-            // Ghi dung moc het han, khong phai
-            // thoi diem nguoi dung truy cap lai.
-            $lanThi->trangthai = 'abandoned';
+            // Ghi dung moc het han, khong phai thoi diem nguoi dung truy cap lai.
+            // MT04: Tu dong nop bai khi het gio.
+            $lanThi->trangthai = 'completed';
             $lanThi->ketthuc = $hanThi;
             $lanThi->save();
             // Ghi nhat ky timeout.

@@ -104,14 +104,10 @@ class MockTestController extends Controller
             : 0;
 
         // Phan biet het gio voi bo do thu cong.
-        $biHetGio = false;
-
-        if ($lanThi->trangthai === 'abandoned') {
-            $biHetGio = DB::table('vipham')
-                ->where('lanthi_id', $lanThi->id)
-                ->where('loai', 'timeout')
-                ->exists();
-        }
+        $biHetGio = DB::table('vipham')
+            ->where('lanthi_id', $lanThi->id)
+            ->where('loai', 'timeout')
+            ->exists();
 
         $cauDuocCap = null;
         $cauHoi = null;
