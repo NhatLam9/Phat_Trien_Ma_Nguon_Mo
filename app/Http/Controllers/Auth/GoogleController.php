@@ -55,7 +55,11 @@ class GoogleController extends Controller
             Auth::login($user);
             $request->session()->regenerate();
 
-            return redirect()->intended('/practice');
+            $fallback = $user->vaitro === 'admin'
+                ? route('admin.dashboard')
+                : route('practice.index');
+
+            return redirect()->intended($fallback);
         } catch (\Exception $e) {
             return redirect()->route('login')->withErrors(['email' => 'Đăng nhập Google thất bại. Vui lòng thử lại.']);
         }
