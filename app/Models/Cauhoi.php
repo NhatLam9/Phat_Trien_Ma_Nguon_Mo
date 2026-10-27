@@ -53,7 +53,7 @@ class Cauhoi extends Model
         return $this->belongsTo(Danhmuc::class, 'danhmuc_id');
     }
 
-    public function nguoitao(): BelongsTo
+    public function nguoiTao(): BelongsTo
     {
         return $this->belongsTo(Nguoidung::class, 'nguoitao');
     }

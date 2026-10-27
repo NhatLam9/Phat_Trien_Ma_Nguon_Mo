@@ -8,7 +8,7 @@ use App\Models\Cauhoi;
 use App\Models\Dethi;
 use App\Models\Dethicauhoi;
 use App\Models\Loaicauhoi;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
@@ -17,7 +17,7 @@ use Tests\TestCase;
  */
 class AdminExamModelTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private function taoNguoiDung(string $email = 'admin@example.com'): int
     {
@@ -67,7 +67,7 @@ class AdminExamModelTest extends TestCase
 
         // Phụ thuộc model Nguoidung của TV1: chỉ kiểm tra khi model đã tồn tại.
         if (class_exists(\App\Models\Nguoidung::class)) {
-            $this->assertSame($nguoiDungId, $dethi->nguoitao->id);
+            $this->assertSame($nguoiDungId, $dethi->nguoiTao->id);
         }
     }
 

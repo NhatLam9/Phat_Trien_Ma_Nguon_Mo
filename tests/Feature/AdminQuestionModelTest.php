@@ -11,7 +11,7 @@ use App\Models\Loaicauhoi;
 use App\Models\Luachon;
 use App\Models\LuachonDoc;
 use App\Models\LuachonNghe;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
@@ -19,7 +19,7 @@ use Tests\TestCase;
  */
 class AdminQuestionModelTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private function taoLoaiCauHoi(string $ma = 'read_aloud'): Loaicauhoi
     {

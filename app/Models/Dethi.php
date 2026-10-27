@@ -40,7 +40,7 @@ class Dethi extends Model
         ];
     }
 
-    public function nguoitao(): BelongsTo
+    public function nguoiTao(): BelongsTo
     {
         return $this->belongsTo(Nguoidung::class, 'nguoitao');
     }

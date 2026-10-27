@@ -20,14 +20,12 @@ class AdminMiddlewareTest extends TestCase
         return (new Admin)->handle($request, fn () => response('ok'));
     }
 
-    public function test_khach_chua_dang_nhap_bi_chan(): void
+    public function test_khach_chua_dang_nhap_bi_chuyen_huong_ve_login(): void
     {
-        try {
-            $this->chayMiddleware(null);
-            $this->fail('Middleware phải chặn khách chưa đăng nhập.');
-        } catch (HttpException $e) {
-            $this->assertSame(401, $e->getStatusCode());
-        }
+        $response = $this->chayMiddleware(null);
+
+        $this->assertTrue($response->isRedirect());
+        $this->assertSame(route('login'), $response->getTargetUrl());
     }
 
     public function test_nguoi_dung_thuong_bi_chan(): void
@@ -51,8 +49,8 @@ class AdminMiddlewareTest extends TestCase
         $this->assertSame('ok', $response->getContent());
     }
 
-    public function test_route_admin_tra_401_cho_khach(): void
+    public function test_route_admin_chuyen_huong_khach_ve_login(): void
     {
-        $this->get('/admin')->assertStatus(401);
+        $this->get('/admin')->assertRedirect(route('login'));
     }
 }
