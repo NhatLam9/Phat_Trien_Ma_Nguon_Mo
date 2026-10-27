@@ -33,7 +33,26 @@ class AuthTest extends TestCase
         ]);
 
         $this->assertAuthenticatedAs($user);
-        $response->assertRedirect('/');
+        $response->assertRedirect('/practice');
+    }
+
+    public function test_admin_can_login_and_redirect_to_admin_dashboard(): void
+    {
+        $admin = Nguoidung::create([
+            'hoten' => 'Admin User',
+            'email' => 'admin-test@example.com',
+            'matkhau' => Hash::make('password123'),
+            'trangthai' => 'active',
+            'vaitro' => 'admin',
+        ]);
+
+        $response = $this->post('/login', [
+            'email' => 'admin-test@example.com',
+            'matkhau' => 'password123',
+        ]);
+
+        $this->assertAuthenticatedAs($admin);
+        $response->assertRedirect(route('admin.dashboard'));
     }
 
     public function test_locked_user_cannot_login(): void
@@ -69,7 +88,7 @@ class AuthTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect('/');
+        $response->assertRedirect('/practice');
     }
 
     public function test_user_can_logout(): void

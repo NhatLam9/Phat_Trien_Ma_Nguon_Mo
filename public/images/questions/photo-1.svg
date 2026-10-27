@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="800"
+     height="450"
+     viewBox="0 0 800 450"
+     role="img"
+     aria-labelledby="title desc">
+    <title id="title">DET Practice photo placeholder</title>
+    <desc id="desc">A simple placeholder image for the Write About the Photo question.</desc>
+
+    <rect width="800" height="450" fill="#eff6ff"/>
+
+    <rect x="40" y="40"
+          width="720" height="370"
+          rx="18"
+          fill="#dbeafe"
+          stroke="#2563eb"
+          stroke-width="4"/>
+
+    <circle cx="170" cy="165" r="52" fill="#facc15"/>
+    <path d="M80 330 L260 190 L390 300 L500 230 L720 360 L720 390 L80 390 Z"
+          fill="#60a5fa"/>
+    <path d="M80 350 L230 250 L360 340 L500 270 L720 380 L720 390 L80 390 Z"
+          fill="#2563eb"/>
+
+    <text x="400" y="120"
+          text-anchor="middle"
+          font-family="Arial, sans-serif"
+          font-size="34"
+          font-weight="700"
+          fill="#1e3a8a">
+        DET Practice
+    </text>
+
+    <text x="400" y="430"
+          text-anchor="middle"
+          font-family="Arial, sans-serif"
+          font-size="20"
+          fill="#334155">
+        Photo placeholder · Write About the Photo
+    </text>
+</svg>
