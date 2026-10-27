@@ -46,7 +46,19 @@ class LoginController extends Controller
         if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['matkhau']], $request->filled('remember'))) {
             RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
-            return redirect()->intended('/');
+
+            $user = $request->user();
+            $fallback = $user->vaitro === 'admin'
+                ? route('admin.dashboard')
+                : route('practice.index');
+
+            $intended = $request->session()->pull('url.intended');
+
+            if ($intended && ($user->vaitro === 'admin' || !str_starts_with($intended, url('/admin')))) {
+                return redirect()->to($intended);
+            }
+
+            return redirect()->to($fallback);
         }
 
         RateLimiter::hit($throttleKey, 60);
