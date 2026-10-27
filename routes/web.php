@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\MockTest\MockTestController;
+use App\Http\Controllers\MockTest\MockTestResultController;
 
 // Trang chu
 Route::view('/', 'welcome');
@@ -40,7 +41,9 @@ Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showRese
     ->name('password.reset');
 Route::post('/reset-password', [ResetPasswordController::class, 'reset'])
     ->name('password.update');
-
+Route::get('/mock-test/{id}/result', [MockTestResultController::class, 'show'])
+    ->whereNumber('id')
+    ->name('mock-test.result');
 // MT01 - Danh sach de thi cong khai
 Route::get('/mock-test', [MockTestController::class, 'index'])
     ->name('mock-test.index');

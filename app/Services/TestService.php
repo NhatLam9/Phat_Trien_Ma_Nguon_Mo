@@ -116,7 +116,6 @@
                     $cauHienTai = Lanthicauhoi::query()
                         ->whereKey($cauHienTaiId)
                         ->where('lanthi_id', $lanThiId)
-                        ->where('datraloi', false)
                         ->first();
 
                     if (!$cauHienTai) {
@@ -125,7 +124,19 @@
                         ]);
                     }
                 }
+                // Ưu tiên câu chưa trả lời đã được cấp ở phía sau.
+                if ($boQua && $cauHienTai) {
+                    $cauDaCapTiepTheo = Lanthicauhoi::query()
+                        ->where('lanthi_id', $lanThiId)
+                        ->where('datraloi', false)
+                        ->where('thutu', '>', $cauHienTai->thutu)
+                        ->orderBy('thutu')
+                        ->first();
 
+                    if ($cauDaCapTiepTheo) {
+                        return $cauDaCapTiepTheo;
+                    }
+                }
                 // 5. Lay cau chua tra loi neu khong yeu cau bo qua.
                 if (!$boQua) {
                     $cauDangLam = Lanthicauhoi::query()
@@ -196,24 +207,9 @@
                     ]);
                 }
 
-                // 9. Het cau moi: quay lai cau bo trong.
+                // Không còn câu phía sau thì dừng, không quay lại câu đầu.
                 if (!$cauHoi) {
-                    if (!$boQua) {
-                        return null;
-                    }
-
-                    $cauTiepTheo = Lanthicauhoi::query()
-                        ->where('lanthi_id', $lanThiId)
-                        ->where('datraloi', false)
-                        ->where('thutu', '>', $cauHienTai->thutu)
-                        ->orderBy('thutu')
-                        ->first();
-
-                    return $cauTiepTheo ?: Lanthicauhoi::query()
-                        ->where('lanthi_id', $lanThiId)
-                        ->where('datraloi', false)
-                        ->orderBy('thutu')
-                        ->first();
+                    return null;
                 }
 
                 // 10. Xac dinh thu tu cau trong lan thi.
@@ -457,14 +453,41 @@
                     $diem = $laDung
                         ? (float) $lanThiCauHoi->diemtoida
                         : 0.0;
-                } else {
-                    // Cau tu luan: luu noi dung, chua cham diem.
+                    }  else {
+                    // Kiểm tra dữ liệu câu trả lời dạng văn bản.
                     if ($luaChonId !== null || $noiDung === '') {
                         throw ValidationException::withMessages([
-                            'noidung' =>
-                                'Vui long nhap noi dung tra loi.',
+                            'noidung' => 'Vui lòng nhập nội dung trả lời.',
                         ]);
                     }
+
+                    // Xác định phương pháp chấm của loại câu hỏi.
+                    $cachCham = DB::table('cauhoi as ch')
+                        ->join('loaicauhoi as l', 'l.id', '=', 'ch.loai_id')
+                        ->where('ch.id', $lanThiCauHoi->cauhoi_id)
+                        ->value('l.cachcham');
+
+                    // Chỉ tự động chấm nếu loại câu hỏi có đáp án chuẩn.
+                    if ($cachCham === 'auto') {
+                        $coDapAnChuan = DB::table('dap_an')
+                            ->where('cauhoi_id', $lanThiCauHoi->cauhoi_id)
+                            ->where('ladung', 1)
+                            ->exists();
+
+                        if ($coDapAnChuan) {
+                            $ketQua = app(ScoringService::class)->calculateResult(
+                                ['id' => $lanThiCauHoi->cauhoi_id],
+                                ['noidung' => $noiDung],
+                                (float) $lanThiCauHoi->diemtoida
+                            );
+
+                            $laDung = $ketQua['is_correct'];
+                            $diem = $ketQua['diem'];
+                        }
+                    }
+
+                    // AI/manual hoặc chưa có đáp án chuẩn:
+                    // giữ $laDung và $diem là null để chờ chấm.
                 }
 
                 // 6. Luu dap an.
@@ -564,26 +587,9 @@
                         'lanthi' => 'Ban can xac nhan cac cau bo trong.',
                     ]);
                 }
-                // Khong chot neu cau da nop van chua cham diem
-                $coCauChuaCham = DB::table('lanthicauhoi as lc')
-                    ->leftJoin(
-                        'traloi as tl',
-                        'tl.lanthicauhoi_id',
-                        '=',
-                        'lc.id'
-                    )
-                    ->where('lc.lanthi_id', $lanThiId)
-                    ->where('lc.datraloi', true)
-                    ->where(function ($query) {
-                        $query->whereNull('tl.id')
-                            ->orWhereNull('tl.diem');
-                    })
-                    ->exists();
-                if ($coCauChuaCham) {
-                    throw ValidationException::withMessages([
-                        'lanthi' => 'Con cau tra loi chua duoc cham diem.',
-                    ]);
-                }
+                // Cho phép hoàn thành bài thi khi còn câu chờ AI/manual.
+                // Các câu chưa chấm vẫn giữ diem = NULL.
+                // Không coi câu chưa chấm là câu trả lời sai.
                 // Hoan thanh phien thi
                 $lanThi->trangthai = 'completed';
                 $lanThi->ketthuc = now();

@@ -46,6 +46,11 @@
                 <a class="det-btn det-btn--primary" href="{{ route('register') }}">Bắt đầu miễn phí</a>
                 <a class="det-btn det-btn--ghost" href="{{ route('login') }}">Đăng nhập</a>
             @endauth
+
+            <a class="det-btn det-btn--ghost"
+            href="{{ route('mock-test.index') }}">
+                Thi thử DET
+            </a>
         </div>
 
         <ul class="det-stats">

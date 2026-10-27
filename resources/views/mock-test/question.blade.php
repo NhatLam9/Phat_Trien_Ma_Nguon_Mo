@@ -1,306 +1,664 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phiên thi #{{ $lanThi->id }} | DET Practice</title>
+
+@extends('layouts.app')
+
+@section('title', 'Làm bài thi thử - DET Practice')
+@section('body_class', 'app-body mock-test-body')
+@section('main_class', 'app-main--mock-exam')
+
+@push('styles')
     <link rel="stylesheet" href="{{ asset('css/mock-test.css') }}">
 
-    {{-- MT04: Tu tai lai khi den han thi --}}
     @if ($lanThi->trangthai === 'in_progress')
-        <meta http-equiv="refresh" content="{{ max(1, $soGiayConLai + 1) }}">
+        <meta http-equiv="refresh"
+              content="{{ max(1, $soGiayConLai + 1) }}">
     @endif
-</head>
-<body>
-    {{-- Header --}}
-    <header class="site-header">
-        <div class="container header-inner">
-            <a href="{{ url('/') }}" class="logo">
-                <img src="{{ asset('images/fox-logo.jpg') }}" alt="DET Practice" class="fox-logo">
-                DET <span>Practice</span>
+@endpush
+
+@section('content')
+    @php
+        $dangThi = $lanThi->trangthai === 'in_progress';
+        $tongSoGiay = max(1, (int) $deThi->thoigian);
+        $phanTram = max(
+            0,
+            min(100, $soGiayConLai / $tongSoGiay * 100)
+        );
+        $soCauDaTraLoi = $dsCauDaCap
+            ->filter(fn ($cau) => (int) $cau->datraloi === 1)
+            ->count();
+    @endphp
+
+    <div class="exam-page">
+
+        {{-- Thanh điều hướng --}}
+        <div class="exam-topbar">
+            <a href="{{ route('mock-test.index') }}"
+               class="back-link">
+                ← Danh sách đề thi
             </a>
-            <span class="header-status">Phiên thi #{{ $lanThi->id }}</span>
+
+            <div class="exam-breadcrumb">
+                <span>LUYỆN THI DET</span>
+                <span>/</span>
+                <span>BÀI THI THỬ</span>
+                <span>/</span>
+                <span class="pill">MÃ ĐỀ {{ $deThi->id }}</span>
+            </div>
+
+            <div class="exam-status-pill">
+                <span class="dot"></span>
+                {{ $dangThi ? 'Đang làm bài' : 'Đã kết thúc' }}
+            </div>
         </div>
-    </header>
 
-    <main class="container page">
-        {{-- Gioi thieu bai thi --}}
-        <div class="page-intro">
-            <span class="eyebrow">DET PRACTICE · MOCK TEST</span>
-            <h1>{{ $deThi->ten ?? 'Phiên thi thử' }}</h1>
-            <p>
-                Hình thức: {{ ($deThi->kieu ?? '') === 'adaptive' ? 'Adaptive' : 'Fixed' }}
-                · Đã cấp {{ $soCauDaCap }}/{{ $soCauTrongDe }} câu hỏi
-            </p>
-        </div>
+        {{-- Thông tin đề --}}
+        <header class="exam-heading">
+            <div class="exam-heading-meta">
+                <span class="eyebrow">
+                    LUYỆN THI TRỰC TUYẾN
+                </span>
 
-        {{-- MT04: Thoi gian con lai --}}
-        @if ($lanThi->trangthai === 'in_progress')
-            <section class="exam-timer" aria-label="Thời gian bài thi">
-                <div class="timer-information">
-                    <span class="timer-label">THỜI GIAN CÒN LẠI</span>
-                    <strong class="timer-value">
-                        {{ sprintf('%02d:%02d', intdiv($soGiayConLai, 60), $soGiayConLai % 60) }}
-                    </strong>
-                    <span class="timer-hint">Thời gian được cập nhật khi tải trang</span>
-                </div>
-                <div class="timer-deadline">
-                    <span>Hết hạn lúc</span>
-                    <strong>{{ $hanThi->format('H:i:s') }}</strong>
-                    <small>{{ $hanThi->format('d/m/Y') }}</small>
-                </div>
-            </section>
-        @endif
+                <span class="dot-sep">•</span>
 
-        {{-- Thong bao tu session --}}
+                <span class="meta-pill">
+                    {{ $deThi->kieu === 'adaptive'
+                        ? 'Cấu trúc thích ứng'
+                        : 'Cấu trúc đề cố định' }}
+                </span>
+            </div>
+
+            <h1>{{ $deThi->ten }}</h1>
+
+            <div class="exam-heading-sub">
+                <span>
+                    Cấu trúc đề:
+                    {{ $deThi->kieu === 'adaptive'
+                        ? 'Thích ứng'
+                        : 'Cố định' }}
+                </span>
+
+                <span>•</span>
+
+                <span class="progress-pill">
+                    Tiến độ: {{ $soCauDaCap }}/{{ $tongSoCau }} câu hỏi
+                </span>
+            </div>
+        </header>
+
+        {{-- Thông báo --}}
         @if (session('success'))
-            <div class="alert alert-success" role="status">{{ session('success') }}</div>
+            <div class="exam-notification" role="status">
+                {{ session('success') }}
+            </div>
         @endif
 
-        {{-- Thong bao validation --}}
         @if ($errors->any())
-            <div class="alert" role="alert">{{ $errors->first() }}</div>
+            <div class="exam-notification exam-notification--error"
+                 role="alert">
+                {{ $errors->first() }}
+            </div>
         @endif
 
-        {{-- Noi dung phien thi --}}
-        <section class="session-card" id="question-area">
-            {{-- MT04 / MT08: Phien thi da bi dong --}}
-            @if ($lanThi->trangthai === 'abandoned')
-                <div class="abandoned-state">
-                    @if ($biHetGio)
-                        <span class="eyebrow">MT04 · TIMEOUT</span>
-                        <h2>Bài thi đã hết thời gian</h2>
-                        <p>
-                            Phiên thi #{{ $lanThi->id }} đã tự động kết thúc vì vượt quá
-                            thời gian quy định.
-                        </p>
-                    @else
-                        <span class="eyebrow">MT08 · ABANDONED</span>
-                        <h2>Bài thi đã bỏ dở</h2>
-                        <p>Phiên thi #{{ $lanThi->id }} đã kết thúc theo yêu cầu của bạn.</p>
-                    @endif
+        <div class="exam-layout">
 
-                    <div class="session-summary">
-                        <div class="summary-item">
-                            <span>Thời gian bắt đầu</span>
-                            <strong>
-                                {{ $lanThi->batdau ? $lanThi->batdau->format('d/m/Y H:i:s') : 'Chưa ghi nhận' }}
-                            </strong>
+            {{-- CỘT TRÁI --}}
+            <div class="exam-left">
+
+                <section class="glass-card question-card"
+                         id="question-area">
+
+                    {{-- Phiên thi đã bỏ dở --}}
+                    @if ($lanThi->trangthai === 'abandoned')
+
+                        <div class="ready-state-box">
+                            <span class="eyebrow">
+                                {{ $biHetGio
+                                    ? 'HẾT THỜI GIAN'
+                                    : 'ĐÃ BỎ DỞ' }}
+                            </span>
+
+                            <h2>
+                                {{ $biHetGio
+                                    ? 'Bài thi đã hết thời gian'
+                                    : 'Bài thi đã bỏ dở' }}
+                            </h2>
+
+                            <p>
+                                Phiên thi đã kết thúc.
+                                Bạn không thể tiếp tục làm bài này.
+                            </p>
+
+                            <a href="{{ route('mock-test.index') }}"
+                               class="nav-btn nav-btn-primary">
+                                Chọn đề thi khác →
+                            </a>
                         </div>
-                        <div class="summary-item">
-                            <span>Thời gian kết thúc</span>
-                            <strong>
-                                {{ $lanThi->ketthuc ? $lanThi->ketthuc->format('d/m/Y H:i:s') : 'Chưa ghi nhận' }}
-                            </strong>
+
+                    {{-- Phiên thi đã hoàn thành --}}
+                    @elseif ($lanThi->trangthai === 'completed')
+
+                        <div class="ready-state-box">
+                            <span class="eyebrow">
+                                HOÀN THÀNH BÀI THI
+                            </span>
+
+                            <h2>
+                                {{ $biHetGio
+                                    ? 'Bài thi đã tự động nộp vì hết giờ'
+                                    : 'Bạn đã hoàn thành bài thi' }}
+                            </h2>
+
+                            <p>
+                                Đã ghi nhận {{ $soCauDaTraLoi }}
+                                câu trả lời.
+                                Kết quả chấm điểm chi tiết sẽ
+                                được cập nhật trong MT05 và MT06.
+                            </p>
+
+                            <a href="{{ route('mock-test.index') }}"
+                               class="nav-btn nav-btn-primary">
+                                Danh sách đề thi →
+                            </a>
                         </div>
-                    </div>
 
-                    <p class="state-description">
-                        Phiên thi này không được tính điểm.
-                        Bạn có thể chọn một đề thi khác để bắt đầu.
-                    </p>
-                    <a href="{{ route('mock-test.index') }}" class="btn btn-primary">Chọn bài thi khác →</a>
-                </div>
+                    {{-- Câu hỏi đang làm --}}
+                    @elseif ($cauDuocCap && $cauHoi)
 
-            {{-- Bai thi da hoan thanh --}}
-            @elseif ($lanThi->trangthai === 'completed')
-                <div class="session-notice">
-                    <span class="eyebrow">MOCK TEST · COMPLETED</span>
-                    {{-- MT04: Phan biet tu nop khi het gio va nop thu cong --}}
-                    @if ($biHetGio)
-                        <h2>Bài thi đã tự động nộp vì hết giờ</h2>
-                        <p>
-                            Thời gian làm bài đã kết thúc.
-                            Các câu trả lời đã nộp được giữ lại,
-                            những câu chưa làm được ghi nhận là bỏ trống.
-                        </p>
-                    @else
-                        <h2>Bài thi đã hoàn thành</h2>
-                        <p>
-                            Bạn đã hoàn thành phiên thi này.
-                            Không thể tiếp tục nhận câu hỏi.
-                        </p>
-                    @endif
-                    <p>Điểm số và báo cáo chi tiết sẽ được tích hợp trong chức năng MT06.</p>
-                </div>
+                        <div class="question-top-meta">
+                            <div class="question-code-group">
 
-            {{-- MT02: Cau hoi dang lam --}}
-            @elseif ($cauDuocCap && $cauHoi)
-                <div class="session-heading">
-                    <div>
-                        <span class="eyebrow">CÂU HỎI {{ $cauDuocCap->thutu }}</span>
-                        <h2>{{ $cauHoi->tenloai }}</h2>
-                    </div>
-                    <span class="status-pill">{{ ucfirst($cauHoi->kynang ?? 'Luyện tập') }}</span>
-                </div>
+                                <span class="small-pill">
+                                    CÂU
+                                    {{ str_pad($cauDuocCap->thutu, 2, '0', STR_PAD_LEFT) }}
+                                    /
+                                    {{ $tongSoCau }}
+                                </span>
 
-                <div class="question-content">
-                    <p class="question-label">Nội dung câu hỏi</p>
-                    <div class="question-text">{{ $cauHoi->noidung }}</div>
-                </div>
+                                <span class="small-pill light-pill">
+                                    {{ $cauHoi->tenloai }}
+                                </span>
+                            </div>
 
-                {{-- Tai nguyen media: cho tich hop TV3 --}}
-                @if ($cauHoi->anh)
-                    <div class="media-note">
-                        Câu hỏi có hình ảnh đính kèm.
-                        Nội dung media sẽ được tích hợp từ kho dữ liệu câu hỏi.
-                    </div>
-                @endif
-                @if ($cauHoi->audio)
-                    <div class="media-note">
-                        Câu hỏi có âm thanh đính kèm.
-                        Chức năng phát audio sẽ được tích hợp từ kho dữ liệu câu hỏi.
-                    </div>
-                @endif
-
-                {{-- MT03: Nop cau tra loi --}}
-                <form method="POST" action="{{ route('mock-test.submit', $lanThi->id) }}" class="answer-form">
-                    @csrf
-                    <input type="hidden" name="lanthicauhoi_id" value="{{ $cauDuocCap->id }}">
-                    @if ($luaChon->isNotEmpty())
-                        <fieldset class="answer-options">
-                            <legend>Chọn đáp án của bạn</legend>
-                            @foreach ($luaChon as $item)
-                                <label class="answer-option">
-                                    <input type="radio" name="luachon_id" value="{{ $item->id }}"
-                                        {{ old('luachon_id') == $item->id ? 'checked' : '' }} required>
-                                    <span class="option-letter">{{ $loop->iteration }}</span>
-                                    <span class="option-content">{{ $item->noidung }}</span>
-                                </label>
-                            @endforeach
-                        </fieldset>
-                    @else
-                        <div class="answer-text-group">
-                            <label for="noidung">Câu trả lời của bạn</label>
-                            <textarea id="noidung" name="noidung" rows="6" maxlength="10000"
-                                placeholder="Nhập câu trả lời..." required>{{ old('noidung') }}</textarea>
+                            {{-- Sẽ kích hoạt khi có backend đánh dấu --}}
+                            <button type="button"
+                                    class="bookmark-btn"
+                                    disabled
+                                    title="Chức năng đánh dấu xem lại đang được phát triển">
+                                Đánh dấu xem lại
+                            </button>
                         </div>
-                    @endif
-                    <div class="answer-actions">
-                        <button type="submit" class="btn btn-primary">Nộp câu trả lời</button>
-                    </div>
-                </form>
 
-                {{-- MT02: Bo qua cau hoi --}}
-                <form method="POST" action="{{ route('mock-test.skip', $lanThi->id) }}" class="skip-form">
-                    @csrf
-                    <input type="hidden" name="lanthicauhoi_id" value="{{ $cauDuocCap->id }}">
-                    <button type="submit" class="btn btn-dark">Bỏ qua / Câu tiếp theo →</button>
-                </form>
+                        {{-- Nội dung câu hỏi --}}
+                        <div class="question-block">
+                            <p class="field-label">
+                                NỘI DUNG CÂU HỎI
+                            </p>
 
-            {{-- Chua co cau hoi hop le --}}
-            @elseif ($soCauHopLeConLai === 0)
-                <div class="session-notice">
-                    @if ($soCauDaCap > 0)
-                        <span class="eyebrow">MT05 · FINISH</span>
-                        <h2>Đã hoàn thành các câu hỏi</h2>
-                        <p>Bạn có thể chốt và nộp bài thi.</p>
-                    @else
-                        <h2>Đề thi chưa có câu hỏi</h2>
-                        <p>Hiện không có câu hỏi hợp lệ. Vui lòng chọn đề thi khác.</p>
-                    @endif
-                </div>
+                            <div class="question-content-box">
+                                {{ $cauHoi->noidung }}
+                            </div>
 
-            {{-- San sang cap cau hoi --}}
-            @else
-                <div class="session-notice">
-                    <span class="eyebrow">MOCK TEST · READY</span>
-                    <h2>Sẵn sàng nhận câu hỏi?</h2>
-                    <p>Hệ thống sẽ lựa chọn câu hỏi tiếp theo dựa trên hình thức đề thi.</p>
-                    <form method="POST" action="{{ route('mock-test.question.next', $lanThi->id) }}">
-                        @csrf
-                        <button type="submit" class="btn btn-primary">Nhận câu hỏi →</button>
-                    </form>
-                </div>
-            @endif
+                            @if ($cauHoi->anh)
+                                <img
+                                    src="{{ asset(ltrim($cauHoi->anh, '/')) }}"
+                                    alt="Hình ảnh minh họa câu hỏi"
+                                    class="question-image">
+                            @endif
 
-            {{-- MT05: Xac nhan nop bai --}}
-            @if ($lanThi->trangthai === 'in_progress')
-                <div class="finish-section">
-                    <a href="#confirm-finish" class="btn btn-primary">Chốt bài thi</a>
-                </div>
+                            @if ($cauHoi->audio)
+                                <audio controls
+                                       preload="metadata"
+                                       class="question-audio">
+                                    <source src="{{ asset(ltrim($cauHoi->audio, '/')) }}">
+                                    Trình duyệt không hỗ trợ âm thanh.
+                                </audio>
+                            @endif
+                        </div>
 
-                <div id="confirm-finish" class="finish-overlay">
-                    <div class="finish-modal" role="dialog" aria-modal="true" aria-labelledby="finish-title">
-                        <h2 id="finish-title">Xác nhận nộp bài</h2>
+                        {{-- MT03: Lưu câu trả lời --}}
+
+                        {{-- MT02 / MT03 / MT05: Trả lời và chuyển câu --}}
                         @php
-                            $soCauChuaCap = $soCauHopLeConLai;
+                            $laCauCuoi = $soCauHopLeConLai === 0
+                                && $cauSau === null;
                         @endphp
-                        @if ($cauChuaTraLoi->count() > 0 || $soCauChuaCap > 0)
-                            <p>Bạn vẫn còn câu hỏi chưa hoàn thành.</p>
-                            @if ($cauChuaTraLoi->isNotEmpty())
-                                <p>
-                                    Câu <strong>{{ $cauChuaTraLoi->pluck('thutu')->implode(', ') }}</strong>
-                                    chưa chọn đáp án.
-                                </p>
+
+                        <form method="POST"
+                            action="{{ $laCauCuoi
+                                ? route('mock-test.finish', $lanThi->id)
+                                : route('mock-test.skip', $lanThi->id) }}"
+                            class="answer-form">
+
+                            @csrf
+
+                            <input type="hidden"
+                                name="lanthicauhoi_id"
+                                value="{{ $cauDuocCap->id }}">
+
+                            @if ($laCauCuoi)
+                                <input type="hidden"
+                                    name="xac_nhan_bo_trong"
+                                    value="1">
                             @endif
-                            @if ($soCauChuaCap > 0)
-                                <p>Bạn còn <strong>{{ $soCauChuaCap }}</strong> câu hỏi chưa được cấp.</p>
+
+                            {{-- Đáp án trắc nghiệm --}}
+                            @if ($luaChon->isNotEmpty())
+                                <div class="answer-list">
+                                    <p class="field-label">CHỌN ĐÁP ÁN CỦA BẠN</p>
+
+                                    @foreach ($luaChon as $item)
+                                        <label class="answer-item">
+                                            <input type="radio"
+                                                name="luachon_id"
+                                                value="{{ $item->id }}"
+                                                @checked(old('luachon_id') == $item->id)>
+
+                                            <span class="answer-item-inner">
+                                                <span class="answer-letter">
+                                                    {{ chr(65 + $loop->index) }}
+                                                </span>
+
+                                                <span class="answer-text">
+                                                    {{ $item->noidung }}
+                                                </span>
+                                            </span>
+                                        </label>
+                                    @endforeach
+                                </div>
+
+                            {{-- Đáp án tự luận --}}
+                            @else
+                                <div class="text-answer-box">
+                                    <label for="noidung" class="field-label">
+                                        CÂU TRẢ LỜI CỦA BẠN
+                                    </label>
+
+                                    <textarea id="noidung"
+                                            name="noidung"
+                                            rows="6"
+                                            maxlength="10000"
+                                            placeholder="Nhập câu trả lời...">{{ old('noidung') }}</textarea>
+                                </div>
                             @endif
-                            <p>Bạn vẫn muốn nộp bài? Các câu chưa làm sẽ được tính là bỏ trống.</p>
+
+                            {{-- Điều hướng và tự động lưu đáp án --}}
+                            <div class="question-nav-actions">
+
+                                <div class="nav-left">
+                                    @if ($cauTruoc)
+                                        <a href="{{ route('mock-test.show', [
+                                            'id' => $lanThi->id,
+                                            'cau' => $cauTruoc->id
+                                        ]) }}"
+                                        class="nav-btn nav-btn-secondary">
+                                            ← Câu trước
+                                        </a>
+                                    @else
+                                        <button type="button"
+                                                class="nav-btn nav-btn-disabled"
+                                                disabled>
+                                            ← Câu trước
+                                        </button>
+                                    @endif
+                                </div>
+
+                                <div class="nav-right">
+                                    <button type="submit"
+                                            class="nav-btn nav-btn-primary">
+
+                                        @if ($laCauCuoi)
+                                            Nộp bài
+                                        @else
+                                            Câu sau →
+                                        @endif
+
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                    {{-- Đã cấp hết câu hỏi --}}
+                    @elseif ($soCauHopLeConLai === 0)
+
+                        <div class="ready-state-box">
+                            <span class="eyebrow">
+                                TRẠNG THÁI BÀI THI
+                            </span>
+
+                            <h2>
+                                {{ $soCauDaCap > 0
+                                    ? 'Đã cấp hết câu hỏi'
+                                    : 'Đề thi chưa có câu hỏi hợp lệ' }}
+                            </h2>
+
+                            <p>
+                                {{ $soCauDaCap > 0
+                                    ? 'Bạn đã đi hết ngân hàng câu hỏi của đề thi. Hãy kiểm tra Phiếu trả lời và xác nhận nộp bài.'
+                                    : 'Không có câu hỏi hợp lệ để bắt đầu bài thi.' }}
+                            </p>
+                        </div>
+
+                    {{-- Chưa bắt đầu nhận câu hỏi --}}
+                    @else
+
+                        <div class="ready-state-box">
+                            <span class="eyebrow">
+                                BẮT ĐẦU BÀI THI
+                            </span>
+
+                            <h2>Bạn đã sẵn sàng làm bài?</h2>
+
+                            <p>
+                                Hệ thống sẽ lựa chọn câu hỏi theo
+                                hình thức Fixed hoặc Adaptive.
+                            </p>
+
+                            <form method="POST"
+                                  action="{{ route('mock-test.question.next', $lanThi->id) }}">
+                                @csrf
+
+                                <button type="submit"
+                                        class="start-btn">
+                                    Bắt đầu làm bài →
+                                </button>
+                            </form>
+                        </div>
+                    @endif
+
+                </section>
+
+                {{-- Các thao tác bài thi --}}
+                <section class="glass-card action-card">
+                    <div>
+                        <h3>THAO TÁC BÀI THI</h3>
+                        <p>
+                            Kiểm tra câu trả lời hoặc kết thúc bài thi.
+                        </p>
+                    </div>
+
+                    <div class="action-buttons">
+                        @if ($dangThi)
+                            <a href="#confirm-finish"
+                               class="nav-btn nav-btn-primary">
+                                Xác nhận nộp bài
+                            </a>
+
+                            <details class="abandon-confirm">
+                                <summary class="nav-btn nav-btn-danger-outline">
+                                    Bỏ dở bài thi
+                                </summary>
+
+                                <div class="abandon-confirm-content">
+                                    <strong>Xác nhận bỏ dở bài thi?</strong>
+
+                                    <p>
+                                        Phiên thi sẽ kết thúc và không
+                                        được tính điểm.
+                                    </p>
+
+                                    <form method="POST"
+                                          action="{{ route('mock-test.abandon', $lanThi->id) }}">
+                                        @csrf
+
+                                        <button type="submit"
+                                                class="nav-btn nav-btn-danger-outline">
+                                            Xác nhận bỏ dở
+                                        </button>
+                                    </form>
+                                </div>
+                            </details>
                         @else
-                            <p>Bạn có chắc chắn muốn nộp bài thi?</p>
+                            <a href="{{ route('mock-test.index') }}"
+                               class="nav-btn nav-btn-secondary">
+                                Danh sách đề thi
+                            </a>
                         @endif
+                    </div>
+                </section>
+
+            </div>
+
+            {{-- CỘT PHẢI --}}
+            <aside class="exam-right">
+
+                {{-- MT04: Đồng hồ --}}
+                @if ($dangThi)
+                    <section class="glass-card timer-card">
+                        <div class="timer-title">
+                            <span>THỜI GIAN CÒN LẠI</span>
+                            <span class="dot"></span>
+                        </div>
+
+                        <div class="timer-number"
+                             id="mock-countdown"
+                             data-seconds="{{ $soGiayConLai }}">
+                            {{ sprintf(
+                                '%02d:%02d',
+                                intdiv($soGiayConLai, 60),
+                                $soGiayConLai % 60
+                            ) }}
+                        </div>
+
+                        <p class="timer-note">
+                            Thời gian làm bài còn lại
+                        </p>
+
+                        <div class="timer-bar">
+                            <div id="mock-timer-progress"
+                                 style="width: {{ $phanTram }}%">
+                            </div>
+                        </div>
+
+                        <div class="timer-deadline">
+                            <div>
+                                <span>Hết hạn lúc:</span>
+                                <strong>
+                                    {{ $hanThi->format('H:i:s') }}
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Ngày hết hạn:</span>
+                                <strong>
+                                    {{ $hanThi->format('d/m/Y') }}
+                                </strong>
+                            </div>
+                        </div>
+                    </section>
+                @endif
+
+                {{-- Phiếu trả lời --}}
+                <section class="glass-card answer-sheet-card">
+                    <div class="sheet-head">
+                        <h3>PHIẾU TRẢ LỜI</h3>
+
+                        <span class="sheet-progress">
+                            {{ $soCauDaTraLoi }}/{{ $tongSoCau }}
+                        </span>
+                    </div>
+
+                    <div class="sheet-grid">
+                        @foreach ($phieuTraLoi as $item)
+                            @php
+                                $trangThai = $item['status'];
+                            @endphp
+
+                            @if ($dangThi && $item['lanthicauhoi_id'])
+                                <a
+                                    href="{{ route('mock-test.show', [
+                                        'id' => $lanThi->id,
+                                        'cau' => $item['lanthicauhoi_id']
+                                    ]) }}"
+                                    class="sheet-item {{ $trangThai }}"
+                                    title="Câu {{ $item['thutu'] }}">
+                                    {{ $item['thutu'] }}
+                                </a>
+                            @else
+                                <span
+                                    class="sheet-item {{ $trangThai }}"
+                                    title="Câu {{ $item['thutu'] }}">
+                                    {{ $item['thutu'] }}
+                                </span>
+                            @endif
+                        @endforeach
+                    </div>
+
+                    <div class="sheet-legend">
+                        <span>
+                            <i class="legend-dot answered"></i>
+                            Đã trả lời
+                        </span>
+
+                        <span>
+                            <i class="legend-dot empty"></i>
+                            Chưa làm
+                        </span>
+
+                        <span>
+                            <i class="legend-dot seen"></i>
+                            Đã cấp
+                        </span>
+
+                        <span>
+                            <i class="legend-dot current"></i>
+                            Đang xem
+                        </span>
+                    </div>
+                </section>
+
+                {{-- Hướng dẫn --}}
+                <section class="glass-card note-card">
+                    <h3>Lưu ý quan trọng khi làm bài</h3>
+
+                    <p>
+                        Chọn đáp án và nhấn Lưu đáp án để ghi nhận
+                        câu trả lời.
+                    </p>
+
+                    <p>
+                        Chuyển câu mà chưa lưu sẽ không tự động
+                        lưu lựa chọn đang nhập.
+                    </p>
+
+                    <p>
+                        Nhấn vào ô số trong Phiếu trả lời
+                        để mở các câu chưa nộp đáp án.
+                    </p>
+                </section>
+
+            </aside>
+        </div>
+
+        {{-- MT05: Xác nhận nộp bài --}}
+        @if ($dangThi)
+            <div id="confirm-finish" class="finish-overlay">
+                <div class="finish-modal"
+                     role="dialog"
+                     aria-modal="true"
+                     aria-labelledby="finish-title">
+
+                    <h2 id="finish-title">
+                        Xác nhận nộp bài
+                    </h2>
+
+                    @if ($cauChuaTraLoi->isNotEmpty() ||
+                         $soCauHopLeConLai > 0)
+
+                        <p>
+                            Bạn vẫn còn câu hỏi chưa hoàn thành.
+                            Các câu bỏ trống sẽ không có điểm.
+                        </p>
 
                         @if ($cauChuaTraLoi->isNotEmpty())
-                            <div class="question-links">
-                                @foreach ($cauChuaTraLoi as $item)
-                                    <a href="{{ route('mock-test.show', ['id' => $lanThi->id, 'cau' => $item->id]) }}#question-area"
-                                        class="btn btn-dark">Câu {{ $item->thutu }}</a>
-                                @endforeach
-                            </div>
+                            <p>
+                                Câu chưa trả lời:
+                                {{ $cauChuaTraLoi
+                                    ->pluck('thutu')
+                                    ->implode(', ') }}
+                            </p>
                         @endif
 
-                        <div class="finish-actions">
-                            @if ($cauChuaTraLoi->isNotEmpty())
-                                <a href="{{ route('mock-test.show', ['id' => $lanThi->id, 'cau' => $cauChuaTraLoi->first()->id]) }}#question-area"
-                                    class="btn btn-dark">Đi đến câu {{ $cauChuaTraLoi->first()->thutu }}</a>
-                            @elseif ($soCauHopLeConLai > 0)
-                                <form method="POST" action="{{ route('mock-test.question.next', $lanThi->id) }}">
-                                    @csrf
-                                    <button type="submit" class="btn btn-dark">Nhận câu tiếp theo</button>
-                                </form>
-                            @else
-                                <a href="#question-area" class="btn btn-dark">Quay lại</a>
-                            @endif
-                            <form method="POST" action="{{ route('mock-test.finish', $lanThi->id) }}">
-                                @csrf
-                                <input type="hidden" name="xac_nhan_bo_trong" value="1">
-                                <button type="submit" class="btn btn-primary">Nộp bài</button>
-                            </form>
-                        </div>
+                        @if ($soCauHopLeConLai > 0)
+                            <p>
+                                Còn {{ $soCauHopLeConLai }}
+                                câu hỏi chưa được cấp.
+                            </p>
+                        @endif
+                    @else
+                        <p>
+                            Bạn có chắc chắn muốn nộp bài thi?
+                        </p>
+                    @endif
+
+                    <div class="finish-actions">
+                        <a href="#question-area"
+                           class="nav-btn nav-btn-secondary">
+                            Quay lại
+                        </a>
+
+                        <form method="POST"
+                              action="{{ route('mock-test.finish', $lanThi->id) }}">
+                            @csrf
+
+                            <input type="hidden"
+                                   name="xac_nhan_bo_trong"
+                                   value="1">
+
+                            <button type="submit"
+                                    class="nav-btn nav-btn-primary">
+                                Nộp bài thi
+                            </button>
+                        </form>
                     </div>
                 </div>
-            @endif
-
-            {{-- MT08: Xac nhan bo do --}}
-            @if ($lanThi->trangthai === 'in_progress')
-                <div class="abandon-section">
-                    <details class="abandon-confirm">
-                        <summary class="btn btn-danger-outline">Bỏ dở bài thi</summary>
-                        <div class="abandon-warning">
-                            <h3>Xác nhận bỏ dở bài thi?</h3>
-                            <p>
-                                Bài thi sẽ kết thúc ngay sau khi xác nhận.
-                                Bạn không thể tiếp tục phiên thi này và kết quả sẽ không được tính điểm.
-                            </p>
-                            <form method="POST" action="{{ route('mock-test.abandon', $lanThi->id) }}">
-                                @csrf
-                                <button type="submit" class="btn btn-danger">Xác nhận bỏ dở</button>
-                            </form>
-                            <p class="abandon-cancel-hint">Nhấn lại "Bỏ dở bài thi" để đóng phần xác nhận.</p>
-                        </div>
-                    </details>
-                </div>
-            @endif
-
-            {{-- Dieu huong --}}
-            <div class="session-actions">
-                <a href="{{ route('mock-test.index') }}" class="btn btn-dark">← Danh sách đề thi</a>
             </div>
-        </section>
-    </main>
+        @endif
 
-    <footer class="site-footer">DET Practice</footer>
-</body>
-</html>
+    </div>
+@endsection
+
+@push('scripts')
+    @if ($lanThi->trangthai === 'in_progress')
+        <script>
+            (() => {
+                const timer = document.getElementById('mock-countdown');
+                const progress = document.getElementById('mock-timer-progress');
+
+                if (!timer) return;
+
+                const total = {{ $tongSoGiay }};
+                const initial = Number(timer.dataset.seconds);
+                const deadline = performance.now() + initial * 1000;
+
+                let interval;
+
+                function updateTimer() {
+                    const seconds = Math.max(
+                        0,
+                        Math.ceil((deadline - performance.now()) / 1000)
+                    );
+
+                    const minutes = Math.floor(seconds / 60);
+                    const remainder = seconds % 60;
+
+                    timer.textContent =
+                        String(minutes).padStart(2, '0') +
+                        ':' +
+                        String(remainder).padStart(2, '0');
+
+                    if (progress) {
+                        progress.style.width =
+                            Math.min(100, seconds / total * 100) + '%';
+                    }
+
+                    if (seconds <= 0) {
+                        clearInterval(interval);
+                        window.location.reload();
+                    }
+                }
+
+                interval = setInterval(updateTimer, 1000);
+                updateTimer();
+            })();
+        </script>
+    @endif
+@endpush

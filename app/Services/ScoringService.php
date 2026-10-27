@@ -99,4 +99,102 @@ class ScoringService
             'nhanxet' => $isCorrect ? 'Đáp án chính xác.' : 'Đáp án chưa chính xác.',
         ];
     }
+    public function tongHopKetQua(int $lanThiId): array
+    {
+    $lanThi = DB::table('lanthi')
+        ->where('id', $lanThiId)
+        ->first();
+
+    if (!$lanThi) {
+        throw new \Illuminate\Database\Eloquent\ModelNotFoundException(
+            'Không tìm thấy lần thi.'
+        );
+    }
+
+    // Tổng số câu và điểm tối đa của đề.
+    $tongSoCau = DB::table('dethicauhoi')
+        ->where('dethi_id', $lanThi->dethi_id)
+        ->count();
+
+    $diemToiDa = (float) DB::table('dethicauhoi')
+        ->where('dethi_id', $lanThi->dethi_id)
+        ->sum('diem');
+
+    // Lấy kết quả từng câu trong lần thi.
+    $dsCauHoi = DB::table('lanthicauhoi as lc')
+        ->leftJoin(
+            'traloi as tl',
+            'tl.lanthicauhoi_id',
+            '=',
+            'lc.id'
+        )
+        ->where('lc.lanthi_id', $lanThiId)
+        ->get([
+            'lc.id',
+            'lc.datraloi',
+            'tl.ladung',
+            'tl.diem',
+        ]);
+
+    $soCauDaTraLoi = $dsCauHoi
+        ->filter(fn ($cau) => (int) $cau->datraloi === 1)
+        ->count();
+
+    $soCauDung = $dsCauHoi
+        ->filter(fn ($cau) =>
+            $cau->ladung !== null &&
+            (int) $cau->ladung === 1
+        )
+        ->count();
+
+    $soCauSai = $dsCauHoi
+        ->filter(fn ($cau) =>
+            $cau->ladung !== null &&
+            (int) $cau->ladung === 0
+        )
+        ->count();
+
+    // Câu đã trả lời nhưng chưa có điểm AI/manual.
+    $soCauChoCham = $dsCauHoi
+        ->filter(fn ($cau) =>
+            (int) $cau->datraloi === 1 &&
+            $cau->diem === null
+        )
+        ->count();
+
+    // Tính cả câu bỏ trống và câu chưa được cấp.
+    $soCauBoTrong = max(
+        0,
+        $tongSoCau - $soCauDaTraLoi
+    );
+
+    $diemDaCham = round(
+        $dsCauHoi->sum(
+            fn ($cau) => (float) ($cau->diem ?? 0)
+        ),
+        2
+    );
+
+    // Chỉ công bố tỷ lệ cuối cùng khi không còn câu chờ chấm.
+    $daChamXong = $soCauChoCham === 0;
+
+    $tyLePhanTram = $daChamXong && $diemToiDa > 0
+        ? round($diemDaCham / $diemToiDa * 100, 2)
+        : null;
+
+    return [
+        'lanthi_id' => $lanThiId,
+        'trangthai' => $lanThi->trangthai,
+        'tong_so_cau' => $tongSoCau,
+        'so_cau_da_tra_loi' => $soCauDaTraLoi,
+        'so_cau_dung' => $soCauDung,
+        'so_cau_sai' => $soCauSai,
+        'so_cau_bo_trong' => $soCauBoTrong,
+        'so_cau_cho_cham' => $soCauChoCham,
+        'diem_da_cham' => $diemDaCham,
+        'diem_toi_da' => round($diemToiDa, 2),
+        'ty_le_phan_tram' => $tyLePhanTram,
+        'da_cham_xong' => $daChamXong,
+    ];
+}
 }
