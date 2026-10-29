@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520" role="img" aria-label="A team meeting in an office">
+  <rect width="800" height="520" fill="#e8eef7"/>
+  <rect x="70" y="50" width="280" height="190" rx="10" fill="#bfe6f5"/>
+  <path d="M70 140 H350 M210 50 V240" stroke="#e8eef7" stroke-width="10"/>
+  <rect x="500" y="70" width="220" height="150" rx="10" fill="#26364d"/>
+  <path d="M525 185 L565 145 L605 165 L645 110 L685 130" fill="none" stroke="#58cc02" stroke-width="8"/>
+  <rect x="180" y="320" width="440" height="30" rx="12" fill="#8b6a4d"/>
+  <rect x="220" y="350" width="18" height="110" fill="#6f5037"/>
+  <rect x="560" y="350" width="18" height="110" fill="#6f5037"/>
+  <circle cx="270" cy="270" r="28" fill="#f2c49b"/>
+  <path d="M235 345 Q270 285 305 345" fill="#4c7dd6"/>
+  <circle cx="400" cy="265" r="28" fill="#8d5a3b"/>
+  <path d="M365 345 Q400 280 435 345" fill="#d95f73"/>
+  <circle cx="530" cy="270" r="28" fill="#e0a87e"/>
+  <path d="M495 345 Q530 285 565 345" fill="#3f8f7a"/>
+  <rect x="245" y="305" width="52" height="34" rx="5" fill="#4b5563"/>
+  <rect x="375" y="300" width="52" height="34" rx="5" fill="#4b5563"/>
+  <rect x="505" y="305" width="52" height="34" rx="5" fill="#4b5563"/>
+  <rect x="90" y="390" width="120" height="80" rx="8" fill="#c9d6e6"/>
+  <circle cx="150" cy="430" r="24" fill="#8b6a4d"/>
+</svg>

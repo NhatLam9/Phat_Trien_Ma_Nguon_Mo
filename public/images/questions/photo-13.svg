@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520" role="img" aria-label="A busy city street with a bus and pedestrians">
+  <rect width="800" height="520" fill="#dff3ff"/>
+  <rect x="40" y="90" width="180" height="270" fill="#c9d6e6"/>
+  <rect x="70" y="120" width="40" height="50" fill="#bfe6f5"/>
+  <rect x="130" y="120" width="40" height="50" fill="#bfe6f5"/>
+  <rect x="70" y="200" width="40" height="50" fill="#bfe6f5"/>
+  <rect x="130" y="200" width="40" height="50" fill="#bfe6f5"/>
+  <rect x="250" y="60" width="150" height="300" fill="#e8b46a"/>
+  <rect x="280" y="90" width="90" height="40" fill="#f8f1e7"/>
+  <rect x="280" y="160" width="90" height="40" fill="#f8f1e7"/>
+  <rect x="280" y="230" width="90" height="40" fill="#f8f1e7"/>
+  <rect x="440" y="130" width="180" height="230" fill="#b8c7d9"/>
+  <rect x="470" y="160" width="50" height="50" fill="#bfe6f5"/>
+  <rect x="540" y="160" width="50" height="50" fill="#bfe6f5"/>
+  <rect x="470" y="240" width="50" height="50" fill="#bfe6f5"/>
+  <rect x="540" y="240" width="50" height="50" fill="#bfe6f5"/>
+  <rect y="360" width="800" height="160" fill="#6b7280"/>
+  <path d="M0 430 H800" stroke="#fff" stroke-width="6" stroke-dasharray="30 20"/>
+  <rect x="600" y="300" width="170" height="80" rx="10" fill="#e85d75"/>
+  <rect x="620" y="315" width="40" height="30" rx="4" fill="#bfe6f5"/>
+  <rect x="675" y="315" width="40" height="30" rx="4" fill="#bfe6f5"/>
+  <circle cx="635" cy="385" r="14" fill="#111827"/>
+  <circle cx="735" cy="385" r="14" fill="#111827"/>
+  <circle cx="360" cy="340" r="22" fill="#f2c49b"/>
+  <path d="M332 410 Q360 348 388 410" fill="#4c7dd6"/>
+  <circle cx="470" cy="345" r="22" fill="#8d5a3b"/>
+  <path d="M442 415 Q470 353 498 415" fill="#3f8f7a"/>
+  <rect x="480" y="65" width="14" height="40" fill="#4b5563"/>
+  <circle cx="487" cy="55" r="16" fill="#e85d75"/>
+  <rect x="40" y="400" width="30" height="90" fill="#8b5a2b"/>
+  <circle cx="55" cy="380" r="42" fill="#4caf50"/>
+</svg>
