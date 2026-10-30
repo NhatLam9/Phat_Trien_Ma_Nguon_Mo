@@ -61,10 +61,12 @@ Route::middleware('auth')->group(function () {
         ->whereNumber('id')->name('mock-test.show');
 
     // MT02 - Cap cau hoi
-    
+    Route::post('/mock-test/{id}/question', [MockTestController::class, 'capCauHoi'])
+        ->whereNumber('id')->name('mock-test.question.next');
 
     // MT02 - Bo qua cau hoi
-    
+    Route::post('/mock-test/{id}/skip', [MockTestController::class, 'skip'])
+        ->whereNumber('id')->name('mock-test.skip');
 
     // MT03 - Nop cau tra loi
     
