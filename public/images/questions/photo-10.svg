@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520" role="img" aria-label="People relaxing on a beach">
+  <rect width="800" height="520" fill="#dff3ff"/>
+  <circle cx="650" cy="90" r="48" fill="#ffe28a"/>
+  <rect y="270" width="800" height="130" fill="#55b8d9"/>
+  <path d="M0 300 Q100 280 200 300 T400 300 T600 300 T800 300 V400 H0Z" fill="#79cfe8"/>
+  <rect y="390" width="800" height="130" fill="#f2d7a2"/>
+  <path d="M270 250 L330 400 H210Z" fill="#e85d75"/>
+  <path d="M270 250 V400" stroke="#8b5a2b" stroke-width="8"/>
+  <circle cx="470" cy="370" r="24" fill="#f2c49b"/>
+  <path d="M440 450 Q470 380 500 450" fill="#4c7dd6"/>
+  <circle cx="560" cy="385" r="24" fill="#8d5a3b"/>
+  <path d="M530 465 Q560 395 590 465" fill="#d95f73"/>
+  <circle cx="690" cy="430" r="22" fill="#f0a23a"/>
+  <path d="M690 408 V452 M668 430 H712" stroke="#e85d75" stroke-width="6"/>
+  <path d="M80 120 q18 -18 36 0 M120 100 q18 -18 36 0" fill="none" stroke="#4b5563" stroke-width="4" stroke-linecap="round"/>
+  <rect x="620" y="430" width="90" height="50" rx="8" fill="#8fc93a"/>
+</svg>

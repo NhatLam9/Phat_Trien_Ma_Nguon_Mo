@@ -1,0 +1,89 @@
+{
+  "questions": [
+    {
+      "ma": "reading-001",
+      "loai": "read_and_select",
+      "danhmuc": "Daily Life",
+      "noidung": "The museum is free on Sundays, so many families ___ there.",
+      "giaithich": "Chủ ngữ \"many families\" số nhiều nên dùng \"visit\".",
+      "dokho": 2,
+      "thoigian": 60,
+      "diem": 1,
+      "trangthai": "draft",
+      "luachon": [
+        { "noidung": "visit", "ladung": true },
+        { "noidung": "visits", "ladung": false },
+        { "noidung": "visited", "ladung": false },
+        { "noidung": "visiting", "ladung": false }
+      ]
+    },
+    {
+      "ma": "reading-002",
+      "loai": "interactive_reading",
+      "danhmuc": "Science & Technology",
+      "noidung": "Read the passage: The Great Barrier Reef is the world's largest coral reef system, stretching more than 2,300 kilometres off the coast of Australia. It is home to thousands of species, but rising ocean temperatures have caused widespread coral bleaching. Scientists are testing new ways to protect the reef, including breeding heat-resistant corals and reducing pollution from nearby farms.",
+      "dokho": 5,
+      "thoigian": 120,
+      "diem": 2,
+      "trangthai": "draft",
+      "cauhoi_doc": [
+        {
+          "loai": "identify_idea",
+          "noidung": "What is the main idea of the passage?",
+          "giaithich": "Đoạn văn nêu nguy cơ và các biện pháp bảo vệ.",
+          "luachon": [
+            { "noidung": "The reef is threatened, but scientists are trying to protect it.", "ladung": true },
+            { "noidung": "The reef has no problems.", "ladung": false },
+            { "noidung": "Tourism is the only cause of coral bleaching.", "ladung": false }
+          ]
+        },
+        {
+          "loai": "title_passage",
+          "noidung": "Choose the best title for the passage.",
+          "dapandung": "Protecting the Great Barrier Reef"
+        }
+      ]
+    },
+    {
+      "ma": "listening-001",
+      "loai": "interactive_listening",
+      "danhmuc": "Travel",
+      "noidung": "Listen to a conversation at a hotel and answer the questions.",
+      "audio": "audio/questions/listening-2.wav",
+      "dokho": 6,
+      "thoigian": 120,
+      "diem": 2,
+      "trangthai": "draft",
+      "cauhoi_nghe": [
+        {
+          "loai": "listen_and_complete",
+          "noidung": "The woman wants to book a room for ___.",
+          "luachon": [
+            { "noidung": "two nights", "ladung": true },
+            { "noidung": "three nights", "ladung": false },
+            { "noidung": "one week", "ladung": false }
+          ]
+        },
+        {
+          "loai": "summarise_conversation",
+          "noidung": "Summarise the conversation in one sentence.",
+          "dapandung": "The woman books a double room for two nights, and breakfast is included."
+        }
+      ]
+    }
+  ],
+  "exam": {
+    "ten": "DET Import Demo",
+    "mota": "Đề mẫu để kiểm tra chức năng import JSON.",
+    "chedo": "full",
+    "kieu": "fixed",
+    "kynang": null,
+    "thoigian": 3600,
+    "trangthai": "draft",
+    "questions": [
+      "reading-001",
+      "reading-002",
+      "listening-001"
+    ]
+  }
+}

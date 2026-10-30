@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520" role="img" aria-label="People waiting at a train station">
+  <rect width="800" height="520" fill="#dce9f5"/>
+  <rect y="360" width="800" height="160" fill="#b8b8b8"/>
+  <path d="M0 280 H800" stroke="#8a8f98" stroke-width="12"/>
+  <rect x="40" y="70" width="720" height="30" rx="8" fill="#4b5563"/>
+  <path d="M80 100 V280 M720 100 V280" stroke="#4b5563" stroke-width="12"/>
+  <rect x="80" y="150" width="480" height="130" rx="16" fill="#f0f4f8"/>
+  <rect x="100" y="175" width="80" height="60" rx="6" fill="#bfe6f5"/>
+  <rect x="200" y="175" width="80" height="60" rx="6" fill="#bfe6f5"/>
+  <rect x="300" y="175" width="80" height="60" rx="6" fill="#bfe6f5"/>
+  <rect x="400" y="175" width="80" height="60" rx="6" fill="#bfe6f5"/>
+  <circle cx="160" cy="300" r="26" fill="#4b5563"/>
+  <circle cx="320" cy="300" r="26" fill="#4b5563"/>
+  <circle cx="480" cy="300" r="26" fill="#4b5563"/>
+  <rect x="620" y="90" width="70" height="70" rx="35" fill="#fff"/>
+  <path d="M655 105 V140 M640 120 H670" stroke="#4b5563" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="610" cy="365" r="24" fill="#f2c49b"/>
+  <path d="M580 445 Q610 375 640 445" fill="#4c7dd6"/>
+  <circle cx="690" cy="375" r="24" fill="#8d5a3b"/>
+  <path d="M660 455 Q690 385 720 455" fill="#d95f73"/>
+  <rect x="120" y="430" width="290" height="12" rx="6" fill="#6b7280"/>
+</svg>

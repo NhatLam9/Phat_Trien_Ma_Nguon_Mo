@@ -18,8 +18,8 @@
             </a>
 
             <nav class="admin-nav">
-                <a class="admin-nav__item is-active" href="{{ route('admin.dashboard') }}">Tổng quan</a>
-                <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Câu hỏi</span>
+                <a class="admin-nav__item {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">Tổng quan</a>
+                <a class="admin-nav__item {{ request()->routeIs('admin.questions.*') ? 'is-active' : '' }}" href="{{ route('admin.questions.import.create') }}">Câu hỏi / Import</a>
                 <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Dạng bài</span>
                 <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Chủ đề</span>
                 <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Đề thi</span>
