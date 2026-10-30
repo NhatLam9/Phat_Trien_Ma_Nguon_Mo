@@ -23,6 +23,10 @@
             </a>
 
             <nav class="app-nav" aria-label="Điều hướng chính">
+                <a href="{{ route('mock-test.index') }}">
+                    Thi thử
+                </a>
+
                 @auth
                     @if (auth()->user()->vaitro === 'admin')
                         <a href="{{ route('admin.dashboard') }}">Quản trị</a>
