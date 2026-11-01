@@ -91,7 +91,15 @@
             @if(!empty($user->matkhau))
                 <div class="form-group">
                     <label for="current_password">Mật khẩu hiện tại <span style="color:red;">*</span></label>
-                    <input type="password" id="current_password" name="current_password" class="form-control" placeholder="••••••••" required>
+                    <div class="password-field-wrapper">
+                        <input type="password" id="current_password" name="current_password" class="form-control" placeholder="••••••••" required>
+                        <button type="button" class="btn-toggle-eye" onclick="togglePasswordVisibility('current_password', this)" title="Hiện mật khẩu" tabindex="-1">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
                     @error('current_password')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -104,7 +112,15 @@
 
             <div class="form-group">
                 <label for="matkhau">Mật khẩu mới <span style="color:red;">*</span></label>
-                <input type="password" id="matkhau" name="matkhau" class="form-control" placeholder="Tối thiểu 8 ký tự (hoa, thường, số, ký tự đặc biệt)" required>
+                <div class="password-field-wrapper">
+                    <input type="password" id="matkhau" name="matkhau" class="form-control" placeholder="Tối thiểu 8 ký tự (hoa, thường, số, ký tự đặc biệt)" required>
+                    <button type="button" class="btn-toggle-eye" onclick="togglePasswordVisibility('matkhau', this)" title="Hiện mật khẩu" tabindex="-1">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
                 <small style="display: block; font-size: 12px; color: #64748b; margin-top: 5px; line-height: 1.4;">
                     🔒 Yêu cầu: tối thiểu 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt (VD: Abc@1234).
                 </small>
@@ -115,7 +131,15 @@
 
             <div class="form-group">
                 <label for="matkhau_confirmation">Xác nhận mật khẩu mới <span style="color:red;">*</span></label>
-                <input type="password" id="matkhau_confirmation" name="matkhau_confirmation" class="form-control" placeholder="Nhập lại mật khẩu mới" required>
+                <div class="password-field-wrapper">
+                    <input type="password" id="matkhau_confirmation" name="matkhau_confirmation" class="form-control" placeholder="Nhập lại mật khẩu mới" required>
+                    <button type="button" class="btn-toggle-eye" onclick="togglePasswordVisibility('matkhau_confirmation', this)" title="Hiện mật khẩu" tabindex="-1">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             <button type="submit" class="btn btn-outline" style="margin-top: 8px;">Cập nhật mật khẩu</button>

@@ -40,6 +40,7 @@ class PracticeController extends Controller
             // Writing
             (object)['id' => 7, 'ma' => 'write_about_photo', 'ten' => 'Write About the Photo', 'kynang' => 'writing', 'cachcham' => 'ai', 'thoigian' => 60, 'mota' => 'Viết ít nhất 1 câu mô tả bức ảnh được hiển thị.'],
             (object)['id' => 8, 'ma' => 'read_then_write', 'ten' => 'Read Then Write', 'kynang' => 'writing', 'cachcham' => 'ai', 'thoigian' => 300, 'mota' => 'Đọc chủ đề và viết bài luận tối thiểu 50 từ trong 5 phút.'],
+            (object)['id' => 12, 'ma' => 'writing_sample', 'ten' => 'Writing Sample', 'kynang' => 'writing', 'cachcham' => 'ai', 'thoigian' => 300, 'mota' => 'Đọc chủ đề và viết bài luận học thuật thể hiện quan điểm cá nhân trong 5 phút.'],
 
             // Speaking
             (object)['id' => 9, 'ma' => 'read_aloud', 'ten' => 'Read Aloud', 'kynang' => 'speaking', 'cachcham' => 'ai', 'thoigian' => 20, 'mota' => 'Đọc to câu văn hiển thị trên màn hình và ghi âm.'],
@@ -94,6 +95,17 @@ class PracticeController extends Controller
                 'thoigian' => 60,
                 'diem' => 10.0,
             ],
+            (object)[
+                'id' => 4,
+                'loai_id' => 12,
+                'noidung' => 'Do you agree or disagree that artificial intelligence will replace human teachers in the future? Give reasons and examples to support your opinion.',
+                'giaithich' => 'Bài viết cần có mở bài nêu quan điểm rõ ràng, thân bài đưa ra tối thiểu 2 luận điểm kèm dẫn chứng, và kết bài tóm lược lại ý kiến.',
+                'dokho' => 6,
+                'anh' => null,
+                'audio' => null,
+                'thoigian' => 300,
+                'diem' => 10.0,
+            ],
         ]);
     }
 
@@ -108,6 +120,21 @@ class PracticeController extends Controller
 
         if ($types->isEmpty()) {
             $types = $this->getDefaultQuestionTypes();
+        } else {
+            // Đảm bảo kỹ năng Writing có đủ 3 dạng bài cân đối với các kỹ năng khác
+            if ($types->where('kynang', 'writing')->count() < 3 && !$types->contains('ma', 'writing_sample')) {
+                $types = $types->concat([
+                    (object)[
+                        'id' => 12,
+                        'ma' => 'writing_sample',
+                        'ten' => 'Writing Sample',
+                        'kynang' => 'writing',
+                        'cachcham' => 'ai',
+                        'thoigian' => 300,
+                        'mota' => 'Đọc chủ đề và viết bài luận học thuật thể hiện quan điểm cá nhân trong 5 phút.',
+                    ]
+                ]);
+            }
         }
 
         // Nhóm các dạng bài theo 4 kỹ năng chuẩn DET

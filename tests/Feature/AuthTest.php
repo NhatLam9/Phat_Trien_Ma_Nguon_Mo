@@ -39,6 +39,32 @@ class AuthTest extends TestCase
         $response->assertRedirect('/practice');
     }
 
+    public function test_user_can_login_with_remember_me_stores_cookie(): void
+    {
+        $user = Nguoidung::create([
+            'hoten' => 'Remember User',
+            'email' => 'remember@example.com',
+            'matkhau' => Hash::make('Password123@'),
+            'trangthai' => 'active',
+            'vaitro' => 'user',
+        ]);
+
+        $response = $this->post('/login', [
+            'email' => 'remember@example.com',
+            'matkhau' => 'Password123@',
+            'remember' => '1',
+        ]);
+
+        $this->assertAuthenticatedAs($user);
+        $response->assertCookie('remember_email', 'remember@example.com');
+
+        // Khi truy cập lại trang login kèm cookie remember_email
+        $loginPage = $this->withCookie('remember_email', 'remember@example.com')->get('/login');
+        $loginPage->assertOk();
+        $loginPage->assertSee('value="remember@example.com"', false);
+        $loginPage->assertSee('checked', false);
+    }
+
     public function test_admin_can_login_and_redirect_to_admin_dashboard(): void
     {
         $admin = Nguoidung::create([

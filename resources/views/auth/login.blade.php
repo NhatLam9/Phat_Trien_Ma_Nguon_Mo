@@ -6,7 +6,7 @@
 @section('content')
     <div class="auth-card">
         <h1>Đăng nhập DET Practice</h1>
-        <p class="subtitle">Chào mừng bạn quay trở lại! Đăng nhập để tiếp tục luyện tập.</p>
+        <p class="subtitle">Chào mừng bạn ! Đăng nhập để tiếp tục luyện tập.</p>
 
         @if ($errors->has('email'))
             <div class="alert-error">{{ $errors->first('email') }}</div>
@@ -15,14 +15,27 @@
         <form method="POST" action="{{ route('login.submit') }}">
             @csrf
 
+            @php
+                $savedEmail = old('email', $rememberedEmail ?? Cookie::get('remember_email'));
+                $hasRemember = old('remember') || !empty($rememberedEmail) || Cookie::has('remember_email');
+            @endphp
+
             <div class="form-group">
                 <label for="email">Địa chỉ Email</label>
-                <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="example@domain.com" required autofocus>
+                <input type="email" id="email" name="email" value="{{ $savedEmail }}" placeholder="example@domain.com" required {{ empty($savedEmail) ? 'autofocus' : '' }}>
             </div>
 
             <div class="form-group">
                 <label for="matkhau">Mật khẩu</label>
-                <input type="password" id="matkhau" name="matkhau" placeholder="Nhập mật khẩu" required>
+                <div class="password-field-wrapper">
+                    <input type="password" id="matkhau" name="matkhau" placeholder="Nhập mật khẩu" required {{ !empty($savedEmail) ? 'autofocus' : '' }}>
+                    <button type="button" class="btn-toggle-eye" onclick="togglePasswordVisibility('matkhau', this)" title="Hiện mật khẩu" tabindex="-1">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
                 @error('matkhau')
                     <div class="error-message">{{ $message }}</div>
                 @enderror
@@ -30,7 +43,7 @@
 
             <div class="checkbox-row">
                 <label>
-                    <input type="checkbox" name="remember"> Ghi nhớ đăng nhập
+                    <input type="checkbox" name="remember" value="1" {{ $hasRemember ? 'checked' : '' }}> Ghi nhớ đăng nhập
                 </label>
                 <a href="{{ route('password.request') }}">Quên mật khẩu?</a>
             </div>

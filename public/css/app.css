@@ -319,3 +319,46 @@ footer.app-footer {
     }
 }
 
+/* Password field with show/hide eye toggle button */
+.password-field-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.password-field-wrapper input {
+    width: 100%;
+    padding-right: 42px !important;
+}
+
+.password-field-wrapper .btn-toggle-eye {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    border-radius: 6px;
+    transition: color 0.15s, background-color 0.15s;
+    outline: none;
+    line-height: 1;
+}
+
+.password-field-wrapper .btn-toggle-eye:hover {
+    color: #1e293b;
+    background-color: #f1f5f9;
+}
+
+/* Enable native browser reveal where supported */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: inline;
+}
+

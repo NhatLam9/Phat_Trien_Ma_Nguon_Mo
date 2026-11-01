@@ -24,6 +24,7 @@ class LoginRequest extends FormRequest
         return [
             'email' => ['required', 'email'],
             'matkhau' => ['required', 'string'],
+            'remember' => ['nullable'],
         ];
     }
 
