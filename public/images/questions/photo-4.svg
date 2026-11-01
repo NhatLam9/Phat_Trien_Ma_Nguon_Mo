@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520" role="img" aria-label="A picnic in a park">
+  <rect width="800" height="520" fill="#dff3ff"/>
+  <circle cx="660" cy="90" r="46" fill="#ffe28a"/>
+  <path d="M0 330 Q160 285 330 325 T800 310 V520 H0Z" fill="#8fd36b"/>
+  <path d="M0 390 Q220 350 430 390 T800 380 V520 H0Z" fill="#67b84f"/>
+  <rect x="105" y="195" width="24" height="170" rx="8" fill="#8b5a2b"/>
+  <circle cx="117" cy="170" r="70" fill="#3f9b45"/>
+  <circle cx="70" cy="200" r="48" fill="#4caf50"/>
+  <circle cx="160" cy="205" r="52" fill="#4caf50"/>
+  <rect x="300" y="370" width="230" height="95" rx="8" fill="#e85d75"/>
+  <path d="M300 395 H530 M300 420 H530 M340 370 V465 M390 370 V465 M440 370 V465 M490 370 V465" stroke="#fff3f5" stroke-width="8"/>
+  <rect x="470" y="335" width="70" height="50" rx="8" fill="#c98b4a"/>
+  <path d="M475 335 Q505 300 535 335" fill="none" stroke="#a56a32" stroke-width="8"/>
+  <circle cx="365" cy="335" r="22" fill="#f2c49b"/>
+  <path d="M338 395 Q365 345 392 395" fill="#4c7dd6"/>
+  <circle cx="435" cy="340" r="22" fill="#8d5a3b"/>
+  <path d="M408 400 Q435 350 462 400" fill="#f0a23a"/>
+  <path d="M230 120 q18 -18 36 0 M270 100 q18 -18 36 0" fill="none" stroke="#4b5563" stroke-width="4" stroke-linecap="round"/>
+</svg>

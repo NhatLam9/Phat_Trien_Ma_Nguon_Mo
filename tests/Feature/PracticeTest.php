@@ -28,6 +28,44 @@ class PracticeTest extends TestCase
             'trangthai' => 'active',
             'vaitro' => 'user',
         ]);
+
+        if (Schema::hasTable('loaicauhoi')) {
+            DB::table('loaicauhoi')->insertOrIgnore([
+                'id' => 1,
+                'ma' => 'read_aloud',
+                'ten' => 'Read Aloud',
+                'kynang' => 'speaking',
+                'cachcham' => 'ai',
+                'is_active' => 1,
+            ]);
+        }
+
+        if (Schema::hasTable('cauhoi')) {
+            DB::table('cauhoi')->insertOrIgnore([
+                'id' => 1,
+                'loai_id' => 1,
+                'noidung' => 'Please read the text aloud.',
+                'dokho' => 5,
+                'diem' => 10,
+                'trangthai' => 'published',
+            ]);
+            DB::table('cauhoi')->insertOrIgnore([
+                'id' => 5,
+                'loai_id' => 1,
+                'noidung' => 'History question.',
+                'dokho' => 5,
+                'diem' => 10,
+                'trangthai' => 'published',
+            ]);
+            DB::table('cauhoi')->insertOrIgnore([
+                'id' => 99,
+                'loai_id' => 1,
+                'noidung' => 'Bookmark question.',
+                'dokho' => 5,
+                'diem' => 10,
+                'trangthai' => 'published',
+            ]);
+        }
     }
 
     /**
@@ -47,7 +85,7 @@ class PracticeTest extends TestCase
             });
         }
 
-        DB::table('loaicauhoi')->insert([
+        DB::table('loaicauhoi')->insertOrIgnore([
             'ma' => 'read_aloud',
             'ten' => 'Read Aloud',
             'kynang' => 'speaking',

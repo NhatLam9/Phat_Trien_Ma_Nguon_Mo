@@ -10,6 +10,11 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             NguoidungSeeder::class,
+            AdminNguoidungSeeder::class,
+            AdminCatalogSeeder::class,
+            MockTestDataSeeder::class,
+            FullMockTestSeeder::class,
+            OperationalQuestionBankSeeder::class,
             LuyentapSeeder::class,
             DanhdauSeeder::class,
         ]);

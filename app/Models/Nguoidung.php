@@ -13,7 +13,7 @@ class Nguoidung extends Authenticatable implements MustVerifyEmail
     use Notifiable;
 
     protected $table = 'nguoidung';
-    
+
     // Khớp với cấu trúc CSDL remake.sql (dùng ngaytao và ngaycapnhat thay vì timestamps mặc định)
     const CREATED_AT = 'ngaytao';
     const UPDATED_AT = 'ngaycapnhat';

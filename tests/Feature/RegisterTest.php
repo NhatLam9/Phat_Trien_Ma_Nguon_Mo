@@ -34,7 +34,7 @@ class RegisterTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect('/');
+        $response->assertRedirect(route('practice.index'));
     }
 
     public function test_registration_fails_when_name_is_missing(): void

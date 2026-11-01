@@ -19,6 +19,36 @@ class PracticeScoringTest extends TestCase
     {
         parent::setUp();
         $this->service = new ScoringService();
+
+        if (Schema::hasTable('loaicauhoi')) {
+            DB::table('loaicauhoi')->insertOrIgnore([
+                'id' => 1,
+                'ma' => 'multiple_choice',
+                'ten' => 'Multiple Choice',
+                'kynang' => 'reading',
+                'cachcham' => 'auto',
+                'is_active' => 1,
+            ]);
+        }
+
+        if (Schema::hasTable('cauhoi')) {
+            DB::table('cauhoi')->insertOrIgnore([
+                'id' => 50,
+                'loai_id' => 1,
+                'noidung' => 'Sample Question 50',
+                'dokho' => 5,
+                'diem' => 10,
+                'trangthai' => 'published',
+            ]);
+            DB::table('cauhoi')->insertOrIgnore([
+                'id' => 60,
+                'loai_id' => 1,
+                'noidung' => 'Sample Question 60',
+                'dokho' => 5,
+                'diem' => 10,
+                'trangthai' => 'published',
+            ]);
+        }
     }
 
     /**

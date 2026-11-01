@@ -23,7 +23,7 @@ class GoogleController extends Controller
     {
         try {
             $googleUser = Socialite::driver('google')->user();
-            
+
             // Kiểm tra xem người dùng đã tồn tại bằng google_id hoặc email chưa
             $user = Nguoidung::where('google_id', $googleUser->getId())
                              ->orWhere('email', $googleUser->getEmail())
@@ -55,7 +55,11 @@ class GoogleController extends Controller
             Auth::login($user);
             $request->session()->regenerate();
 
-            return redirect()->intended('/practice');
+            $fallback = $user->vaitro === 'admin'
+                ? route('admin.dashboard')
+                : route('practice.index');
+
+            return redirect()->intended($fallback);
         } catch (\Exception $e) {
             return redirect()->route('login')->withErrors(['email' => 'Đăng nhập Google thất bại. Vui lòng thử lại.']);
         }

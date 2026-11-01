@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520" role="img" aria-label="A busy outdoor market">
+  <rect width="800" height="520" fill="#dff3ff"/>
+  <rect y="330" width="800" height="190" fill="#d9c3a9"/>
+  <rect x="60" y="150" width="250" height="180" fill="#fff4d6"/>
+  <path d="M45 150 H325 L300 105 H70Z" fill="#e85d75"/>
+  <path d="M45 150 H325 M70 150 V330 M120 150 V330 M170 150 V330 M220 150 V330 M270 150 V330" stroke="#b23a4e" stroke-width="4"/>
+  <rect x="90" y="250" width="70" height="60" rx="6" fill="#b9774b"/>
+  <circle cx="115" cy="245" r="18" fill="#f0a23a"/>
+  <circle cx="145" cy="245" r="18" fill="#e85d75"/>
+  <circle cx="130" cy="225" r="18" fill="#8fc93a"/>
+  <rect x="190" y="245" width="80" height="65" rx="6" fill="#b9774b"/>
+  <circle cx="215" cy="240" r="16" fill="#f6d365"/>
+  <circle cx="245" cy="240" r="16" fill="#f6d365"/>
+  <rect x="430" y="130" width="300" height="200" fill="#f8f1e7"/>
+  <path d="M415 130 H745 L715 80 H445Z" fill="#3f8f7a"/>
+  <path d="M415 130 H745 M445 130 V330 M500 130 V330 M555 130 V330 M610 130 V330 M665 130 V330" stroke="#2f6b5c" stroke-width="4"/>
+  <rect x="455" y="245" width="70" height="65" rx="6" fill="#b9774b"/>
+  <circle cx="480" cy="240" r="17" fill="#e85d75"/>
+  <circle cx="510" cy="240" r="17" fill="#8fc93a"/>
+  <rect x="560" y="245" width="110" height="65" rx="6" fill="#b9774b"/>
+  <circle cx="590" cy="240" r="16" fill="#f0a23a"/>
+  <circle cx="625" cy="240" r="16" fill="#f0a23a"/>
+  <circle cx="660" cy="240" r="16" fill="#f0a23a"/>
+  <circle cx="370" cy="390" r="26" fill="#f2c49b"/>
+  <path d="M335 480 Q370 405 405 480" fill="#4c7dd6"/>
+  <circle cx="505" cy="400" r="26" fill="#8d5a3b"/>
+  <path d="M470 490 Q505 415 540 490" fill="#d95f73"/>
+  <circle cx="650" cy="395" r="26" fill="#e0a87e"/>
+  <path d="M615 485 Q650 410 685 485" fill="#3f8f7a"/>
+</svg>

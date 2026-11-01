@@ -1,20 +1,24 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\Practice\PracticeController;
+use App\Http\Controllers\MockTest\MockTestController;
+use App\Http\Controllers\MockTest\MockTestResultController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes - DET Practice System
-| Phân hệ Tài khoản (TK) & Luyện tập (LT) do TV1 (Thế Hào) phụ trách
+| Phân hệ Tài khoản (TK), Luyện tập (LT) [TV1] & Thi thử Mock Test [TV2]
 |--------------------------------------------------------------------------
 */
 
@@ -24,7 +28,7 @@ Route::get('/', function () {
 });
 
 // =========================================================================
-// GIAI ĐOẠN 1: TÀI KHOẢN (TK)
+// PHÂN HỆ TÀI KHOẢN (AUTHENTICATION - TV1)
 // =========================================================================
 
 // TK03: Đăng nhập (Login)
@@ -45,8 +49,8 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 // TK06: Quên và đặt lại mật khẩu
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
-Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
-Route::post('/reset-password', [ForgotPasswordController::class, 'reset'])->name('password.update');
+Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 // TK02: Xác minh Email (Email Verification)
 Route::middleware('auth')->group(function () {
@@ -63,13 +67,13 @@ Route::middleware('auth')->group(function () {
 });
 
 // =========================================================================
-// GIAI ĐOẠN 2: LUYỆN TẬP (LT) - Bắt buộc người dùng đăng nhập
+// PHÂN HỆ LUYỆN TẬP (PRACTICE - TV1) - Bắt buộc người dùng đăng nhập
 // =========================================================================
 Route::middleware('auth')->prefix('practice')->name('practice.')->group(function () {
     // LT01: Danh sách các dạng bài luyện tập DET nhóm theo 4 kỹ năng
     Route::get('/', [PracticeController::class, 'index'])->name('index');
 
-    // LT02 & LT09: Chọn câu luyện tập có bộ lọc dạng bài, độ khó, từ khóa tìm kiếm
+    // LT02 & LT09: Chọn câu luyện tập có bộ lọc dạng bài, chủ đề, độ khó, từ khóa tìm kiếm
     Route::get('/select/{loai_id?}', [PracticeController::class, 'select'])->name('select');
 
     // LT08 & LT09: Lịch sử luyện tập và tìm kiếm lịch sử
@@ -90,4 +94,45 @@ Route::middleware('auth')->prefix('practice')->name('practice.')->group(function
 
     // LT06: Chuyển bài Writing/Speaking sang cho AI chấm
     Route::post('/result/{id}/ai', [PracticeController::class, 'submitAI'])->name('ai');
+});
+
+// =========================================================================
+// PHÂN HỆ THI THỬ (MOCK TEST - TV2)
+// =========================================================================
+Route::get('/mock-test/{id}/result', [MockTestResultController::class, 'show'])
+    ->whereNumber('id')
+    ->name('mock-test.result');
+
+// MT01 - Danh sách đề thi công khai
+Route::get('/mock-test', [MockTestController::class, 'index'])
+    ->name('mock-test.index');
+
+Route::middleware('auth')->group(function () {
+    // MT01 - Bắt đầu hoặc tiếp tục bài thi
+    Route::post('/mock-test/start', [MockTestController::class, 'start'])
+        ->name('mock-test.start');
+
+    // MT02 / MT04 - Hiển thị phiên thi
+    Route::get('/mock-test/{id}', [MockTestController::class, 'show'])
+        ->whereNumber('id')->name('mock-test.show');
+
+    // MT02 - Cấp câu hỏi
+    Route::post('/mock-test/{id}/question', [MockTestController::class, 'capCauHoi'])
+        ->whereNumber('id')->name('mock-test.question.next');
+
+    // MT02 - Bỏ qua câu hỏi
+    Route::post('/mock-test/{id}/skip', [MockTestController::class, 'skip'])
+        ->whereNumber('id')->name('mock-test.skip');
+
+    // MT03 - Nộp câu trả lời
+    Route::post('/mock-test/{id}/submit', [MockTestController::class, 'submit'])
+        ->whereNumber('id')->name('mock-test.submit');
+
+    // MT05 - Chốt bài thi
+    Route::post('/mock-test/{id}/finish', [MockTestController::class, 'finish'])
+        ->whereNumber('id')->name('mock-test.finish');
+
+    // MT08 / MT04 - Bỏ dở hoặc xử lý hết giờ
+    Route::post('/mock-test/{id}/abandon', [MockTestController::class, 'abandon'])
+        ->whereNumber('id')->name('mock-test.abandon');
 });

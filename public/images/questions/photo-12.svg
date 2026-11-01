@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520" role="img" aria-label="A teacher and students in a classroom">
+  <rect width="800" height="520" fill="#e8eef7"/>
+  <rect x="60" y="45" width="680" height="180" rx="8" fill="#2f6b5c"/>
+  <path d="M100 100 H250 M100 140 H350 M100 180 H300" stroke="#d7f0e8" stroke-width="7" stroke-linecap="round"/>
+  <rect x="650" y="70" width="60" height="60" rx="30" fill="#fff"/>
+  <path d="M680 85 V115 M665 100 H695" stroke="#4b5563" stroke-width="5" stroke-linecap="round"/>
+  <rect x="90" y="350" width="180" height="24" rx="8" fill="#9a6b45"/>
+  <rect x="110" y="374" width="16" height="90" fill="#7a5235"/>
+  <rect x="235" y="374" width="16" height="90" fill="#7a5235"/>
+  <rect x="310" y="350" width="180" height="24" rx="8" fill="#9a6b45"/>
+  <rect x="330" y="374" width="16" height="90" fill="#7a5235"/>
+  <rect x="455" y="374" width="16" height="90" fill="#7a5235"/>
+  <rect x="530" y="350" width="180" height="24" rx="8" fill="#9a6b45"/>
+  <rect x="550" y="374" width="16" height="90" fill="#7a5235"/>
+  <rect x="675" y="374" width="16" height="90" fill="#7a5235"/>
+  <circle cx="180" cy="300" r="24" fill="#f2c49b"/>
+  <path d="M150 350 Q180 290 210 350" fill="#4c7dd6"/>
+  <circle cx="400" cy="300" r="24" fill="#8d5a3b"/>
+  <path d="M370 350 Q400 290 430 350" fill="#d95f73"/>
+  <circle cx="620" cy="300" r="24" fill="#e0a87e"/>
+  <path d="M590 350 Q620 290 650 350" fill="#3f8f7a"/>
+  <circle cx="500" cy="190" r="28" fill="#f2c49b"/>
+  <path d="M465 270 Q500 195 535 270" fill="#8b6a4d"/>
+</svg>

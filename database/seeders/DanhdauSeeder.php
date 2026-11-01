@@ -18,7 +18,7 @@ class DanhdauSeeder extends Seeder
         }
 
         $user = Nguoidung::where('email', 'lam@example.com')->first();
-        
+
         // Lấy ID câu hỏi đầu tiên có sẵn trong bảng cauhoi (nếu có)
         $firstCauhoiId = DB::table('cauhoi')->value('id');
 

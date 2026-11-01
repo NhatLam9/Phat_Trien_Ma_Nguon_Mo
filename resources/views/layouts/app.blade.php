@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'DET Practice - Nền tảng luyện thi Duolingo English Test')</title>
     
-    <!-- CSS nền hệ thống do TV1 cung cấp dùng chung cho toàn bộ dự án -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
     
     @stack('styles')
 </head>
-<body>
+<body class="@yield('body_class', 'app-body')">
 
     <!-- HEADER / NAVIGATION THEO VAI TRÒ (Đúng ngữ cảnh: Khách chỉ gồm Trang chủ, Đăng nhập, Đăng ký) -->
     <header class="app-header">
@@ -26,12 +30,11 @@
                 <a href="{{ route('practice.index') }}" class="{{ request()->is('practice*') && !request()->is('practice/bookmarks*') && !request()->is('practice/history*') ? 'active' : '' }}">Luyện tập</a>
                 <a href="{{ route('practice.bookmarks') }}" class="{{ request()->is('practice/bookmarks*') ? 'active' : '' }}">Câu hỏi đã lưu</a>
                 <a href="{{ route('practice.history') }}" class="{{ request()->is('practice/history*') ? 'active' : '' }}">Lịch sử</a>
-                <a href="{{ url('/mock-test') }}" class="{{ request()->is('mock-test*') ? 'active' : '' }}">Mock Test</a>
-                <a href="{{ url('/dashboard') }}" class="{{ request()->is('dashboard*') ? 'active' : '' }}">Dashboard</a>
+                <a href="{{ route('mock-test.index') }}" class="{{ request()->is('mock-test*') ? 'active' : '' }}">Thi thử</a>
 
-                @if(Auth::user()->isAdmin())
+                @if(Auth::user()->vaitro === 'admin' || Auth::user()->isAdmin())
                     <!-- Menu dành riêng cho Quản trị viên (Admin) -->
-                    <a href="{{ url('/admin') }}" class="{{ request()->is('admin*') ? 'active' : '' }}" style="color: #7e22ce; font-weight: 700;">
+                    <a href="{{ route('admin.dashboard') }}" class="{{ request()->is('admin*') ? 'active' : '' }}" style="color: #7e22ce; font-weight: 700;">
                         Quản trị <span class="badge badge-admin">Admin</span>
                     </a>
                 @endif
@@ -50,7 +53,7 @@
                 </form>
             </div>
         @else
-            <!-- Thanh điều hướng cho Khách (chưa đăng nhập) chỉ gồm: Trang chủ, Đăng nhập, Đăng ký -->
+            <!-- Thanh điều hướng cho Khách (chưa đăng nhập) đúng ngữ cảnh: Trang chủ, Đăng nhập, Đăng ký -->
             <nav class="main-nav">
                 <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a>
                 <a href="{{ route('login') }}" class="{{ request()->is('login') ? 'active' : '' }}">Đăng nhập</a>
@@ -60,7 +63,7 @@
     </header>
 
     <!-- MAIN CONTENT -->
-    <main class="app-main">
+    <main class="app-main @yield('main_class')">
         <!-- Thông báo Flash Messages (Thuần HTML/CSS, không có JavaScript) -->
         @if (session('status'))
             <div class="alert alert-success">
@@ -93,8 +96,8 @@
     <!-- FOOTER -->
     <footer class="app-footer">
         <div class="footer-inner">
-            <p>&copy; 2026 DETPractice. Dự án học tập môn Phát Triển Mã Nguồn Mở (không liên kết với Duolingo).</p>
-            <p class="footer-credits">Phát triển bởi: Trần Thế Hào (TV1) • Võ Nhật Lâm (TV2) • Đoàn Phi Phong (TV3)</p>
+            <p>&copy; {{ date('Y') }} DETPractice. Dự án môn Phát Triển Mã Nguồn Mở.</p>
+            <p class="footer-credits">Nhóm phát triển: Trần Thế Hào (TV1) • Võ Nhật Lâm (TV2) • Đoàn Phi Phong (TV3)</p>
         </div>
     </footer>
 
