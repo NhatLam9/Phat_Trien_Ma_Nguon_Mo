@@ -10,7 +10,7 @@
                 <h2>Import hoàn tất</h2>
                 <p class="admin-muted">File: <strong>{{ $file_name }}</strong></p>
             </div>
-            <a href="{{ route('admin.questions.import.create') }}" class="admin-btn">
+            <a href="{{ route('admin.questions.import.create') }}" class="admin-btn admin-btn--ghost">
                 Import file khác
             </a>
         </div>
@@ -62,6 +62,10 @@
             Câu hỏi mặc định được import ở trạng thái <code>draft</code> nếu file không ghi rõ trạng thái.
             Hãy kiểm tra và publish khi dữ liệu đã sẵn sàng.
         </p>
-        <a href="{{ route('admin.dashboard') }}" class="admin-btn admin-btn--ghost">Về tổng quan</a>
+
+        <div class="admin-form__actions">
+            <a href="{{ route('admin.questions.index') }}" class="admin-btn">Duyệt câu hỏi vừa import</a>
+            <a href="{{ route('admin.dashboard') }}" class="admin-btn admin-btn--ghost">Về tổng quan</a>
+        </div>
     </div>
 @endsection

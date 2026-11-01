@@ -17,10 +17,6 @@
             </a>
         </div>
 
-        @if (session('error'))
-            <div class="admin-alert admin-alert--error">{{ session('error') }}</div>
-        @endif
-
         <div class="admin-stats">
             <div class="admin-stat">
                 <span>Câu hỏi</span>

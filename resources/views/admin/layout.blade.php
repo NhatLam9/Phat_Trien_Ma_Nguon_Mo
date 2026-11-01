@@ -19,7 +19,8 @@
 
             <nav class="admin-nav">
                 <a class="admin-nav__item {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">Tổng quan</a>
-                <a class="admin-nav__item {{ request()->routeIs('admin.questions.*') ? 'is-active' : '' }}" href="{{ route('admin.questions.import.create') }}">Câu hỏi / Import</a>
+                <a class="admin-nav__item {{ request()->routeIs('admin.questions.index') || request()->routeIs('admin.questions.show') ? 'is-active' : '' }}" href="{{ route('admin.questions.index') }}">Ngân hàng câu hỏi</a>
+                <a class="admin-nav__item {{ request()->routeIs('admin.questions.import.*') ? 'is-active' : '' }}" href="{{ route('admin.questions.import.create') }}">Import JSON</a>
                 <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Dạng bài</span>
                 <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Chủ đề</span>
                 <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Đề thi</span>
@@ -35,6 +36,37 @@
             </header>
 
             <main class="admin-content">
+                @if (session('success'))
+                    <div class="admin-alert admin-alert--success">{{ session('success') }}</div>
+                @endif
+
+                @if (session('error'))
+                    <div class="admin-alert admin-alert--error">{{ session('error') }}</div>
+                @endif
+
+                @php($bagLoi = session('errors'))
+                @if ($bagLoi && $bagLoi->any())
+                    <div class="admin-alert admin-alert--error">
+                        <strong>Vui lòng kiểm tra lại:</strong>
+                        <ul>
+                            @foreach ($bagLoi->all() as $loi)
+                                <li>{{ $loi }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                @if (session('bulk_skipped'))
+                    <div class="admin-alert admin-alert--warning">
+                        <strong>Một số câu hỏi bị bỏ qua:</strong>
+                        <ul>
+                            @foreach (session('bulk_skipped') as $boQua)
+                                <li><code>{{ $boQua['ma'] }}</code>: {{ $boQua['ly_do'] }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 @yield('content')
             </main>
         </div>

@@ -20,9 +20,9 @@ class DashboardController extends Controller
         $thongke = [
             'nguoidung' => $this->countTable('nguoidung'),
             'cauhoi' => $this->countTable('cauhoi'),
-            'cauhoi_published' => Schema::hasTable('cauhoi')
-                ? DB::table('cauhoi')->where('trangthai', 'published')->count()
-                : 0,
+            'cauhoi_published' => $this->countWhere('cauhoi', 'trangthai', 'published'),
+            'cauhoi_review' => $this->countWhere('cauhoi', 'trangthai', 'review'),
+            'cauhoi_draft' => $this->countWhere('cauhoi', 'trangthai', 'draft'),
             'dethi' => $this->countTable('dethi'),
             'lanthi' => $this->countTable('lanthi'),
             'ailog' => $this->countTable('ailog'),
@@ -37,5 +37,12 @@ class DashboardController extends Controller
     private function countTable(string $table): int
     {
         return Schema::hasTable($table) ? DB::table($table)->count() : 0;
+    }
+
+    private function countWhere(string $table, string $cot, string $giaTri): int
+    {
+        return Schema::hasTable($table)
+            ? DB::table($table)->where($cot, $giaTri)->count()
+            : 0;
     }
 }
