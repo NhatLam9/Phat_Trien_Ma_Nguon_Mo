@@ -13,6 +13,7 @@ use App\Http\Controllers\MockTest\MockTestController;
 use App\Http\Controllers\MockTest\MockTestDashboardController;
 use App\Http\Controllers\MockTest\MockTestHistoryController;
 use App\Http\Controllers\MockTest\MockTestResultController;
+use App\Http\Controllers\Certificate\CertificateController;
 
 // Trang chu
 Route::view('/', 'welcome');
@@ -56,6 +57,12 @@ Route::middleware('auth')->group(function () {
     // MT07 - Lich su thi cua nguoi dung dang dang nhap
     Route::get('/mock-test/history', [MockTestHistoryController::class, 'index'])
         ->name('mock-test.history');
+
+    // MT09 - Cap va xem chung chi cho luot thi cua nguoi dung dang nhap
+    Route::post('/mock-test/{id}/certificate', [CertificateController::class, 'issue'])
+        ->whereNumber('id')->name('certificate.issue');
+    Route::get('/certificate/{id}', [CertificateController::class, 'show'])
+        ->whereNumber('id')->name('certificate.show');
 
     // DB01-DB05 - Dashboard tien do va thong ke cua nguoi hoc
     Route::get('/learning-dashboard', [MockTestDashboardController::class, 'index'])

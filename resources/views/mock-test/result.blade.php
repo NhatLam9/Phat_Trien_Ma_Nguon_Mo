@@ -38,6 +38,19 @@
         <div class="mr-heading-actions">
             <button type="button" class="mr-btn mr-btn--outline" onclick="window.print()">⤓ In / Lưu PDF</button>
             <button type="button" class="mr-btn mr-btn--outline" id="mr-share">Chia sẻ</button>
+            @if ($lanThi->tongdiem !== null
+                && $lanThi->tongdiem >= 10 && $lanThi->tongdiem <= 160
+                && $lanThi->literacy !== null && $lanThi->literacy >= 10 && $lanThi->literacy <= 160
+                && $lanThi->comprehension !== null && $lanThi->comprehension >= 10 && $lanThi->comprehension <= 160
+                && $lanThi->conversation !== null && $lanThi->conversation >= 10 && $lanThi->conversation <= 160
+                && $lanThi->production !== null && $lanThi->production >= 10 && $lanThi->production <= 160)
+                <form method="POST" action="{{ route('certificate.issue', ['id' => $lanThi->id]) }}">
+                    @csrf
+                    <button class="mr-btn mr-btn--primary" type="submit">Cấp / xem chứng chỉ</button>
+                </form>
+            @else
+                <span class="mr-pill mr-pill--neutral" title="Cần điểm DET tổng và đủ bốn kỹ năng đã được lưu.">Chứng chỉ chưa sẵn sàng</span>
+            @endif
         </div>
     </div>
 
