@@ -1,65 +1,204 @@
-.auth-wrapper {
+/* ==========================================================================
+   DET Practice - Auth Pages CSS (Đăng nhập, Đăng ký, Quên mật khẩu, Xác minh)
+   ========================================================================== */
+
+/* Căn giữa toàn bộ giao diện Auth */
+body.auth-body {
+    background-color: #f8fafc;
+    min-height: 100vh;
     display: flex;
+    flex-direction: column;
+}
+
+body.auth-body .app-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 160px);
-    padding: 30px 16px;
+    min-height: calc(100vh - 180px);
+    padding: 40px 16px;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
 }
 
+/* Thẻ Auth Card */
 .auth-card {
     background: #ffffff;
-    padding: 36px 32px;
-    border-radius: 14px;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
     width: 100%;
-    max-width: 420px;
-    box-sizing: border-box;
+    max-width: 440px;
+    margin: 20px auto;
+    padding: 40px 36px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
     border: 1px solid #e2e8f0;
+    box-sizing: border-box;
 }
 
-.auth-header {
-    text-align: center;
-    margin-bottom: 24px;
-}
-
-.auth-header h1 {
+.auth-card h1 {
     font-size: 24px;
     font-weight: 800;
     color: #1e293b;
+    text-align: center;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.auth-card p.subtitle,
+.auth-card > p {
+    color: #64748b;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.auth-card .icon {
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+/* Form controls */
+.auth-card .form-group {
+    margin-bottom: 18px;
+    text-align: left;
+}
+
+.auth-card label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
     margin-bottom: 6px;
 }
 
-.auth-header p {
-    font-size: 14px;
-    color: #64748b;
+.auth-card input[type="text"],
+.auth-card input[type="email"],
+.auth-card input[type="password"] {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14.5px;
+    color: #1e293b;
+    background: #ffffff;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.auth-divider {
+.auth-card input[type="text"]:focus,
+.auth-card input[type="email"]:focus,
+.auth-card input[type="password"]:focus {
+    border-color: #00b86b;
+    box-shadow: 0 0 0 3px rgba(0, 184, 107, 0.15);
+}
+
+/* Checkbox & Quên mật khẩu row */
+.auth-card .checkbox-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 16px 0 20px;
+    font-size: 13.5px;
+}
+
+.auth-card .checkbox-row label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0;
+    font-weight: 500;
+    color: #475569;
+    cursor: pointer;
+}
+
+.auth-card .checkbox-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #00b86b;
+    cursor: pointer;
+    margin: 0;
+}
+
+.auth-card .checkbox-row a {
+    color: #00b86b;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.15s;
+}
+
+.auth-card .checkbox-row a:hover {
+    color: #009e5b;
+    text-decoration: underline;
+}
+
+/* Nút Submit Primary */
+.auth-card .btn-primary,
+.auth-card button[type="submit"].btn-primary {
+    width: 100%;
+    background: #00b86b;
+    color: #ffffff;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.05s;
+    display: block;
+    text-align: center;
+    box-sizing: border-box;
+    box-shadow: 0 2px 6px rgba(0, 184, 107, 0.2);
+}
+
+.auth-card .btn-primary:hover,
+.auth-card button[type="submit"].btn-primary:hover {
+    background: #009e5b;
+}
+
+.auth-card .btn-primary:active,
+.auth-card button[type="submit"].btn-primary:active {
+    transform: scale(0.99);
+}
+
+/* Đường phân cách HOẶC */
+.auth-card .divider,
+.auth-card .auth-divider {
     display: flex;
     align-items: center;
     text-align: center;
-    margin: 20px 0;
+    margin: 22px 0;
     color: #94a3b8;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.auth-divider::before,
-.auth-divider::after {
+.auth-card .divider::before,
+.auth-card .divider::after,
+.auth-card .auth-divider::before,
+.auth-card .auth-divider::after {
     content: '';
     flex: 1;
     border-bottom: 1px solid #e2e8f0;
 }
 
-.auth-divider:not(:empty)::before {
-    margin-right: .6em;
+.auth-card .divider::before,
+.auth-card .auth-divider::before {
+    margin-right: 12px;
 }
 
-.auth-divider:not(:empty)::after {
-    margin-left: .6em;
+.auth-card .divider::after,
+.auth-card .auth-divider::after {
+    margin-left: 12px;
 }
 
-.btn-google {
+/* Nút Google */
+.auth-card .btn-google {
     width: 100%;
     display: flex;
     align-items: center;
@@ -68,34 +207,81 @@
     background: #ffffff;
     color: #334155;
     border: 1px solid #cbd5e1;
-    padding: 10px;
+    padding: 11px 16px;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: 14.5px;
     font-weight: 600;
     cursor: pointer;
     text-decoration: none;
     box-sizing: border-box;
-    transition: background 0.15s, border-color 0.15s;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 
-.btn-google:hover {
+.auth-card .btn-google:hover {
     background: #f8fafc;
     border-color: #94a3b8;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
-.auth-footer {
+/* Liên kết chân trang auth */
+.auth-card .auth-links,
+.auth-card .auth-footer {
     margin-top: 24px;
-    font-size: 13px;
+    font-size: 14px;
     text-align: center;
     color: #64748b;
 }
 
-.auth-footer a {
+.auth-card .auth-links a,
+.auth-card .auth-footer a {
     color: #00b86b;
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 700;
+    transition: color 0.15s;
 }
 
-.auth-footer a:hover {
+.auth-card .auth-links a:hover,
+.auth-card .auth-footer a:hover {
+    color: #009e5b;
     text-decoration: underline;
+}
+
+/* Thông báo lỗi & trạng thái */
+.auth-card .error-message,
+.auth-card .invalid-feedback {
+    color: #dc2626;
+    font-size: 13px;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+.auth-card .alert-error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.auth-card .status-message {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 18px;
+    line-height: 1.5;
+    text-align: left;
+}
+
+.auth-card .password-hint {
+    display: block;
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 6px;
+    line-height: 1.4;
 }
