@@ -8,22 +8,24 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use App\Models\Nguoidung;
+use App\Http\Requests\LoginRequest;
 
 class LoginController extends Controller
 {
-    // Hiển thị form đăng nhập
+    /**
+     * Hiển thị form đăng nhập
+     */
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    // Xử lý đăng nhập
-    public function login(Request $request)
+    /**
+     * Xử lý đăng nhập sử dụng LoginRequest
+     */
+    public function login(LoginRequest $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'matkhau' => ['required'],
-        ]);
+        $credentials = $request->validated();
 
         $throttleKey = Str::transliterate(Str::lower($credentials['email']) . '|' . $request->ip());
 
@@ -56,12 +58,14 @@ class LoginController extends Controller
         ])->onlyInput('email');
     }
 
-    // Đăng xuất
+    /**
+     * Đăng xuất và đưa về trang chủ
+     */
     public function logout(Request $request)
     {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/login');
+        return redirect('/');
     }
 }

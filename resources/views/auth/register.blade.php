@@ -15,6 +15,7 @@
         .btn-primary { width: 100%; background: #2cb67d; color: white; border: none; padding: 10px; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
         .btn-primary:hover { background: #249667; }
         .error-message { color: #dc2626; font-size: 13px; margin-top: 4px; }
+        .password-hint { display: block; font-size: 12px; color: #64748b; margin-top: 5px; line-height: 1.4; }
         .auth-links { margin-top: 20px; font-size: 13px; text-align: center; color: #64748b; }
         .auth-links a { color: #2cb67d; text-decoration: none; font-weight: 600; }
         .auth-links a:hover { text-decoration: underline; }
@@ -44,7 +45,10 @@
 
             <div class="form-group">
                 <label for="matkhau">Mật khẩu</label>
-                <input type="password" id="matkhau" name="matkhau" placeholder="Ít nhất 6 ký tự" required>
+                <input type="password" id="matkhau" name="matkhau" placeholder="Tối thiểu 8 ký tự (hoa, thường, số, ký tự đặc biệt)" required>
+                <small class="password-hint">
+                    🔒 Yêu cầu: tối thiểu 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt (VD: Abc@1234).
+                </small>
                 @error('matkhau')
                     <div class="error-message">{{ $message }}</div>
                 @enderror
