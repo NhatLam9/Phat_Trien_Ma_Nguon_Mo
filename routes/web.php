@@ -10,6 +10,8 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\MockTest\MockTestController;
+use App\Http\Controllers\MockTest\MockTestDashboardController;
+use App\Http\Controllers\MockTest\MockTestHistoryController;
 use App\Http\Controllers\MockTest\MockTestResultController;
 
 // Trang chu
@@ -50,6 +52,14 @@ Route::get('/mock-test', [MockTestController::class, 'index'])
 
 // Cac chuc nang yeu cau dang nhap
 Route::middleware('auth')->group(function () {
+
+    // MT07 - Lich su thi cua nguoi dung dang dang nhap
+    Route::get('/mock-test/history', [MockTestHistoryController::class, 'index'])
+        ->name('mock-test.history');
+
+    // DB01-DB05 - Dashboard tien do va thong ke cua nguoi hoc
+    Route::get('/learning-dashboard', [MockTestDashboardController::class, 'index'])
+        ->name('learning.dashboard');
 
     // PRACTICE - Luyen tap
     Route::get('/practice', [PracticeController::class, 'index'])
