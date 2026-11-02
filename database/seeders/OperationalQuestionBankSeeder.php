@@ -368,9 +368,28 @@ class OperationalQuestionBankSeeder extends Seeder
 
         DB::table('cauhoi')->updateOrInsert($attributes, $values);
 
-        return (int) DB::table('cauhoi')
+        $cauhoiId = (int) DB::table('cauhoi')
             ->where($attributes)
             ->value('id');
+
+        $this->damBaoMaCauHoi($cauhoiId);
+
+        return $cauhoiId;
+    }
+
+    /**
+     * Gán mã ổn định q-000001 cho câu hỏi seed nếu chưa có.
+     */
+    private function damBaoMaCauHoi(int $cauhoiId): void
+    {
+        if ($cauhoiId <= 0 || ! Schema::hasColumn('cauhoi', 'ma')) {
+            return;
+        }
+
+        DB::table('cauhoi')
+            ->where('id', $cauhoiId)
+            ->whereNull('ma')
+            ->update(['ma' => 'q-'.str_pad((string) $cauhoiId, 6, '0', STR_PAD_LEFT)]);
     }
 
     private function xoaCauHoiConDoc(int $cauhoiId): void

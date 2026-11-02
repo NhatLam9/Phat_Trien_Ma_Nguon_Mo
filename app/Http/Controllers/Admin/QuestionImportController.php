@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ImportBatch;
 use App\Services\QuestionImportService;
 use Illuminate\Http\Request;
 
@@ -10,7 +11,13 @@ class QuestionImportController extends Controller
 {
     public function create()
     {
-        return view('admin.questions.import');
+        return view('admin.questions.import', [
+            'batches' => ImportBatch::query()
+                ->with('nguoiTao')
+                ->orderByDesc('id')
+                ->limit(10)
+                ->get(),
+        ]);
     }
 
     public function template()
@@ -67,21 +74,34 @@ class QuestionImportController extends Controller
                 ->with('error', 'Phiên import đã hết hạn. Vui lòng chọn lại file.');
         }
 
+        $tenFile = $payload['file_name'] ?? 'file.json';
         $prepared = $service->prepare($payload['json']);
 
         if (! empty($prepared['errors'])) {
             return view('admin.questions.preview', $prepared + [
-                'file_name' => $payload['file_name'] ?? 'file.json',
+                'file_name' => $tenFile,
             ])->with('error', 'File còn lỗi, chưa thể import.');
         }
 
         try {
             $result = $service->import(
                 $prepared,
-                (int) $request->user()->getAuthIdentifier()
+                (int) $request->user()->getAuthIdentifier(),
+                $tenFile
             );
         } catch (\Throwable $exception) {
             report($exception);
+
+            ImportBatch::create([
+                'ten_file' => $tenFile,
+                'nguoitao' => (int) $request->user()->getAuthIdentifier(),
+                'tong_cau' => count($prepared['questions']),
+                'tao_moi' => 0,
+                'cap_nhat' => 0,
+                'so_canhbao' => count($prepared['warnings'] ?? []),
+                'trangthai' => 'failed',
+                'ghichu' => mb_substr($exception->getMessage(), 0, 500),
+            ]);
 
             return redirect()
                 ->route('admin.questions.import.create')
@@ -92,7 +112,7 @@ class QuestionImportController extends Controller
 
         return view('admin.questions.result', [
             'result' => $result,
-            'file_name' => $payload['file_name'] ?? 'file.json',
+            'file_name' => $tenFile,
         ]);
     }
 }
