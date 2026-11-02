@@ -30,20 +30,53 @@ class ProfileController extends Controller
         $user->hoten = $validated['hoten'];
         $user->muctieu = $validated['muctieu'] ?? null;
 
-        // Xử lý tải lên ảnh đại diện mới nếu có
-        if ($request->hasFile('anh')) {
+        // Xử lý gỡ ảnh nếu người dùng chọn xóa ảnh
+        if ($request->boolean('remove_avatar') || $request->input('remove_avatar') === '1' || $request->input('remove_avatar') === 1) {
+            if ($user->anh && !str_starts_with($user->anh, 'http')) {
+                if (Storage::disk('public')->exists($user->anh)) {
+                    Storage::disk('public')->delete($user->anh);
+                }
+                $oldPublicFile = public_path('storage/' . $user->anh);
+                if (file_exists($oldPublicFile)) {
+                    @unlink($oldPublicFile);
+                }
+            }
+            $user->anh = null;
+        } elseif ($request->hasFile('anh')) {
             // Xóa ảnh cũ nếu đã từng lưu trên đĩa public
-            if ($user->anh && !str_starts_with($user->anh, 'http') && Storage::disk('public')->exists($user->anh)) {
-                Storage::disk('public')->delete($user->anh);
+            if ($user->anh && !str_starts_with($user->anh, 'http')) {
+                if (Storage::disk('public')->exists($user->anh)) {
+                    Storage::disk('public')->delete($user->anh);
+                }
+                $oldPublicFile = public_path('storage/' . $user->anh);
+                if (file_exists($oldPublicFile)) {
+                    @unlink($oldPublicFile);
+                }
             }
 
             $path = $request->file('anh')->store('avatars', 'public');
             $user->anh = $path;
+
+            // Đồng bộ sang public/storage/avatars để chắc chắn hiển thị được trên Windows/XAMPP
+            $destDir = public_path('storage/avatars');
+            if (!file_exists($destDir)) {
+                @mkdir($destDir, 0755, true);
+            }
+            @copy(storage_path('app/public/' . $path), public_path('storage/' . $path));
+        }
+
+        // Cập nhật mật khẩu nếu có nhập mật khẩu mới
+        if ($request->filled('matkhau')) {
+            $user->matkhau = Hash::make($request->matkhau);
         }
 
         $user->save();
 
-        return back()->with('status', 'Cập nhật thông tin hồ sơ cá nhân thành công!');
+        $message = $request->filled('matkhau')
+            ? 'Cập nhật thông tin hồ sơ và đổi mật khẩu thành công!'
+            : 'Cập nhật thông tin hồ sơ cá nhân thành công!';
+
+        return back()->with('status', $message);
     }
 
     /**

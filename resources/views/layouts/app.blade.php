@@ -65,19 +65,19 @@
     <!-- MAIN CONTENT -->
     <main class="app-main @yield('main_class')">
         <!-- Thông báo Flash Messages (Thuần HTML/CSS, không có JavaScript) -->
-        @if (session('status'))
+        @if (session('status') && !request()->is('forgot-password*') && !request()->is('reset-password*') && !request()->is('login*'))
             <div class="alert alert-success">
                 <span>{{ session('status') }}</span>
             </div>
         @endif
 
-        @if (session('error'))
+        @if (session('error') && !request()->is('forgot-password*') && !request()->is('reset-password*') && !request()->is('login*') && !request()->is('register*'))
             <div class="alert alert-danger">
                 <span>{{ session('error') }}</span>
             </div>
         @endif
 
-        @if ($errors->any())
+        @if ($errors->any() && !request()->is('forgot-password*') && !request()->is('reset-password*') && !request()->is('login*') && !request()->is('register*'))
             <div class="alert alert-danger">
                 <div>
                     <strong>Có lỗi xảy ra:</strong>

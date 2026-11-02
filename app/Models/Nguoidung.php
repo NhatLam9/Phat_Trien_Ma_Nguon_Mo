@@ -79,14 +79,6 @@ class Nguoidung extends Authenticatable implements MustVerifyEmail
 
     public function sendPasswordResetNotification($token): void
     {
-        $resetUrl = route('password.reset', [
-            'token' => $token,
-            'email' => $this->getEmailForPasswordReset(),
-        ]);
-
-        // Hỗ trợ hiển thị link khôi phục trực tiếp trên giao diện web khi chạy test / local
-        session()->flash('debug_reset_link', $resetUrl);
-
         $this->notify(new ResetPassword($token));
     }
 

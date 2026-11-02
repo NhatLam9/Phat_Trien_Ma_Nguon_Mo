@@ -21,11 +21,31 @@ class ProfileRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'hoten' => ['required', 'string', 'max:100'],
             'muctieu' => ['nullable', 'integer', 'min:10', 'max:160'],
             'anh' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
+            'remove_avatar' => ['nullable'],
         ];
+
+        // Nếu người dùng nhập mật khẩu mới, kiểm tra độ an toàn và mật khẩu cũ
+        if ($this->filled('matkhau')) {
+            $user = $this->user();
+            // Nếu tài khoản đã có mật khẩu trước đó và không phải tài khoản Google thuần
+            if (!empty($user->matkhau) && empty($user->google_id)) {
+                $rules['current_password'] = ['required', 'current_password'];
+            }
+
+            $rules['matkhau'] = [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/',
+                'confirmed',
+            ];
+        }
+
+        return $rules;
     }
 
     /**
@@ -42,6 +62,12 @@ class ProfileRequest extends FormRequest
             'anh.image' => 'Tệp tải lên phải là hình ảnh hợp lệ.',
             'anh.mimes' => 'Định dạng hình ảnh hợp lệ: jpeg, png, jpg, webp, svg.',
             'anh.max' => 'Kích thước ảnh đại diện không được vượt quá 2MB.',
+            'current_password.required' => 'Vui lòng nhập mật khẩu hiện tại để đổi mật khẩu.',
+            'current_password.current_password' => 'Mật khẩu hiện tại không chính xác.',
+            'matkhau.required' => 'Vui lòng nhập mật khẩu mới.',
+            'matkhau.min' => 'Mật khẩu mới phải có ít nhất 8 ký tự.',
+            'matkhau.regex' => 'Mật khẩu mới phải bao gồm chữ hoa, chữ thường, chữ số và ký tự đặc biệt.',
+            'matkhau.confirmed' => 'Xác nhận mật khẩu mới không khớp.',
         ];
     }
 }

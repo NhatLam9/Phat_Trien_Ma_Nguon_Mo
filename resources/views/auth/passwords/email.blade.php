@@ -11,13 +11,6 @@
         @if (session('status'))
             <div class="status-message">
                 {{ session('status') }}
-                @if (session('debug_reset_link'))
-                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #bbf7d0;">
-                        <a href="{{ session('debug_reset_link') }}" style="color: #166534; font-weight: 700; text-decoration: underline; font-size: 13px;">
-                            👉 Nhấn vào đây để đặt lại mật khẩu ngay (Thử nghiệm)
-                        </a>
-                    </div>
-                @endif
             </div>
         @endif
 

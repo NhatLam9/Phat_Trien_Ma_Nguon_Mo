@@ -38,9 +38,7 @@
                         </svg>
                     </button>
                 </div>
-                <small class="password-hint">
-                    🔒 Yêu cầu: tối thiểu 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt (VD: Abc@1234).
-                </small>
+                
                 @error('matkhau')
                     <div class="error-message">{{ $message }}</div>
                 @enderror

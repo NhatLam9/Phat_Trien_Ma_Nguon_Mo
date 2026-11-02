@@ -136,3 +136,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/mock-test/{id}/abandon', [MockTestController::class, 'abandon'])
         ->whereNumber('id')->name('mock-test.abandon');
 });
+
+// Phục vụ file tĩnh trong thư mục storage trên môi trường Windows / XAMPP
+Route::get('/storage/{path}', function ($path) {
+    $filePath = public_path('storage/' . $path);
+    if (!file_exists($filePath)) {
+        $filePath = storage_path('app/public/' . $path);
+    }
+    if (!file_exists($filePath)) {
+        abort(404);
+    }
+    return response()->file($filePath);
+})->where('path', '.*')->name('storage.file');

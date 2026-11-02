@@ -323,8 +323,8 @@ body.auth-body .app-main {
     background-color: #f1f5f9;
 }
 
-/* Enable native browser reveal where supported */
+/* Ẩn mắt mặc định của trình duyệt Edge để không bị trùng 2 con mắt */
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
-    display: inline;
+    display: none !important;
 }

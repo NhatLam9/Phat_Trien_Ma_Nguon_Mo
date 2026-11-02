@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\QueryException;
 
 class ForgotPasswordController extends Controller
 {
@@ -31,18 +33,30 @@ class ForgotPasswordController extends Controller
             'email.email' => 'Địa chỉ email không đúng định dạng.',
         ]);
 
-        // Sử dụng Password Broker chuẩn của Laravel
-        $status = Password::broker()->sendResetLink(
-            $request->only('email')
-        );
+        try {
+            // Sử dụng Password Broker chuẩn của Laravel
+            $status = Password::broker()->sendResetLink(
+                $request->only('email')
+            );
 
-        if ($status === Password::RESET_LINK_SENT) {
-            return back()->with('status', 'Chúng tôi đã gửi liên kết đặt lại mật khẩu vào email của bạn!');
+            if ($status === Password::RESET_LINK_SENT) {
+                return back()->with('status', 'Chúng tôi đã gửi liên kết đặt lại mật khẩu vào email của bạn!');
+            }
+
+            return back()->withErrors([
+                'email' => 'Không tìm thấy tài khoản với địa chỉ email này hoặc không thể gửi liên kết khôi phục.',
+            ])->onlyInput('email');
+        } catch (QueryException $e) {
+            Log::error('Lỗi kết nối CSDL khi gửi mail khôi phục mật khẩu: ' . $e->getMessage());
+            return back()->withErrors([
+                'email' => 'Không thể kết nối cơ sở dữ liệu MySQL. Vui lòng mở XAMPP Control Panel và nhấn "Start" tại MySQL.',
+            ])->onlyInput('email');
+        } catch (\Exception $e) {
+            Log::error('Lỗi gửi mail đặt lại mật khẩu: ' . $e->getMessage());
+            return back()->withErrors([
+                'email' => 'Có lỗi xảy ra khi gửi email: ' . $e->getMessage(),
+            ])->onlyInput('email');
         }
-
-        return back()->withErrors([
-            'email' => 'Không tìm thấy tài khoản với địa chỉ email này hoặc không thể gửi liên kết khôi phục.',
-        ])->onlyInput('email');
     }
 
     /**
