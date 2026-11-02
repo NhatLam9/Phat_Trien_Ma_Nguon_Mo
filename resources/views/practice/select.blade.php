@@ -41,7 +41,7 @@
         </div>
 
         <div style="flex: 2; min-width: 200px;">
-            <label style="font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 4px;">Từ khóa tìm kiếm (LT09)</label>
+            <label style="font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 4px;">Từ khóa tìm kiếm</label>
             <input type="text" name="q" value="{{ $keyword }}" placeholder="Nhập từ khóa nội dung..." class="form-control" style="font-size: 13px;">
         </div>
 

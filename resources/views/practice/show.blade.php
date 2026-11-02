@@ -49,20 +49,84 @@
                 {{ $question->noidung }}
             </h2>
 
+            @php
+                // Chuẩn hóa đường dẫn ảnh
+                $imageUrl = '';
+                if (!empty($question->anh)) {
+                    $rawImg = trim($question->anh);
+                    if (str_starts_with($rawImg, 'http://') || str_starts_with($rawImg, 'https://')) {
+                        $imageUrl = $rawImg;
+                    } else {
+                        $cleanImg = ltrim(str_replace('\\', '/', $rawImg), '/');
+                        if (file_exists(public_path($cleanImg))) {
+                            $imageUrl = asset($cleanImg);
+                        } elseif (file_exists(public_path('storage/' . $cleanImg))) {
+                            $imageUrl = asset('storage/' . $cleanImg);
+                        } elseif (file_exists(public_path('images/' . $cleanImg))) {
+                            $imageUrl = asset('images/' . $cleanImg);
+                        } elseif (file_exists(public_path('images/questions/' . basename($cleanImg)))) {
+                            $imageUrl = asset('images/questions/' . basename($cleanImg));
+                        } else {
+                            $imageUrl = asset($cleanImg);
+                        }
+                    }
+                }
+
+                // Chuẩn hóa đường dẫn và định dạng âm thanh
+                $audioUrl = '';
+                $audioType = 'audio/mpeg';
+                if (!empty($question->audio)) {
+                    $rawAudio = trim($question->audio);
+                    if (str_starts_with($rawAudio, 'http://') || str_starts_with($rawAudio, 'https://')) {
+                        $audioUrl = $rawAudio;
+                    } else {
+                        $cleanAudio = ltrim(str_replace('\\', '/', $rawAudio), '/');
+                        if (file_exists(public_path($cleanAudio))) {
+                            $audioUrl = asset($cleanAudio);
+                        } elseif (file_exists(public_path('storage/' . $cleanAudio))) {
+                            $audioUrl = asset('storage/' . $cleanAudio);
+                        } elseif (file_exists(public_path('audio/' . $cleanAudio))) {
+                            $audioUrl = asset('audio/' . $cleanAudio);
+                        } elseif (file_exists(public_path('audio/questions/' . basename($cleanAudio)))) {
+                            $audioUrl = asset('audio/questions/' . basename($cleanAudio));
+                        } else {
+                            $audioUrl = asset($cleanAudio);
+                        }
+                    }
+
+                    $ext = strtolower(pathinfo(parse_url($audioUrl, PHP_URL_PATH), PATHINFO_EXTENSION));
+                    if ($ext === 'wav') {
+                        $audioType = 'audio/wav';
+                    } elseif ($ext === 'ogg') {
+                        $audioType = 'audio/ogg';
+                    } elseif ($ext === 'webm') {
+                        $audioType = 'audio/webm';
+                    } elseif ($ext === 'm4a' || $ext === 'mp4') {
+                        $audioType = 'audio/mp4';
+                    } else {
+                        $audioType = 'audio/mpeg';
+                    }
+                }
+            @endphp
+
             <!-- Hình ảnh đính kèm nếu có -->
-            @if(!empty($question->anh))
+            @if(!empty($imageUrl))
                 <div style="text-align: center; margin: 20px 0;">
-                    <img src="{{ str_starts_with($question->anh, 'http') ? $question->anh : asset('storage/' . $question->anh) }}" alt="Question Image" style="max-width: 100%; max-height: 380px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <img src="{{ $imageUrl }}" alt="Question Image" style="max-width: 100%; max-height: 380px; border-radius: 8px; border: 1px solid #e2e8f0;">
                 </div>
             @endif
 
-            <!-- Âm thanh audio nếu có (Sử dụng thẻ audio chuẩn HTML5, không dùng JavaScript) -->
-            @if(!empty($question->audio))
-                <div style="background: #f8fafc; padding: 16px; border-radius: 8px; margin: 16px 0; text-align: center;">
-                    <p style="font-size: 13px; color: #475569; margin-bottom: 8px; font-weight: 600;">🎧 Nghe đoạn âm thanh:</p>
-                    <audio controls style="width: 100%; max-width: 500px;">
-                        <source src="{{ str_starts_with($question->audio, 'http') ? $question->audio : asset('storage/' . $question->audio) }}" type="audio/mpeg">
-                        Trình duyệt của bạn không hỗ trợ phát âm thanh.
+            <!-- Âm thanh audio nếu có (Sử dụng thẻ audio chuẩn HTML5, tương thích mọi trình duyệt) -->
+            @if(!empty($audioUrl))
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 18px; border-radius: 12px; margin: 18px 0; text-align: center;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px;">
+                        <span style="font-size: 18px;">🎧</span>
+                        <span style="font-size: 14px; color: #1e293b; font-weight: 700;">Nghe đoạn âm thanh câu hỏi</span>
+                    </div>
+                    <audio controls preload="auto" style="width: 100%; max-width: 520px; outline: none; border-radius: 30px;">
+                        <source src="{{ $audioUrl }}" type="{{ $audioType }}">
+                        <source src="{{ $audioUrl }}">
+                        Trình duyệt của bạn không hỗ trợ phát âm thanh trực tiếp. Bạn có thể <a href="{{ $audioUrl }}" target="_blank" download style="color: #00b86b; font-weight: 600;">tải file âm thanh tại đây</a>.
                     </audio>
                 </div>
             @endif

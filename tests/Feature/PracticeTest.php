@@ -120,6 +120,32 @@ class PracticeTest extends TestCase
     }
 
     /**
+     * Kiểm tra hiển thị âm thanh cho câu hỏi có audio trong bài luyện tập
+     */
+    public function test_practice_question_page_renders_audio_player_correctly(): void
+    {
+        if (Schema::hasTable('cauhoi')) {
+            DB::table('cauhoi')->updateOrInsert(
+                ['id' => 777],
+                [
+                    'loai_id' => 1,
+                    'noidung' => 'Audio test question',
+                    'audio' => 'audio/questions/listening-1.wav',
+                    'dokho' => 5,
+                    'diem' => 10,
+                    'trangthai' => 'published',
+                ]
+            );
+        }
+
+        $response = $this->actingAs($this->user)->get(route('practice.show', 777));
+        $response->assertOk();
+        $response->assertSee('<audio controls', false);
+        $response->assertSee('audio/questions/listening-1.wav');
+        $response->assertSee('type="audio/wav"', false);
+    }
+
+    /**
      * LT04 & LT05: Nộp bài luyện tập, lưu bản ghi vào bảng luyentap và chuyển hướng sang xem kết quả
      */
     public function test_user_can_submit_practice_answer_and_see_result(): void
@@ -190,5 +216,63 @@ class PracticeTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('practice.history'));
         $response->assertOk();
         $response->assertSee('History answer');
+    }
+
+    /**
+     * Kiểm tra lọc dạng bài luyện tập theo kỹ năng
+     */
+    public function test_user_can_filter_practice_types_by_skill(): void
+    {
+        $response = $this->actingAs($this->user)->get(route('practice.index', ['skill' => 'speaking']));
+        $response->assertOk();
+        $response->assertSee('Speaking');
+        $response->assertSee('Read Aloud');
+    }
+
+    /**
+     * Kiểm tra lọc lịch sử luyện tập theo ngày, tháng
+     */
+    public function test_user_can_filter_practice_history_by_date_and_month(): void
+    {
+        Luyentap::create([
+            'nguoidung_id' => $this->user->id,
+            'cauhoi_id' => 5,
+            'noidung' => 'Today answer test',
+            'ladung' => 1,
+            'diem' => 1.0,
+            'thoigianlam' => 20,
+            'ngaylam' => now(),
+        ]);
+
+        Luyentap::create([
+            'nguoidung_id' => $this->user->id,
+            'cauhoi_id' => 5,
+            'noidung' => 'Old answer test',
+            'ladung' => 0,
+            'diem' => 0,
+            'thoigianlam' => 20,
+            'ngaylam' => now()->subMonths(2),
+        ]);
+
+        // 1. Lọc hôm nay
+        $resToday = $this->actingAs($this->user)->get(route('practice.history', ['period' => 'today']));
+        $resToday->assertOk();
+        $resToday->assertSee('Today answer test');
+        $resToday->assertDontSee('Old answer test');
+
+        // 2. Lọc theo tháng hiện tại
+        $resMonth = $this->actingAs($this->user)->get(route('practice.history', ['month' => now()->format('Y-m')]));
+        $resMonth->assertOk();
+        $resMonth->assertSee('Today answer test');
+        $resMonth->assertDontSee('Old answer test');
+
+        // 3. Lọc theo khoảng ngày (from_date -> to_date)
+        $resDate = $this->actingAs($this->user)->get(route('practice.history', [
+            'from_date' => now()->subDay()->format('Y-m-d'),
+            'to_date' => now()->addDay()->format('Y-m-d'),
+        ]));
+        $resDate->assertOk();
+        $resDate->assertSee('Today answer test');
+        $resDate->assertDontSee('Old answer test');
     }
 }

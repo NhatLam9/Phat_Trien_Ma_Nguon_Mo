@@ -554,3 +554,74 @@ footer.app-footer {
     flex-shrink: 0;
 }
 
+/* ==========================================================================
+   SKILL FILTER TABS (PRACTICE)
+   ========================================================================== */
+.skill-filter-container {
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 28px;
+    background: transparent;
+}
+
+.skill-filter-tabs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.skill-filter-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.skill-tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    padding: 12px 18px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    outline: none;
+    text-decoration: none;
+}
+
+.skill-tab-btn:hover {
+    color: #00b86b;
+}
+
+.skill-tab-btn.active {
+    color: #00b86b;
+    border-bottom-color: #00b86b;
+    font-weight: 800;
+}
+
+.skill-tab-badge {
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 700;
+    transition: all 0.2s;
+}
+
+.skill-tab-btn.active .skill-tab-badge {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.history-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+    margin-bottom: 14px;
+}
+

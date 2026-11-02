@@ -35,27 +35,127 @@
     </div>
 </div>
 
-<!-- BỘ LỌC VÀ TÌM KIẾM (LT08 & LT09) -->
-<div class="card" style="padding: 16px 20px;">
-    <form method="GET" action="{{ route('practice.history') }}" style="display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end;">
-        <div style="flex: 1; min-width: 160px;">
-            <label style="font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 4px;">Kết quả bài làm</label>
-            <select name="status" class="form-control" style="font-size: 13px;">
-                <option value="">-- Tất cả kết quả --</option>
-                <option value="dung" {{ $status === 'dung' ? 'selected' : '' }}>✓ Câu đúng</option>
-                <option value="sai" {{ $status === 'sai' ? 'selected' : '' }}>✗ Câu chưa đúng</option>
-            </select>
+<!-- BỘ LỌC VÀ TÌM KIẾM CHI TIẾT (KẾT QUẢ, TỪ KHÓA, NGÀY, THÁNG) -->
+<div class="card" style="padding: 20px 24px; margin-bottom: 24px;">
+    <form method="GET" action="{{ route('practice.history') }}">
+        <div class="history-filter-grid">
+            <!-- 1. Kết quả bài làm -->
+            <div>
+                <label style="font-size: 13px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">
+                    Kết quả bài làm
+                </label>
+                <select name="status" class="form-control" style="font-size: 13px;">
+                    <option value="">-- Tất cả kết quả --</option>
+                    <option value="dung" {{ $status === 'dung' ? 'selected' : '' }}>✓ Câu đúng</option>
+                    <option value="sai" {{ $status === 'sai' ? 'selected' : '' }}>✗ Câu chưa đúng</option>
+                </select>
+            </div>
+
+            <!-- 2. Mốc thời gian nhanh -->
+            <div>
+                <label style="font-size: 13px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">
+                    Mốc thời gian
+                </label>
+                <select name="period" id="period-select" class="form-control" style="font-size: 13px;">
+                    <option value="">-- Tất cả thời gian --</option>
+                    <option value="today" {{ $period === 'today' ? 'selected' : '' }}>📅 Hôm nay</option>
+                    <option value="yesterday" {{ $period === 'yesterday' ? 'selected' : '' }}>📅 Hôm qua</option>
+                    <option value="7_days" {{ $period === '7_days' ? 'selected' : '' }}>⏱️ 7 ngày qua</option>
+                    <option value="30_days" {{ $period === '30_days' ? 'selected' : '' }}>⏱️ 30 ngày qua</option>
+                    <option value="this_month" {{ $period === 'this_month' ? 'selected' : '' }}>🗓️ Tháng này</option>
+                    <option value="last_month" {{ $period === 'last_month' ? 'selected' : '' }}>🗓️ Tháng trước</option>
+                </select>
+            </div>
+
+            <!-- 3. Lọc theo Tháng (tháng/năm) -->
+            <div>
+                <label style="font-size: 13px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">
+                    Lọc theo Tháng
+                </label>
+                <input type="month" name="month" id="month-input" value="{{ $month ?? '' }}" class="form-control" style="font-size: 13px;">
+            </div>
+
+            <!-- 4. Từ ngày -->
+            <div>
+                <label style="font-size: 13px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">
+                    Từ ngày
+                </label>
+                <input type="date" name="from_date" id="from-date-input" value="{{ $fromDate ?? '' }}" class="form-control" style="font-size: 13px;">
+            </div>
+
+            <!-- 5. Đến ngày -->
+            <div>
+                <label style="font-size: 13px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">
+                    Đến ngày
+                </label>
+                <input type="date" name="to_date" id="to-date-input" value="{{ $toDate ?? '' }}" class="form-control" style="font-size: 13px;">
+            </div>
         </div>
 
-        <div style="flex: 2; min-width: 220px;">
-            <label style="font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 4px;">Tìm kiếm từ khóa (LT09)</label>
-            <input type="text" name="q" value="{{ $keyword }}" placeholder="Tìm theo nội dung trả lời..." class="form-control" style="font-size: 13px;">
+        <!-- Hàng 2: Từ khóa tìm kiếm + Các nút hành động -->
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 14px;">
+            <div style="flex: 1; min-width: 240px;">
+                <input type="text" name="q" value="{{ $keyword ?? '' }}" placeholder="🔍 Tìm theo nội dung câu trả lời hoặc từ khóa..." class="form-control" style="font-size: 13px;">
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button type="submit" class="btn btn-primary" style="height: 40px; padding: 0 20px; font-weight: 700;">
+                    🔍 Lọc dữ liệu
+                </button>
+                <a href="{{ route('practice.history') }}" class="btn btn-outline" style="height: 40px; padding: 0 16px;">
+                    🔄 Đặt lại
+                </a>
+            </div>
         </div>
 
-        <div style="display: flex; gap: 8px;">
-            <button type="submit" class="btn btn-primary" style="height: 40px; padding: 0 18px;">Lọc</button>
-            <a href="{{ route('practice.history') }}" class="btn btn-outline" style="height: 40px; padding: 0 14px;">Đặt lại</a>
-        </div>
+        <!-- Hiển thị các tiêu chí lọc đang được kích hoạt -->
+        @php
+            $hasActiveFilter = !empty($status) || !empty($keyword) || !empty($period) || !empty($month) || !empty($fromDate) || !empty($toDate);
+        @endphp
+
+        @if($hasActiveFilter)
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 14px; font-size: 12px; padding-top: 12px; border-top: 1px dashed #e2e8f0;">
+                <span style="color: #64748b; font-weight: 700;">Đang lọc theo:</span>
+                @if($status === 'dung')
+                    <span class="badge badge-speaking">✓ Câu đúng</span>
+                @elseif($status === 'sai')
+                    <span class="badge badge-listening">✗ Câu chưa đúng</span>
+                @endif
+
+                @if(!empty($period))
+                    @php
+                        $periodLabels = [
+                            'today' => 'Hôm nay',
+                            'yesterday' => 'Hôm qua',
+                            '7_days' => '7 ngày qua',
+                            '30_days' => '30 ngày qua',
+                            'this_month' => 'Tháng này',
+                            'last_month' => 'Tháng trước',
+                        ];
+                    @endphp
+                    <span class="badge badge-reading">⏱️ Mốc: {{ $periodLabels[$period] ?? $period }}</span>
+                @endif
+
+                @if(!empty($month))
+                    <span class="badge badge-writing">🗓️ Tháng: {{ $month }}</span>
+                @endif
+
+                @if(!empty($fromDate) || !empty($toDate))
+                    <span class="badge badge-admin">
+                        📅 {{ !empty($fromDate) ? 'Từ ' . \Carbon\Carbon::parse($fromDate)->format('d/m/Y') : '' }} 
+                        {{ !empty($toDate) ? 'đến ' . \Carbon\Carbon::parse($toDate)->format('d/m/Y') : '' }}
+                    </span>
+                @endif
+
+                @if(!empty($keyword))
+                    <span class="badge badge-user">Từ khóa: "{{ $keyword }}"</span>
+                @endif
+
+                <a href="{{ route('practice.history') }}" style="color: #ef4444; text-decoration: underline; margin-left: 6px; font-weight: 600;">
+                    Xóa tất cả bộ lọc ✕
+                </a>
+            </div>
+        @endif
     </form>
 </div>
 
@@ -63,8 +163,9 @@
 @if($attempts->isEmpty())
     <div class="card" style="text-align: center; padding: 48px 20px;">
         <div style="font-size: 40px; margin-bottom: 12px;">📋</div>
-        <h3 style="font-size: 18px; color: #1e293b; margin-bottom: 6px;">Chưa có lịch sử làm bài nào</h3>
-        <p style="color: #64748b; font-size: 14px; margin-bottom: 18px;">Hãy bắt đầu luyện tập các câu hỏi đầu tiên để ghi nhận tiến độ học tập của bạn.</p>
+        <h3 style="font-size: 18px; color: #1e293b; margin-bottom: 6px;">Không tìm thấy lịch sử làm bài phù hợp</h3>
+        <p style="color: #64748b; font-size: 14px; margin-bottom: 18px;">Thử thay đổi mốc thời gian hoặc xóa bớt tiêu chí lọc để xem các kết quả khác.</p>
+        <a href="{{ route('practice.history') }}" class="btn btn-outline" style="margin-right: 8px;">Xem tất cả lịch sử</a>
         <a href="{{ route('practice.index') }}" class="btn btn-primary">Luyện tập ngay</a>
     </div>
 @else
@@ -128,4 +229,3 @@
     </div>
 @endif
 @endsection
-

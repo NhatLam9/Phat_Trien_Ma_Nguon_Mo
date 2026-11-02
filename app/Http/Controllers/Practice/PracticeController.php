@@ -79,7 +79,7 @@ class PracticeController extends Controller
                 'giaithich' => 'Câu văn chuẩn là: "She has been studying literature for five years."',
                 'dokho' => 6,
                 'anh' => null,
-                'audio' => 'sample_audio.mp3',
+                'audio' => 'audio/questions/listening-1.wav',
                 'thoigian' => 60,
                 'diem' => 1.0,
                 'dap_an' => 'She has been studying literature for five years.',
@@ -90,7 +90,7 @@ class PracticeController extends Controller
                 'noidung' => 'Viết ít nhất 1 câu hoàn chỉnh mô tả hoạt động trong bức ảnh.',
                 'giaithich' => 'Mô tả nên có đầy đủ chủ ngữ, vị ngữ miêu tả đối tượng chính và hành động.',
                 'dokho' => 4,
-                'anh' => 'sample_photo.jpg',
+                'anh' => 'images/questions/photo-1.svg',
                 'audio' => null,
                 'thoigian' => 60,
                 'diem' => 10.0,
@@ -112,8 +112,10 @@ class PracticeController extends Controller
     /**
      * LT01: Hiển thị danh sách các dạng bài luyện tập DET theo 4 kỹ năng
      */
-    public function index()
+    public function index(Request $request)
     {
+        $activeSkill = $request->query('skill', 'all');
+
         $types = Schema::hasTable('loaicauhoi')
             ? DB::table('loaicauhoi')->where('is_active', 1)->get()
             : collect();
@@ -145,7 +147,7 @@ class PracticeController extends Controller
             'speaking' => $types->where('kynang', 'speaking'),
         ];
 
-        return view('practice.types', compact('groupedTypes', 'types'));
+        return view('practice.types', compact('groupedTypes', 'types', 'activeSkill'));
     }
 
     /**
@@ -318,28 +320,71 @@ class PracticeController extends Controller
     }
 
     /**
-     * LT08 & LT09: Lịch sử luyện tập & tìm kiếm
+     * LT08 & LT09: Lịch sử luyện tập & tìm kiếm (hỗ trợ lọc trạng thái, từ khóa, khoảng ngày, tháng)
      */
     public function history(Request $request)
     {
         $userId = Auth::id();
         $status = $request->query('status'); // 'dung', 'sai'
         $keyword = $request->query('q');
+        $period = $request->query('period'); // 'today', 'yesterday', '7_days', '30_days', 'this_month', 'last_month'
+        $month = $request->query('month'); // YYYY-MM
+        $fromDate = $request->query('from_date'); // YYYY-MM-DD
+        $toDate = $request->query('to_date'); // YYYY-MM-DD
 
         $query = Luyentap::where('nguoidung_id', $userId)
             ->when($status === 'dung', fn($q) => $q->where('ladung', 1))
             ->when($status === 'sai', fn($q) => $q->where('ladung', 0))
-            ->when($keyword, fn($q) => $q->where('noidung', 'like', "%{$keyword}%"))
-            ->orderByDesc('id');
+            ->when($keyword, fn($q) => $q->where('noidung', 'like', "%{$keyword}%"));
 
-        $attempts = $query->paginate(15)->withQueryString();
+        // Lọc theo mốc thời gian nhanh
+        if ($period === 'today') {
+            $query->whereDate('ngaylam', today());
+        } elseif ($period === 'yesterday') {
+            $query->whereDate('ngaylam', today()->subDay());
+        } elseif ($period === '7_days') {
+            $query->whereDate('ngaylam', '>=', today()->subDays(7));
+        } elseif ($period === '30_days') {
+            $query->whereDate('ngaylam', '>=', today()->subDays(30));
+        } elseif ($period === 'this_month') {
+            $query->whereMonth('ngaylam', now()->month)->whereYear('ngaylam', now()->year);
+        } elseif ($period === 'last_month') {
+            $query->whereMonth('ngaylam', now()->subMonth()->month)->whereYear('ngaylam', now()->subMonth()->year);
+        }
+
+        // Lọc theo tháng cụ thể (YYYY-MM từ input type="month")
+        if ($month && preg_match('/^\d{4}-\d{2}$/', $month)) {
+            [$year, $m] = explode('-', $month);
+            $query->whereYear('ngaylam', (int)$year)->whereMonth('ngaylam', (int)$m);
+        }
+
+        // Lọc theo khoảng ngày cụ thể (Từ ngày -> Đến ngày)
+        if ($fromDate) {
+            $query->whereDate('ngaylam', '>=', $fromDate);
+        }
+        if ($toDate) {
+            $query->whereDate('ngaylam', '<=', $toDate);
+        }
+
+        $attempts = $query->orderByDesc('id')->paginate(15)->withQueryString();
 
         // Thống kê nhanh
         $totalAttempts = Luyentap::where('nguoidung_id', $userId)->count();
         $correctAttempts = Luyentap::where('nguoidung_id', $userId)->where('ladung', 1)->count();
         $accuracy = $totalAttempts > 0 ? round(($correctAttempts / $totalAttempts) * 100, 1) : 0;
 
-        return view('practice.history', compact('attempts', 'totalAttempts', 'correctAttempts', 'accuracy', 'status', 'keyword'));
+        return view('practice.history', compact(
+            'attempts',
+            'totalAttempts',
+            'correctAttempts',
+            'accuracy',
+            'status',
+            'keyword',
+            'period',
+            'month',
+            'fromDate',
+            'toDate'
+        ));
     }
 }
 
