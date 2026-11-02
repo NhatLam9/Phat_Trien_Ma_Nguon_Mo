@@ -21,11 +21,11 @@
                 <a class="admin-nav__item {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">Tổng quan</a>
                 <a class="admin-nav__item {{ request()->routeIs('admin.questions.index') || request()->routeIs('admin.questions.show') ? 'is-active' : '' }}" href="{{ route('admin.questions.index') }}">Ngân hàng câu hỏi</a>
                 <a class="admin-nav__item {{ request()->routeIs('admin.questions.import.*') ? 'is-active' : '' }}" href="{{ route('admin.questions.import.create') }}">Import JSON</a>
-                <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Dạng bài</span>
-                <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Chủ đề</span>
+                <a class="admin-nav__item {{ request()->routeIs('admin.question-types.*') ? 'is-active' : '' }}" href="{{ route('admin.question-types.index') }}">Dạng bài</a>
+                <a class="admin-nav__item {{ request()->routeIs('admin.categories.*') ? 'is-active' : '' }}" href="{{ route('admin.categories.index') }}">Chủ đề</a>
                 <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Đề thi</span>
-                <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Người dùng</span>
-                <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Nhật ký AI</span>
+                <a class="admin-nav__item {{ request()->routeIs('admin.users.*') ? 'is-active' : '' }}" href="{{ route('admin.users.index') }}">Người dùng</a>
+                <a class="admin-nav__item {{ request()->routeIs('admin.ai-logs.*') ? 'is-active' : '' }}" href="{{ route('admin.ai-logs.index') }}">Nhật ký AI</a>
             </nav>
         </aside>
 

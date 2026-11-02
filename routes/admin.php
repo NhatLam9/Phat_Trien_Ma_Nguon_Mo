@@ -1,8 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\AiLogController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\QuestionBankController;
 use App\Http\Controllers\Admin\QuestionImportController;
+use App\Http\Controllers\Admin\QuestionTypeController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -43,4 +47,34 @@ Route::middleware('admin')
         Route::delete('questions/{question}', [QuestionBankController::class, 'destroy'])
             ->whereNumber('question')
             ->name('questions.destroy');
+
+        // AD02 - Dạng bài (chỉ bật/tắt và sửa cấu hình, không đổi mã).
+        Route::get('question-types', [QuestionTypeController::class, 'index'])
+            ->name('question-types.index');
+        Route::patch('question-types/{loai}', [QuestionTypeController::class, 'update'])
+            ->name('question-types.update');
+
+        // AD03 - Chủ đề.
+        Route::get('categories', [CategoryController::class, 'index'])
+            ->name('categories.index');
+        Route::post('categories', [CategoryController::class, 'store'])
+            ->name('categories.store');
+        Route::get('categories/{danhmuc}/edit', [CategoryController::class, 'edit'])
+            ->name('categories.edit');
+        Route::patch('categories/{danhmuc}', [CategoryController::class, 'update'])
+            ->name('categories.update');
+        Route::delete('categories/{danhmuc}', [CategoryController::class, 'destroy'])
+            ->name('categories.destroy');
+
+        // AD04 - Người dùng: khóa/mở khóa và đổi vai trò.
+        Route::get('users', [UserController::class, 'index'])
+            ->name('users.index');
+        Route::patch('users/{user}/status', [UserController::class, 'updateStatus'])
+            ->name('users.status');
+        Route::patch('users/{user}/role', [UserController::class, 'updateRole'])
+            ->name('users.role');
+
+        // AD06 - Nhật ký AI (chỉ đọc).
+        Route::get('ai-logs', [AiLogController::class, 'index'])
+            ->name('ai-logs.index');
     });

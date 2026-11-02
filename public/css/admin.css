@@ -794,3 +794,97 @@ body.admin-body {
     }
 }
 
+/* =====================================================================
+   Dạng bài, chủ đề, người dùng, nhật ký AI (TV3)
+   ===================================================================== */
+
+.admin-table input[type="text"],
+.admin-table input[type="number"],
+.admin-table select {
+    width: 100%;
+    min-height: 34px;
+    padding: 5px 8px;
+    border: 1px solid var(--admin-border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--admin-text);
+    font: inherit;
+}
+
+.admin-table input:focus,
+.admin-table select:focus {
+    outline: 2px solid rgba(88, 204, 2, .35);
+    outline-offset: 1px;
+    border-color: var(--admin-primary);
+}
+
+.admin-table input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--admin-primary);
+}
+
+.admin-input--narrow {
+    max-width: 96px;
+}
+
+.admin-row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-inline-form {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+}
+
+.admin-inline-form select {
+    width: auto;
+    min-width: 120px;
+}
+
+.admin-details summary {
+    cursor: pointer;
+    color: var(--admin-primary-dark);
+    font-weight: 600;
+}
+
+.admin-details summary:hover {
+    text-decoration: underline;
+}
+
+.admin-details__body {
+    margin-top: 10px;
+}
+
+.admin-details__body h3 {
+    margin: 10px 0 4px;
+    color: var(--admin-muted);
+    font-size: 12px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.admin-details__body h3:first-child {
+    margin-top: 0;
+}
+
+.admin-details__body pre {
+    max-height: 260px;
+    margin: 0;
+    overflow: auto;
+    padding: 12px;
+    border-radius: 8px;
+    background: #101828;
+    color: #d7e3f4;
+    font-size: 12px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+
