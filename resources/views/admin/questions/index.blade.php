@@ -4,6 +4,8 @@
 @section('heading', 'Ngân hàng câu hỏi')
 
 @section('content')
+    @include('admin.questions.partials.tabs')
+
     <div class="admin-panel">
         <div class="admin-panel__header">
             <div>
@@ -14,7 +16,7 @@
                 </p>
             </div>
             <a href="{{ route('admin.questions.import.create') }}" class="admin-btn">
-                Import JSON
+                Nhập câu hỏi
             </a>
         </div>
 
@@ -194,7 +196,7 @@
             <div class="admin-empty">
                 <p>Ngân hàng câu hỏi đang trống.</p>
                 <p class="admin-muted">
-                    Hãy <a href="{{ route('admin.questions.import.create') }}">import file JSON</a>
+                    Hãy <a href="{{ route('admin.questions.import.create') }}">nhập câu hỏi từ JSON</a>
                     để tạo câu hỏi đầu tiên.
                 </p>
             </div>

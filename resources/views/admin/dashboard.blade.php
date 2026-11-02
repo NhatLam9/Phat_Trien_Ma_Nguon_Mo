@@ -60,7 +60,7 @@
             </a>
             <a class="admin-quick__item" href="{{ route('admin.questions.import.create') }}">
                 <strong>JSON</strong>
-                <span>Import câu hỏi mới</span>
+                <span>Nhập câu hỏi mới</span>
             </a>
         </div>
     </section>

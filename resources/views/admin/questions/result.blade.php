@@ -1,17 +1,19 @@
 @extends('admin.layout')
 
-@section('title', 'Kết quả import')
-@section('heading', 'Kết quả import câu hỏi')
+@section('title', 'Kết quả nhập câu hỏi')
+@section('heading', 'Kết quả nhập câu hỏi')
 
 @section('content')
+    @include('admin.questions.partials.tabs')
+
     <div class="admin-panel">
         <div class="admin-panel__header">
             <div>
-                <h2>Import hoàn tất</h2>
+                <h2>Nhập hoàn tất</h2>
                 <p class="admin-muted">File: <strong>{{ $file_name }}</strong></p>
             </div>
             <a href="{{ route('admin.questions.import.create') }}" class="admin-btn admin-btn--ghost">
-                Import file khác
+                Nhập file khác
             </a>
         </div>
 
@@ -45,7 +47,7 @@
 
     @if ($result['exam'])
         <div class="admin-panel">
-            <h2>Đề thi đã import</h2>
+            <h2>Đề thi đã nhập</h2>
             <dl class="admin-definition">
                 <dt>ID</dt>
                 <dd>{{ $result['exam']['id'] }}</dd>
@@ -59,12 +61,12 @@
 
     <div class="admin-panel">
         <p class="admin-muted">
-            Câu hỏi mặc định được import ở trạng thái <code>draft</code> nếu file không ghi rõ trạng thái.
+            Câu hỏi mặc định được nhập ở trạng thái <code>draft</code> nếu file không ghi rõ trạng thái.
             Hãy kiểm tra và publish khi dữ liệu đã sẵn sàng.
         </p>
 
         <div class="admin-form__actions">
-            <a href="{{ route('admin.questions.index') }}" class="admin-btn">Duyệt câu hỏi vừa import</a>
+            <a href="{{ route('admin.questions.index') }}" class="admin-btn">Duyệt câu hỏi vừa nhập</a>
             <a href="{{ route('admin.dashboard') }}" class="admin-btn admin-btn--ghost">Về tổng quan</a>
         </div>
     </div>

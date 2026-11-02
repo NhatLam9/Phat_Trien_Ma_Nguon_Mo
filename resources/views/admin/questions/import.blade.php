@@ -1,9 +1,11 @@
 @extends('admin.layout')
 
-@section('title', 'Import câu hỏi')
-@section('heading', 'Import câu hỏi từ file JSON')
+@section('title', 'Nhập câu hỏi')
+@section('heading', 'Nhập câu hỏi từ JSON')
 
 @section('content')
+    @include('admin.questions.partials.tabs')
+
     <div class="admin-panel">
         <div class="admin-panel__header">
             <div>
@@ -13,9 +15,6 @@
                     Hệ thống sẽ kiểm tra trước, sau đó mới ghi vào database.
                 </p>
             </div>
-            <a href="{{ route('admin.questions.index') }}" class="admin-btn admin-btn--ghost">
-                Ngân hàng câu hỏi
-            </a>
         </div>
 
         <form method="POST"
@@ -83,16 +82,16 @@
             <li>Câu hỏi con đọc dùng <code>cauhoi_doc</code>; câu hỏi con nghe dùng <code>cauhoi_nghe</code>.</li>
             <li>Câu con không có lựa chọn phải có <code>dapandung</code>.</li>
             <li>Đường dẫn media là đường dẫn tương đối trong <code>public/</code>, ví dụ <code>images/questions/photo-2.svg</code>.</li>
-            <li>Mặc định câu hỏi và đề được import ở trạng thái <code>draft</code> để duyệt trước khi publish.</li>
-            <li><code>ma</code> là khóa ổn định: import lại cùng <code>ma</code> sẽ cập nhật câu hỏi cũ thay vì tạo trùng.</li>
+            <li>Mặc định câu hỏi và đề được nhập ở trạng thái <code>draft</code> để duyệt trước khi publish.</li>
+            <li><code>ma</code> là khóa ổn định: nhập lại cùng <code>ma</code> sẽ cập nhật câu hỏi cũ thay vì tạo trùng.</li>
         </ul>
     </div>
 
     <div class="admin-panel">
-        <h2>Lịch sử import gần đây</h2>
+        <h2>Lịch sử nhập gần đây</h2>
 
         @if ($batches->isEmpty())
-            <p class="admin-muted">Chưa có lần import nào.</p>
+            <p class="admin-muted">Chưa có lần nhập nào.</p>
         @else
             <div class="admin-table-wrap">
                 <table class="admin-table">
@@ -101,7 +100,7 @@
                             <th>#</th>
                             <th>Thời điểm</th>
                             <th>File</th>
-                            <th>Người import</th>
+                            <th>Người nhập</th>
                             <th>Câu trong file</th>
                             <th>Tạo mới</th>
                             <th>Cập nhật</th>

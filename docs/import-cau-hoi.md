@@ -1,4 +1,4 @@
-# Import câu hỏi bằng JSON
+# Nhập câu hỏi bằng JSON
 
 Cập nhật ngày 01/11/2026, thuộc module TV3.
 
@@ -16,7 +16,7 @@ Màn hình cho phép:
 2. Xem trước số câu, số lựa chọn, câu con và đề thi.
 3. Kiểm tra lỗi/cảnh báo.
 4. Xác nhận ghi database trong một transaction.
-5. Xem lại lịch sử 10 lần import gần nhất (file, người import, số câu tạo mới/cập nhật, cảnh báo, kết quả).
+5. Xem lại lịch sử 10 lần nhập gần nhất (file, người nhập, số câu tạo mới/cập nhật, cảnh báo, kết quả).
 
 File mẫu tải tại:
 

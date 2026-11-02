@@ -68,7 +68,7 @@ class QuestionImportTest extends TestCase
         $result = $this->post(route('admin.questions.import.store'));
 
         $result->assertOk();
-        $result->assertSee('Import hoàn tất');
+        $result->assertSee('Nhập hoàn tất');
 
         $this->assertDatabaseCount('cauhoi', 3);
         $this->assertDatabaseCount('luachon', 4);
@@ -149,7 +149,7 @@ class QuestionImportTest extends TestCase
         $result = $this->post(route('admin.questions.import.store'));
 
         $result->assertOk();
-        $result->assertSee('Import hoàn tất');
+        $result->assertSee('Nhập hoàn tất');
 
         $this->assertDatabaseCount('cauhoi', 3);
         $this->assertDatabaseCount('import_batches', 2);
@@ -215,5 +215,23 @@ class QuestionImportTest extends TestCase
             'ma' => 'reading-001',
             'noidung' => 'Nội dung đã sửa ___ .',
         ]);
+    }
+
+    public function test_nhap_cau_hoi_la_tab_trong_ngan_hang_khong_nam_o_menu(): void
+    {
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->get(route('admin.questions.index'))
+            ->assertOk()
+            ->assertSee('Danh sách câu hỏi')
+            ->assertSee('Nhập câu hỏi')
+            ->assertDontSee('Import JSON');
+
+        $this->actingAs($admin)
+            ->get(route('admin.questions.import.create'))
+            ->assertOk()
+            ->assertSee('Nhập câu hỏi từ JSON')
+            ->assertSee('Danh sách câu hỏi');
     }
 }

@@ -9,7 +9,7 @@
             <div>
                 <h2>Danh sách dạng bài</h2>
                 <p class="admin-muted">
-                    Dạng bài là dữ liệu nền cho import JSON: file import tham chiếu tới cột
+                    Dạng bài là dữ liệu nền cho việc nhập câu hỏi bằng JSON: file nhập tham chiếu tới cột
                     <code>ma</code>. Mã không sửa được; chỉ sửa tên hiển thị, cách chấm,
                     thời gian mặc định và bật/tắt.
                 </p>

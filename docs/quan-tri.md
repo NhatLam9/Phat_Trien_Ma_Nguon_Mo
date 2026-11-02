@@ -84,3 +84,15 @@ php artisan test
 - Các route dùng route model binding: `{loai}` → `Loaicauhoi`, `{danhmuc}` → `Danhmuc`,
   `{user}` → `Nguoidung`.
 - Màn hình Đề thi (AD05) vẫn để ở trạng thái "sẽ làm ở bước tiếp theo" trong menu.
+
+## 7. Bố cục giao diện
+
+- Sidebar tối, chia nhóm **Tổng quan / Nội dung / Hệ thống**, mỗi mục có icon SVG nội tuyến.
+- Mục đang mở được đánh dấu bằng nền xanh nhạt và vạch xanh bên trái.
+- Cuối sidebar có thẻ người dùng đang đăng nhập.
+- **Nhập câu hỏi** nằm trong tab của Ngân hàng câu hỏi (`admin/questions/import`), không còn là mục riêng trên menu.
+- Topbar dính trên cùng, hiển thị nhãn “Quản trị nội dung”, tiêu đề trang và link về trang chủ.
+- Nội dung giới hạn chiều rộng 1280px, bảng có header nền nhạt và bo góc.
+- Responsive: dưới 960px sidebar chuyển thành thanh ngang; dưới 720px form lọc về một cột.
+- Không dùng JavaScript; mọi tương tác dựa trên HTML/CSS và form submit thường.
+

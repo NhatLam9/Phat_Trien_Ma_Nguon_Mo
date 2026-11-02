@@ -24,9 +24,10 @@ sẽ rất dài và dễ sai; JSON giữ đúng cấu trúc và kiểm tra đư�
 | Đổi trạng thái | `PATCH /admin/questions/{id}/status` | `admin.questions.status` |
 | Duyệt hàng loạt | `POST /admin/questions/bulk-status` | `admin.questions.bulk-status` |
 | Xóa câu hỏi | `DELETE /admin/questions/{id}` | `admin.questions.destroy` |
-| Import JSON | `/admin/questions/import` | `admin.questions.import.create` |
+| Nhập câu hỏi (JSON) | `/admin/questions/import` | `admin.questions.import.create` |
 
 Tất cả đều nằm trong middleware `admin`, chỉ tài khoản `vaitro = admin` mới vào được.
+Trên giao diện, mục **Nhập câu hỏi** là một tab trong Ngân hàng câu hỏi, không còn là mục riêng ở menu trái.
 
 ## Quy trình trạng thái
 
