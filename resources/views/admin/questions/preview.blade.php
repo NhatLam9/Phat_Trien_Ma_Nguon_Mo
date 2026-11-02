@@ -1,9 +1,11 @@
 @extends('admin.layout')
 
-@section('title', 'Xem trước import')
-@section('heading', 'Xem trước dữ liệu import')
+@section('title', 'Xem trước dữ liệu nhập')
+@section('heading', 'Xem trước dữ liệu nhập')
 
 @section('content')
+    @include('admin.questions.partials.tabs')
+
     <div class="admin-panel">
         <div class="admin-panel__header">
             <div>
@@ -16,10 +18,6 @@
                 Chọn file khác
             </a>
         </div>
-
-        @if (session('error'))
-            <div class="admin-alert admin-alert--error">{{ session('error') }}</div>
-        @endif
 
         <div class="admin-stats">
             <div class="admin-stat">
@@ -56,7 +54,7 @@
     @if (! empty($errors))
         <div class="admin-panel">
             <div class="admin-alert admin-alert--error">
-                <strong>Không thể import vì file còn lỗi:</strong>
+                <strong>Không thể nhập vì file còn lỗi:</strong>
                 <ul>
                     @foreach ($errors as $field => $messages)
                         @foreach ((array) $messages as $message)
@@ -75,7 +73,7 @@
             <form method="POST" action="{{ route('admin.questions.import.store') }}" class="admin-form">
                 @csrf
                 <div class="admin-form__actions">
-                    <button type="submit" class="admin-btn">Xác nhận import</button>
+                    <button type="submit" class="admin-btn">Xác nhận nhập</button>
                     <a href="{{ route('admin.questions.import.create') }}" class="admin-btn admin-btn--ghost">
                         Hủy
                     </a>

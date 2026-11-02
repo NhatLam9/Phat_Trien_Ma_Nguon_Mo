@@ -8,6 +8,7 @@ use App\Models\CauhoiNghe;
 use App\Models\Danhmuc;
 use App\Models\Dethi;
 use App\Models\Dethicauhoi;
+use App\Models\ImportBatch;
 use App\Models\Loaicauhoi;
 use App\Models\Luachon;
 use App\Models\LuachonDoc;
@@ -99,10 +100,13 @@ class QuestionImportService
                 continue;
             }
 
-            $ma = trim((string) ($row['ma'] ?? 'q-'.($index + 1)));
+            $coMa = isset($row['ma']) && trim((string) $row['ma']) !== '';
+            $ma = $coMa ? trim((string) $row['ma']) : 'q-'.($index + 1);
 
-            if ($ma === '') {
-                $ma = 'q-'.($index + 1);
+            if (mb_strlen($ma) > 100) {
+                $errors[$prefix.'.ma'][] = 'Mã câu hỏi không được vượt quá 100 ký tự.';
+
+                continue;
             }
 
             if (isset($seenMa[$ma])) {
@@ -245,6 +249,7 @@ class QuestionImportService
 
             $questions[] = [
                 'ma' => $ma,
+                'co_ma' => $coMa,
                 'loai_ma' => $loaiMa,
                 'loai_ten' => $type->ten,
                 'loai_id' => (int) $type->id,
@@ -281,13 +286,13 @@ class QuestionImportService
      * @param  array<string, mixed>  $prepared
      * @return array<string, mixed>
      */
-    public function import(array $prepared, int $nguoiTaoId): array
+    public function import(array $prepared, int $nguoiTaoId, ?string $tenFile = null): array
     {
         if (! empty($prepared['errors'])) {
             throw new InvalidArgumentException('File import còn lỗi, không thể ghi database.');
         }
 
-        return DB::transaction(function () use ($prepared, $nguoiTaoId): array {
+        return DB::transaction(function () use ($prepared, $nguoiTaoId, $tenFile): array {
             $stats = [
                 'questions_created' => 0,
                 'questions_updated' => 0,
@@ -316,28 +321,35 @@ class QuestionImportService
                     $danhmucId = $danhmuc->id;
                 }
 
-                $question = Cauhoi::updateOrCreate(
-                    [
-                        'loai_id' => $questionData['loai_id'],
-                        'noidung' => $questionData['noidung'],
-                    ],
-                    [
-                        'danhmuc_id' => $danhmucId,
-                        'giaithich' => $questionData['giaithich'],
-                        'dokho' => $questionData['dokho'],
-                        'anh' => $questionData['anh'],
-                        'audio' => $questionData['audio'],
-                        'thoigian' => $questionData['thoigian'],
-                        'diem' => $questionData['diem'],
-                        'trangthai' => $questionData['trangthai'],
-                        'nguoitao' => $nguoiTaoId,
-                    ]
-                );
+                $question = $this->timCauHoiDeCapNhat($questionData);
 
-                if ($question->wasRecentlyCreated) {
-                    $stats['questions_created']++;
-                } else {
+                $duLieuCauHoi = [
+                    'loai_id' => $questionData['loai_id'],
+                    'noidung' => $questionData['noidung'],
+                    'danhmuc_id' => $danhmucId,
+                    'giaithich' => $questionData['giaithich'],
+                    'dokho' => $questionData['dokho'],
+                    'anh' => $questionData['anh'],
+                    'audio' => $questionData['audio'],
+                    'thoigian' => $questionData['thoigian'],
+                    'diem' => $questionData['diem'],
+                ];
+
+                if ($question) {
+                    // Không đổi "ma", "trangthai" hay "nguoitao" của câu đã có:
+                    // "ma" là khóa ổn định, trạng thái do quy trình duyệt quyết định.
+                    $question->fill($duLieuCauHoi)->save();
                     $stats['questions_updated']++;
+                } else {
+                    $duLieuCauHoi['trangthai'] = $questionData['trangthai'];
+                    $duLieuCauHoi['nguoitao'] = $nguoiTaoId;
+
+                    if ($questionData['co_ma']) {
+                        $duLieuCauHoi['ma'] = $questionData['ma'];
+                    }
+
+                    $question = Cauhoi::create($duLieuCauHoi);
+                    $stats['questions_created']++;
                 }
 
                 $question->luachon()->delete();
@@ -443,11 +455,46 @@ class QuestionImportService
                 ];
             }
 
+            $batch = ImportBatch::create([
+                'ten_file' => $tenFile !== null && $tenFile !== '' ? $tenFile : 'import.json',
+                'nguoitao' => $nguoiTaoId,
+                'tong_cau' => count($prepared['questions']),
+                'tao_moi' => $stats['questions_created'],
+                'cap_nhat' => $stats['questions_updated'],
+                'so_canhbao' => count($prepared['warnings'] ?? []),
+                'trangthai' => 'success',
+                'ghichu' => null,
+            ]);
+
             return [
                 'stats' => $stats,
                 'exam' => $examResult,
+                'batch' => [
+                    'id' => $batch->id,
+                    'ten_file' => $batch->ten_file,
+                ],
             ];
         }, 3);
+    }
+
+    /**
+     * Tim cau hoi da co de cap nhat thay vi tao trung.
+     *
+     * Uu tien "ma" (khoa on dinh). Neu file khong khai bao ma thi giu cach cu:
+     * ghep theo (loai_id, noidung) de khong tao trung khi import lai.
+     *
+     * @param  array<string, mixed>  $questionData
+     */
+    private function timCauHoiDeCapNhat(array $questionData): ?Cauhoi
+    {
+        if ($questionData['co_ma']) {
+            return Cauhoi::query()->where('ma', $questionData['ma'])->first();
+        }
+
+        return Cauhoi::query()
+            ->where('loai_id', $questionData['loai_id'])
+            ->where('noidung', $questionData['noidung'])
+            ->first();
     }
 
     /**

@@ -1,9 +1,11 @@
 @extends('admin.layout')
 
-@section('title', 'Import câu hỏi')
-@section('heading', 'Import câu hỏi từ file JSON')
+@section('title', 'Nhập câu hỏi')
+@section('heading', 'Nhập câu hỏi từ JSON')
 
 @section('content')
+    @include('admin.questions.partials.tabs')
+
     <div class="admin-panel">
         <div class="admin-panel__header">
             <div>
@@ -14,23 +16,6 @@
                 </p>
             </div>
         </div>
-
-        @if (session('error'))
-            <div class="admin-alert admin-alert--error">
-                {{ session('error') }}
-            </div>
-        @endif
-
-        @if ($errors->any())
-            <div class="admin-alert admin-alert--error">
-                <strong>File chưa hợp lệ:</strong>
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
 
         <form method="POST"
               action="{{ route('admin.questions.import.preview') }}"
@@ -97,7 +82,57 @@
             <li>Câu hỏi con đọc dùng <code>cauhoi_doc</code>; câu hỏi con nghe dùng <code>cauhoi_nghe</code>.</li>
             <li>Câu con không có lựa chọn phải có <code>dapandung</code>.</li>
             <li>Đường dẫn media là đường dẫn tương đối trong <code>public/</code>, ví dụ <code>images/questions/photo-2.svg</code>.</li>
-            <li>Mặc định câu hỏi và đề được import ở trạng thái <code>draft</code> để duyệt trước khi publish.</li>
+            <li>Mặc định câu hỏi và đề được nhập ở trạng thái <code>draft</code> để duyệt trước khi publish.</li>
+            <li><code>ma</code> là khóa ổn định: nhập lại cùng <code>ma</code> sẽ cập nhật câu hỏi cũ thay vì tạo trùng.</li>
         </ul>
+    </div>
+
+    <div class="admin-panel">
+        <h2>Lịch sử nhập gần đây</h2>
+
+        @if ($batches->isEmpty())
+            <p class="admin-muted">Chưa có lần nhập nào.</p>
+        @else
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Thời điểm</th>
+                            <th>File</th>
+                            <th>Người nhập</th>
+                            <th>Câu trong file</th>
+                            <th>Tạo mới</th>
+                            <th>Cập nhật</th>
+                            <th>Cảnh báo</th>
+                            <th>Kết quả</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($batches as $batch)
+                            <tr>
+                                <td>{{ $batch->id }}</td>
+                                <td>{{ $batch->ngaytao?->format('d/m/Y H:i') ?? '—' }}</td>
+                                <td><code>{{ $batch->ten_file }}</code></td>
+                                <td>{{ $batch->nguoiTao?->hoten ?? '—' }}</td>
+                                <td>{{ $batch->tong_cau }}</td>
+                                <td>{{ $batch->tao_moi }}</td>
+                                <td>{{ $batch->cap_nhat }}</td>
+                                <td>{{ $batch->so_canhbao }}</td>
+                                <td>
+                                    @if ($batch->laThanhCong())
+                                        <span class="admin-badge admin-badge--published">Thành công</span>
+                                    @else
+                                        <span class="admin-badge admin-badge--review" title="{{ $batch->ghichu }}">
+                                            Thất bại
+                                        </span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
     </div>
 @endsection
