@@ -26,7 +26,20 @@ class ResetPasswordController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
-            'matkhau' => 'required|string|min:6|confirmed',
+            'matkhau' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&^_-]/',
+            ],
+        ], [
+            'matkhau.min' => 'Mật khẩu phải có ít nhất 8 ký tự.',
+            'matkhau.regex' => 'Mật khẩu phải bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.',
+            'matkhau.confirmed' => 'Mật khẩu xác nhận không khớp.',
         ]);
 
         $credentials = [

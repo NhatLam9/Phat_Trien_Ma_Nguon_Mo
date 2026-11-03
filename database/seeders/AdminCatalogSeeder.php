@@ -162,7 +162,7 @@ class AdminCatalogSeeder extends Seeder
     {
         $cauhoi = $this->taoCauHoi($loai, $danhmuc, [
             'noidung' => 'Listen to a conversation at a train station and answer the question.',
-            'audio' => 'audio/questions/listening-2.wav',
+            'audio' => 'audio/questions/listening-bank-01.wav',
             'dokho' => 5,
             'thoigian' => 120,
         ]);
@@ -259,7 +259,7 @@ class AdminCatalogSeeder extends Seeder
     {
         $cauhoi = $this->taoCauHoi($loai, $danhmuc, [
             'noidung' => 'Listen to the sentence and type exactly what you hear.',
-            'audio' => 'audio/questions/listening-3.wav',
+            'audio' => 'audio/questions/listening-1.wav',
             'dokho' => 3,
             'thoigian' => 60,
         ]);
