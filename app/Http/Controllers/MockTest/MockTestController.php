@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\MockTest;
 
 use App\Http\Controllers\Controller;
+use App\Models\CauhoiDoc;
+use App\Models\CauhoiNghe;
 use App\Models\Lanthi;
 use App\Models\Lanthicauhoi;
 use App\Services\TestService;
@@ -12,7 +14,6 @@ use Illuminate\Validation\ValidationException;
 
 class MockTestController extends Controller
 {
-    // MT01: Danh sách đề thi.
     public function index(Request $request, TestService $service)
     {
         $deThi = DB::table('dethi')
@@ -32,7 +33,7 @@ class MockTestController extends Controller
 
             if ($lanThiDangMo) {
                 $lanThiDangMo = $service->kiemTraHetHan(
-                    $lanThiDangMo->id,
+                    (int) $lanThiDangMo->id,
                     $nguoiDungId
                 );
 
@@ -48,18 +49,15 @@ class MockTestController extends Controller
         ));
     }
 
-    // MT01: Bắt đầu hoặc tiếp tục bài thi.
     public function start(Request $request, TestService $service)
     {
-        $validated = $request->validate([
+        $data = $request->validate([
             'dethi_id' => ['required', 'integer', 'exists:dethi,id'],
         ]);
 
-        $nguoiDungId = (int) $request->user()->getAuthIdentifier();
-
         $lanThi = $service->batDauThi(
-            $nguoiDungId,
-            (int) $validated['dethi_id']
+            (int) $request->user()->getAuthIdentifier(),
+            (int) $data['dethi_id']
         );
 
         return redirect()
@@ -67,14 +65,13 @@ class MockTestController extends Controller
             ->with('success', 'Đã bắt đầu hoặc tiếp tục bài thi.');
     }
 
-    // MT02 / MT04: Hiển thị câu hỏi và kiểm tra thời gian.
     public function show(Request $request, int $id, TestService $service)
     {
         $nguoiDungId = (int) $request->user()->getAuthIdentifier();
-
         $lanThi = $service->kiemTraHetHan($id, $nguoiDungId);
+
         if ($lanThi->trangthai === 'completed') {
-            return redirect()->route('mock-test.result', ['id' => $lanThi->id]);
+            return redirect()->route('mock-test.result', ['id' => $id]);
         }
 
         $deThi = DB::table('dethi')
@@ -90,161 +87,135 @@ class MockTestController extends Controller
             : 0;
 
         $biHetGio = DB::table('vipham')
-            ->where('lanthi_id', $lanThi->id)
+            ->where('lanthi_id', $id)
             ->where('loai', 'timeout')
             ->exists();
 
-        // Danh sách câu hỏi đã cấp.
         $dsCauDaCap = DB::table('lanthicauhoi')
-            ->where('lanthi_id', $lanThi->id)
+            ->where('lanthi_id', $id)
             ->orderBy('thutu')
-            ->get([
-                'id',
-                'cauhoi_id',
-                'thutu',
-                'datraloi',
-            ]);
+            ->get(['id', 'cauhoi_id', 'thutu', 'datraloi']);
 
         $soCauDaCap = $dsCauDaCap->count();
 
-        // Số câu hỏi thực tế trong đề.
-        $soCauTrongDe = DB::table('dethicauhoi')
+        $soCauTrongDe = (int) DB::table('dethicauhoi')
             ->where('dethi_id', $lanThi->dethi_id)
             ->count();
 
-        $tongSoCau = $soCauTrongDe;
+        $tongSoCau = max(
+            $soCauTrongDe,
+            (int) ($dsCauDaCap->max('thutu') ?? 0)
+        );
 
         $cauDuocCap = null;
         $cauHoi = null;
         $luaChon = collect();
+        $cauHoiCon = collect();
+        $luaChonCon = collect();
         $cauTruoc = null;
         $cauSau = null;
+
+        $cauChuaTraLoi = $dsCauDaCap
+            ->filter(fn ($cau) => !(bool) $cau->datraloi)
+            ->values();
 
         if ($lanThi->trangthai === 'in_progress') {
             $cauYeuCau = $request->query('cau');
 
-            // Kiểm tra ID câu hỏi trên URL.
             if ($cauYeuCau !== null) {
                 abort_unless(
                     is_string($cauYeuCau)
-                    && ctype_digit($cauYeuCau)
-                    && (int) $cauYeuCau > 0,
+                        && ctype_digit($cauYeuCau)
+                        && (int) $cauYeuCau > 0,
                     404
                 );
             }
 
-            // Các câu chưa nộp đáp án.
-            $dsChuaTraLoi = $dsCauDaCap
-                ->filter(fn ($cau) => (int) $cau->datraloi === 0);
-
-            // Chọn câu được yêu cầu hoặc câu chưa làm mới nhất.
             $cauDuocCap = $cauYeuCau !== null
-                ? $dsChuaTraLoi->firstWhere('id', (int) $cauYeuCau)
-                : $dsChuaTraLoi->last();
+                ? $cauChuaTraLoi->firstWhere('id', (int) $cauYeuCau)
+                : $cauChuaTraLoi->last();
 
             if ($cauYeuCau !== null && !$cauDuocCap) {
                 abort(404, 'Câu hỏi không tồn tại hoặc đã được nộp.');
             }
 
             if ($cauDuocCap) {
-                // Lấy câu hỏi từ ngân hàng câu hỏi.
-                $cauHoi = DB::table('cauhoi')
-                    ->join(
-                        'loaicauhoi',
-                        'loaicauhoi.id',
-                        '=',
-                        'cauhoi.loai_id'
-                    )
-                    ->where('cauhoi.id', $cauDuocCap->cauhoi_id)
-                    ->select(
-                        'cauhoi.id',
-                        'cauhoi.noidung',
-                        'cauhoi.anh',
-                        'cauhoi.audio',
-                        'cauhoi.thoigian',
-                        'loaicauhoi.ten as tenloai',
-                        'loaicauhoi.kynang'
-                    )
-                    ->firstOrFail();
+                $cauHoi = DB::table('cauhoi as ch')
+                    ->join('loaicauhoi as loai', 'loai.id', '=', 'ch.loai_id')
+                    ->where('ch.id', $cauDuocCap->cauhoi_id)
+                    ->first([
+                        'ch.id',
+                        'ch.noidung',
+                        'ch.anh',
+                        'ch.audio',
+                        'ch.thoigian',
+                        'loai.ten as tenloai',
+                        'loai.ma as maloai',
+                        'loai.kynang',
+                    ]);
 
-                // Lấy đáp án trắc nghiệm.
+                abort_if(!$cauHoi, 404, 'Không tìm thấy câu hỏi.');
+
                 $luaChon = DB::table('luachon')
                     ->where('cauhoi_id', $cauHoi->id)
                     ->orderBy('thutu')
                     ->orderBy('id')
                     ->get(['id', 'noidung']);
 
-                // Câu trước: chỉ mở các câu chưa nộp.
-                $cauTruoc = $dsChuaTraLoi
+                [$cauHoiCon, $luaChonCon] = $this->layCauHoiCon(
+                    (int) $cauHoi->id,
+                    $cauHoi->maloai
+                );
+
+                $cauTruoc = $cauChuaTraLoi
                     ->filter(fn ($cau) =>
                         (int) $cau->thutu < (int) $cauDuocCap->thutu
                     )
                     ->last();
 
-                // Câu sau đã được cấp nhưng chưa nộp.
-                $cauSau = $dsChuaTraLoi
-                    ->first(fn ($cau) =>
+                $cauSau = $cauChuaTraLoi->first(
+                    fn ($cau) =>
                         (int) $cau->thutu > (int) $cauDuocCap->thutu
-                    );
+                );
             }
         }
 
-        // Phiếu trả lời.
+        $cauTheoThuTu = $dsCauDaCap->keyBy('thutu');
         $phieuTraLoi = collect();
 
-        for ($i = 1; $i <= $tongSoCau; $i++) {
-            $cau = $dsCauDaCap->firstWhere('thutu', $i);
+        for ($thuTu = 1; $thuTu <= $tongSoCau; $thuTu++) {
+            $cau = $cauTheoThuTu->get($thuTu);
 
-            if (!$cau) {
-                $trangThai = 'empty';
-            } elseif ((int) $cau->datraloi === 1) {
-                $trangThai = 'answered';
-            } elseif (
-                $cauDuocCap
-                && (int) $cau->id === (int) $cauDuocCap->id
-            ) {
-                $trangThai = 'current';
-            } else {
-                $trangThai = 'seen';
-            }
+            $trangThai = match (true) {
+                $cau === null => 'empty',
+                (bool) $cau->datraloi => 'answered',
+                $cauDuocCap !== null
+                    && (int) $cau->id === (int) $cauDuocCap->id => 'current',
+                default => 'seen',
+            };
 
             $phieuTraLoi->push([
-                'thutu' => $i,
+                'thutu' => $thuTu,
                 'status' => $trangThai,
-                'lanthicauhoi_id' => $cau
-                    && (int) $cau->datraloi === 0
+                'lanthicauhoi_id' => $cau && !(bool) $cau->datraloi
                     ? (int) $cau->id
                     : null,
             ]);
         }
 
-        // Đếm câu chưa được cấp.
-        $soCauHopLeConLai = 0;
-
-        if ($lanThi->trangthai === 'in_progress') {
-            $soCauHopLeConLai = DB::table('dethicauhoi as dc')
-                ->join(
-                    'cauhoi as ch',
-                    'ch.id',
-                    '=',
-                    'dc.cauhoi_id'
-                )
+        $soCauHopLeConLai = $lanThi->trangthai === 'in_progress'
+            ? DB::table('dethicauhoi as dc')
+                ->join('cauhoi as ch', 'ch.id', '=', 'dc.cauhoi_id')
                 ->where('dc.dethi_id', $lanThi->dethi_id)
                 ->where('ch.trangthai', 'published')
-                ->whereNotIn('ch.id', function ($query) use ($lanThi) {
-                    $query->select('cauhoi_id')
-                        ->from('lanthicauhoi')
-                        ->where('lanthi_id', $lanThi->id);
+                ->whereNotExists(function ($query) use ($id) {
+                    $query->selectRaw('1')
+                        ->from('lanthicauhoi as lc')
+                        ->whereColumn('lc.cauhoi_id', 'dc.cauhoi_id')
+                        ->where('lc.lanthi_id', $id);
                 })
-                ->count();
-        }
-
-        // Các câu đã cấp nhưng chưa trả lời.
-        $cauChuaTraLoi = DB::table('lanthicauhoi')
-            ->where('lanthi_id', $lanThi->id)
-            ->where('datraloi', false)
-            ->orderBy('thutu')
-            ->get(['id', 'thutu']);
+                ->count()
+            : 0;
 
         return view('mock-test.question', compact(
             'lanThi',
@@ -252,6 +223,8 @@ class MockTestController extends Controller
             'cauDuocCap',
             'cauHoi',
             'luaChon',
+            'cauHoiCon',
+            'luaChonCon',
             'soCauDaCap',
             'soCauTrongDe',
             'soCauHopLeConLai',
@@ -267,7 +240,6 @@ class MockTestController extends Controller
         ));
     }
 
-    // MT02: Cấp câu hỏi đầu tiên hoặc tiếp theo.
     public function capCauHoi(
         Request $request,
         int $id,
@@ -281,66 +253,29 @@ class MockTestController extends Controller
         return redirect()->route('mock-test.show', ['id' => $id]);
     }
 
-    // MT02 / MT03: Lưu đáp án và chuyển sang câu sau.
-    public function skip(
-        Request $request,
-        int $id,
-        TestService $service
-    ) {
-        $data = $request->validate([
-            'lanthicauhoi_id' => ['required', 'integer'],
-            'luachon_id' => ['nullable', 'integer'],
-            'noidung' => ['nullable', 'string', 'max:10000'],
-        ]);
-
+    public function skip(Request $request, int $id, TestService $service)
+    {
+        $data = $this->kiemTraDapAn($request);
         $nguoiDungId = (int) $request->user()->getAuthIdentifier();
-        $cauHienTaiId = (int) $data['lanthicauhoi_id'];
 
-        // Xác minh phiên thi và quyền sở hữu.
         $lanThi = $service->kiemTraHetHan($id, $nguoiDungId);
 
         if ($lanThi->trangthai !== 'in_progress') {
             return redirect()->route('mock-test.show', ['id' => $id]);
         }
 
-        // Chỉ thao tác trên câu chưa được nộp của phiên này.
         $cauHienTai = Lanthicauhoi::query()
-            ->whereKey($cauHienTaiId)
-            ->where('lanthi_id', $lanThi->id)
+            ->whereKey((int) $data['lanthicauhoi_id'])
+            ->where('lanthi_id', $id)
             ->where('datraloi', false)
             ->firstOrFail();
 
-        $tongSoCau = DB::table('dethicauhoi')
-            ->where('dethi_id', $lanThi->dethi_id)
-            ->count();
-
-        // Không cho nút Câu sau quay vòng tại câu cuối.
-        // Câu cuối phải sử dụng nút Nộp bài.
-        if ((int) $cauHienTai->thutu >= $tongSoCau) {
-            return redirect()
-                ->route('mock-test.show', [
-                    'id' => $id,
-                    'cau' => $cauHienTaiId,
-                ])
-                ->withErrors([
-                    'lanthi' => 'Đây là câu cuối. Vui lòng nhấn Nộp bài.',
-                ]);
-        }
-
-        $luaChonId = isset($data['luachon_id'])
-            ? (int) $data['luachon_id']
-            : null;
-
-        $noiDung = trim($data['noidung'] ?? '');
-
-        // Có câu trả lời: lưu trước khi chuyển câu.
-        if ($luaChonId !== null || $noiDung !== '') {
-            $traLoi = $service->nopCauTraLoi(
+        if ($this->coDapAn($data)) {
+            $traLoi = $this->luuDapAn(
+                $service,
                 $id,
                 $nguoiDungId,
-                $cauHienTaiId,
-                $luaChonId,
-                $noiDung
+                $data
             );
 
             if ($traLoi === null) {
@@ -348,21 +283,17 @@ class MockTestController extends Controller
             }
         }
 
-        // Cấp câu tiếp theo hoặc chuyển đến câu đã cấp phía sau.
         $cauTiepTheo = $service->capCauHoiTiepTheo(
             $id,
             $nguoiDungId,
             true,
-            $cauHienTaiId
+            (int) $cauHienTai->id
         );
 
         if (!$cauTiepTheo) {
             return redirect()
                 ->route('mock-test.show', ['id' => $id])
-                ->with(
-                    'success',
-                    'Không còn câu hỏi mới. Bạn có thể nộp bài thi.'
-                );
+                ->with('success', 'Không còn câu hỏi mới. Bạn có thể nộp bài.');
         }
 
         return redirect()->route('mock-test.show', [
@@ -371,48 +302,29 @@ class MockTestController extends Controller
         ]);
     }
 
-    // MT03: Nộp câu trả lời độc lập (giữ tương thích).
-    public function submit(
-        Request $request,
-        int $id,
-        TestService $service
-    ) {
-        $data = $request->validate([
-            'lanthicauhoi_id' => ['required', 'integer'],
-            'luachon_id' => ['nullable', 'integer'],
-            'noidung' => ['nullable', 'string', 'max:10000'],
-        ]);
+    public function submit(Request $request, int $id, TestService $service)
+    {
+        $data = $this->kiemTraDapAn($request);
 
-        $traLoi = $service->nopCauTraLoi(
+        $traLoi = $this->luuDapAn(
+            $service,
             $id,
             (int) $request->user()->getAuthIdentifier(),
-            (int) $data['lanthicauhoi_id'],
-            isset($data['luachon_id'])
-                ? (int) $data['luachon_id']
-                : null,
-            $data['noidung'] ?? null
+            $data
         );
-
-        if ($traLoi === null) {
-            return redirect()
-                ->route('mock-test.show', ['id' => $id])
-                ->with(
-                    'success',
-                    'Bài thi đã hết thời gian. Câu trả lời không được ghi nhận.'
-                );
-        }
 
         return redirect()
             ->route('mock-test.show', ['id' => $id])
-            ->with('success', 'Đã lưu câu trả lời thành công.');
+            ->with(
+                'success',
+                $traLoi
+                    ? 'Đã lưu câu trả lời.'
+                    : 'Bài thi đã hết thời gian.'
+            );
     }
 
-    // MT05: Nộp bài, đồng thời lưu đáp án câu cuối.
-    public function finish(
-        Request $request,
-        int $id,
-        TestService $service
-    ) {
+    public function finish(Request $request, int $id, TestService $service)
+    {
         $data = $request->validate([
             'lanthicauhoi_id' => ['nullable', 'integer'],
             'luachon_id' => ['nullable', 'integer'],
@@ -422,65 +334,131 @@ class MockTestController extends Controller
 
         $nguoiDungId = (int) $request->user()->getAuthIdentifier();
 
-        $luaChonId = isset($data['luachon_id'])
-            ? (int) $data['luachon_id']
-            : null;
-
-        $noiDung = trim($data['noidung'] ?? '');
-
-        // Nếu có đáp án câu cuối, lưu trước khi chốt.
-        if ($luaChonId !== null || $noiDung !== '') {
-            if (empty($data['lanthicauhoi_id'])) {
-                throw ValidationException::withMessages([
-                    'lanthicauhoi_id' =>
-                        'Không xác định được câu hỏi cần nộp.',
-                ]);
-            }
-
-            $traLoi = $service->nopCauTraLoi(
-                $id,
-                $nguoiDungId,
-                (int) $data['lanthicauhoi_id'],
-                $luaChonId,
-                $noiDung
-            );
-
-            if ($traLoi === null) {
-                return redirect()
-                    ->route('mock-test.show', ['id' => $id]);
-            }
-        }
-
-        $lanThi = $service->chotBaiThi(
+        $lanThi = DB::transaction(function () use (
+            $data,
             $id,
             $nguoiDungId,
-            ($data['xac_nhan_bo_trong'] ?? null) === '1'
-        );
+            $service
+        ) {
+            $lanThi = Lanthi::query()
+                ->whereKey($id)
+                ->where('nguoidung_id', $nguoiDungId)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-            return redirect()->route('mock-test.result', ['id' => $lanThi->id]);
+            if ($lanThi->trangthai === 'completed') {
+                return $lanThi;
+            }
+
+            if ($this->coDapAn($data)) {
+                if (empty($data['lanthicauhoi_id'])) {
+                    throw ValidationException::withMessages([
+                        'lanthicauhoi_id' => 'Không xác định được câu hỏi cần nộp.',
+                    ]);
+                }
+
+                $this->luuDapAn($service, $id, $nguoiDungId, $data);
+            }
+
+            return $service->chotBaiThi(
+                $id,
+                $nguoiDungId,
+                ($data['xac_nhan_bo_trong'] ?? null) === '1'
+            );
+        }, 3);
+
+        return redirect()->route('mock-test.result', [
+            'id' => $lanThi->id,
+        ]);
     }
 
-    // MT08: Bỏ dở bài thi.
     public function abandon(
         Request $request,
         int $id,
         TestService $service
     ) {
-        $nguoiDungId = (int) $request->user()->getAuthIdentifier();
+        $lanThi = $service->boDoBaiThi(
+            $id,
+            (int) $request->user()->getAuthIdentifier()
+        );
 
-        $lanThi = $service->boDoBaiThi($id, $nguoiDungId);
-
-        $biHetGio = DB::table('vipham')
-            ->where('lanthi_id', $lanThi->id)
-            ->where('loai', 'timeout')
-            ->exists();
-
-        $thongBao = $biHetGio
+        $thongBao = $lanThi->trangthai === 'completed'
             ? 'Bài thi đã hết thời gian quy định.'
-            : 'Bạn đã bỏ dở bài thi. Kết quả sẽ không được tính điểm.';
+            : 'Bạn đã bỏ dở bài thi. Kết quả không được tính điểm.';
 
         return redirect()
             ->route('mock-test.show', ['id' => $id])
             ->with('success', $thongBao);
+    }
+
+    private function kiemTraDapAn(Request $request): array
+    {
+        return $request->validate([
+            'lanthicauhoi_id' => ['required', 'integer'],
+            'luachon_id' => ['nullable', 'integer'],
+            'noidung' => ['nullable', 'string', 'max:10000'],
+        ]);
+    }
+
+    private function coDapAn(array $data): bool
+    {
+        return isset($data['luachon_id'])
+            || trim($data['noidung'] ?? '') !== '';
+    }
+
+    private function luuDapAn(
+        TestService $service,
+        int $lanThiId,
+        int $nguoiDungId,
+        array $data
+    ): ?\App\Models\Traloi {
+        return $service->nopCauTraLoi(
+            $lanThiId,
+            $nguoiDungId,
+            (int) $data['lanthicauhoi_id'],
+            isset($data['luachon_id']) ? (int) $data['luachon_id'] : null,
+            $data['noidung'] ?? null
+        );
+    }
+
+    private function layCauHoiCon(int $cauHoiId, string $maLoai): array
+    {
+        $cauHoiCon = collect();
+        $luaChonCon = collect();
+
+        if (!in_array($maLoai, [
+            'interactive_reading',
+            'interactive_listening',
+        ], true)) {
+            return [$cauHoiCon, $luaChonCon];
+        }
+
+        $laDoc = $maLoai === 'interactive_reading';
+        $quanHe = $laDoc ? 'luachonDoc' : 'luachonNghe';
+        $query = $laDoc ? CauhoiDoc::query() : CauhoiNghe::query();
+
+        $cacCauCon = $query
+            ->where('cauhoi_id', $cauHoiId)
+            ->with($quanHe)
+            ->orderBy('thutu')
+            ->orderBy('id')
+            ->get();
+
+        foreach ($cacCauCon as $con) {
+            $cauHoiCon->push((object) [
+                'id' => (int) $con->id,
+                'noidung' => $con->noidung,
+            ]);
+
+            $luaChonCon->put(
+                $con->id,
+                $con->getRelation($quanHe)->map(fn ($lua) => (object) [
+                    'id' => (int) $lua->id,
+                    'noidung' => $lua->noidung,
+                ])
+            );
+        }
+
+        return [$cauHoiCon, $luaChonCon];
     }
 }

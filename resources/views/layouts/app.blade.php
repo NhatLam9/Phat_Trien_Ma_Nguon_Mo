@@ -29,8 +29,25 @@
                 <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a>
                 <a href="{{ route('practice.index') }}" class="{{ request()->is('practice*') && !request()->is('practice/bookmarks*') && !request()->is('practice/history*') ? 'active' : '' }}">Luyện tập</a>
                 <a href="{{ route('practice.bookmarks') }}" class="{{ request()->is('practice/bookmarks*') ? 'active' : '' }}">Câu hỏi đã lưu</a>
-                <a href="{{ route('practice.history') }}" class="{{ request()->is('practice/history*') ? 'active' : '' }}">Lịch sử</a>
-                <a href="{{ route('mock-test.index') }}" class="{{ request()->is('mock-test*') ? 'active' : '' }}">Thi thử</a>
+                <a href="{{ route('practice.history') }}"
+   class="{{ request()->routeIs('practice.history') ? 'active' : '' }}">
+    Lịch sử luyện tập
+</a>
+
+<a href="{{ route('mock-test.index') }}"
+   class="{{ request()->routeIs('mock-test.*') && !request()->routeIs('mock-test.history') ? 'active' : '' }}">
+    Thi thử
+</a>
+
+<a href="{{ route('mock-test.history') }}"
+   class="{{ request()->routeIs('mock-test.history') ? 'active' : '' }}">
+    Lịch sử thi
+</a>
+
+<a href="{{ route('learning.dashboard') }}"
+   class="{{ request()->routeIs('learning.dashboard') ? 'active' : '' }}">
+    Thống kê
+</a>
 
                 @if(Auth::user()->vaitro === 'admin' || Auth::user()->isAdmin())
                     <!-- Menu dành riêng cho Quản trị viên (Admin) -->
