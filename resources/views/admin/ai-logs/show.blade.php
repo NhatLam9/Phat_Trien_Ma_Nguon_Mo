@@ -5,7 +5,7 @@
 
 @section('content')
 <div style="margin-bottom: 16px;">
-    <a href="{{ route('admin.ailogs.index') }}" style="color: var(--admin-muted); text-decoration: none; font-size: 14px;">&larr; Quay lại danh sách nhật ký</a>
+    <a href="{{ route('admin.ai-logs.index') }}" style="color: var(--admin-muted); text-decoration: none; font-size: 14px;">&larr; Quay lại danh sách nhật ký</a>
 </div>
 
 <div style="background: var(--admin-surface); border: 1px solid var(--admin-border); border-radius: var(--admin-radius); padding: 24px; box-shadow: var(--admin-shadow); margin-bottom: 24px;">
@@ -18,7 +18,7 @@
         <div>
             <span style="font-size: 12px; color: var(--admin-muted); display: block; text-transform: uppercase;">Phân loại yêu cầu</span>
             <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; background: #e2e8f0; color: #334155; margin-top: 4px;">
-                {{ $log->loai }}
+                {{ $loaiNhan[$log->loai] ?? $log->loai }}
             </span>
         </div>
         <div>

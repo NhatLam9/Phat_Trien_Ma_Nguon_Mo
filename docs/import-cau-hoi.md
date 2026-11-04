@@ -1,6 +1,6 @@
-# Import câu hỏi bằng JSON
+# Nhập câu hỏi bằng JSON
 
-Cập nhật ngày 28/10/2026, thuộc module TV3.
+Cập nhật ngày 01/11/2026, thuộc module TV3.
 
 ## Đường dẫn
 
@@ -16,6 +16,7 @@ Màn hình cho phép:
 2. Xem trước số câu, số lựa chọn, câu con và đề thi.
 3. Kiểm tra lỗi/cảnh báo.
 4. Xác nhận ghi database trong một transaction.
+5. Xem lại lịch sử 10 lần nhập gần nhất (file, người nhập, số câu tạo mới/cập nhật, cảnh báo, kết quả).
 
 File mẫu tải tại:
 
@@ -63,7 +64,7 @@ File mẫu tải tại:
 
 | Trường | Bắt buộc | Ghi chú |
 |---|---|---|
-| `ma` | Không | Mã nội bộ trong file, dùng để tham chiếu từ đề. Nếu bỏ trống sẽ tự sinh. |
+| `ma` | Không | Khóa ổn định của câu hỏi. Import lại cùng `ma` sẽ cập nhật câu cũ thay vì tạo trùng. Tối đa 100 ký tự, không trùng trong cùng file. Nếu bỏ trống, hệ thống tự sinh `q-000001` theo id. |
 | `loai` | Có | Mã trong bảng `loaicauhoi`, ví dụ `read_and_select`. |
 | `noidung` | Có | Nội dung câu hỏi hoặc đoạn văn cha. |
 | `danhmuc` | Không | Tên chủ đề. Nếu chưa có, hệ thống tạo mới. |
@@ -168,6 +169,9 @@ Nếu đề đã tồn tại theo `ten`, hệ thống cập nhật đề và tha
 ## Ghi chú
 
 - Import chạy trong transaction: lỗi giữa chừng sẽ rollback.
-- Câu hỏi được nhận diện để cập nhật theo cặp `loai_id + noidung`.
+- `ma` là khóa ổn định: import lại cùng `ma` sẽ cập nhật nội dung, lựa chọn, câu con và giữ nguyên id, trạng thái duyệt, lịch sử nằm trong đề thi.
+- File không khai báo `ma` thì hệ thống nhận diện câu cũ theo cặp `loai_id + noidung` (cách cũ). Nên khai báo `ma` cho mọi câu.
+- Khi cập nhật câu đã có, hệ thống **không** ghi đè `trangthai` và `nguoitao`: trạng thái do quy trình duyệt ở màn hình ngân hàng câu hỏi quyết định.
+- Mỗi lần import (kể cả thất bại) được ghi vào bảng `import_batches`.
 - Media chỉ được kiểm tra đường dẫn; file thật cần có trong `public/`.
 - Chưa hỗ trợ đọc trực tiếp Word/PDF/Excel. Các định dạng đó cần chuyển sang JSON trước để giữ cấu trúc câu hỏi lồng nhau.

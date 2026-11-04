@@ -1,120 +1,150 @@
 @extends('admin.layout')
 
 @section('title', 'Nhật ký AI')
-@section('heading', 'Nhật ký gọi dịch vụ AI (ailog)')
+@section('heading', 'Nhật ký gọi AI')
 
 @section('content')
-<div style="background: var(--admin-surface); border: 1px solid var(--admin-border); border-radius: var(--admin-radius); padding: 20px; box-shadow: var(--admin-shadow); margin-bottom: 24px;">
-    <!-- Form lọc No-JS (GET) -->
-    <form method="GET" action="{{ route('admin.ailogs.index') }}" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
-        <div style="flex: 1; min-width: 200px;">
-            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--admin-muted); margin-bottom: 6px;">Tìm học viên (Tên hoặc Email)</label>
-            <input type="text" name="search" value="{{ $search }}" placeholder="Nhập tên hoặc email..." style="width: 100%; padding: 8px 12px; border: 1px solid var(--admin-border); border-radius: 6px; font-size: 14px;">
+    <div class="admin-panel">
+        <div class="admin-panel__header">
+            <div>
+                <h2>Lọc nhật ký</h2>
+                <p class="admin-muted">
+                    Chỉ đọc. Dùng để kiểm tra lỗi chấm Writing/Speaking hoặc lạm dụng lượt gọi AI.
+                </p>
+            </div>
         </div>
 
-        <div style="width: 160px;">
-            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--admin-muted); margin-bottom: 6px;">Loại yêu cầu</label>
-            <select name="loai" style="width: 100%; padding: 8px 12px; border: 1px solid var(--admin-border); border-radius: 6px; font-size: 14px; background: #fff;">
-                <option value="">Tất cả loại</option>
-                @foreach ($loaiOptions as $opt)
-                    <option value="{{ $opt }}" {{ $loai === $opt ? 'selected' : '' }}>{{ strtoupper($opt) }}</option>
-                @endforeach
-            </select>
-        </div>
+        <form method="GET" action="{{ route('admin.ai-logs.index') }}" class="admin-filter">
+            <div class="admin-filter__field">
+                <label for="q">Người dùng</label>
+                <input type="search" id="q" name="q" value="{{ $boLoc['q'] }}"
+                       placeholder="Họ tên hoặc email">
+            </div>
 
-        <div style="width: 150px;">
-            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--admin-muted); margin-bottom: 6px;">Trạng thái</label>
-            <select name="trangthai" style="width: 100%; padding: 8px 12px; border: 1px solid var(--admin-border); border-radius: 6px; font-size: 14px; background: #fff;">
-                <option value="">Tất cả trạng thái</option>
-                @foreach ($trangthaiOptions as $value => $label)
-                    <option value="{{ $value }}" {{ $trangthai === $value ? 'selected' : '' }}>{{ $label }}</option>
-                @endforeach
-            </select>
-        </div>
+            <div class="admin-filter__field">
+                <label for="loai">Loại yêu cầu</label>
+                <select id="loai" name="loai">
+                    <option value="">Tất cả</option>
+                    @foreach ($loaiNhan as $ma => $nhan)
+                        <option value="{{ $ma }}" @selected($boLoc['loai'] === $ma)>{{ $nhan }}</option>
+                    @endforeach
+                </select>
+            </div>
 
-        <div style="width: 150px;">
-            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--admin-muted); margin-bottom: 6px;">Từ ngày</label>
-            <input type="date" name="date_from" value="{{ $dateFrom }}" style="width: 100%; padding: 8px 12px; border: 1px solid var(--admin-border); border-radius: 6px; font-size: 14px;">
-        </div>
+            <div class="admin-filter__field">
+                <label for="trangthai">Trạng thái</label>
+                <select id="trangthai" name="trangthai">
+                    <option value="">Tất cả</option>
+                    @foreach ($trangThaiNhan as $ma => $nhan)
+                        <option value="{{ $ma }}" @selected($boLoc['trangthai'] === $ma)>{{ $nhan }}</option>
+                    @endforeach
+                </select>
+            </div>
 
-        <div style="width: 150px;">
-            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--admin-muted); margin-bottom: 6px;">Đến ngày</label>
-            <input type="date" name="date_to" value="{{ $dateTo }}" style="width: 100%; padding: 8px 12px; border: 1px solid var(--admin-border); border-radius: 6px; font-size: 14px;">
-        </div>
+            <div class="admin-filter__field">
+                <label for="tu_ngay">Từ ngày</label>
+                <input type="date" id="tu_ngay" name="tu_ngay" value="{{ $boLoc['tu_ngay'] }}">
+            </div>
 
-        <div>
-            <button type="submit" style="background: var(--admin-primary); color: #fff; border: none; padding: 9px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 14px;">
-                Lọc nhật ký
-            </button>
-            <a href="{{ route('admin.ailogs.index') }}" style="display: inline-block; padding: 9px 14px; margin-left: 6px; color: var(--admin-muted); text-decoration: none; font-size: 14px;">
-                Đặt lại
-            </a>
-        </div>
-    </form>
-</div>
+            <div class="admin-filter__field">
+                <label for="den_ngay">Đến ngày</label>
+                <input type="date" id="den_ngay" name="den_ngay" value="{{ $boLoc['den_ngay'] }}">
+            </div>
 
-<!-- Bảng hiển thị nhật ký -->
-<div style="background: var(--admin-surface); border: 1px solid var(--admin-border); border-radius: var(--admin-radius); overflow: hidden; box-shadow: var(--admin-shadow);">
-    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
-        <thead>
-            <tr style="background: #f8fafc; border-bottom: 1px solid var(--admin-border); color: var(--admin-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
-                <th style="padding: 12px 16px;">Mã</th>
-                <th style="padding: 12px 16px;">Người dùng</th>
-                <th style="padding: 12px 16px;">Loại</th>
-                <th style="padding: 12px 16px;">Trạng thái</th>
-                <th style="padding: 12px 16px;">Model</th>
-                <th style="padding: 12px 16px;">Tokens (Vào / Ra)</th>
-                <th style="padding: 12px 16px;">Thời gian</th>
-                <th style="padding: 12px 16px; text-align: right;">Hành động</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($logs as $log)
-                <tr style="border-bottom: 1px solid var(--admin-border);">
-                    <td style="padding: 12px 16px; font-weight: 600;">#{{ $log->id }}</td>
-                    <td style="padding: 12px 16px;">
-                        <strong>{{ $log->nguoidung?->hoten ?? 'N/A' }}</strong><br>
-                        <span style="font-size: 12px; color: var(--admin-muted);">{{ $log->nguoidung?->email ?? '' }}</span>
-                    </td>
-                    <td style="padding: 12px 16px;">
-                        <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; background: #e2e8f0; color: #334155;">
-                            {{ $log->loai }}
-                        </span>
-                    </td>
-                    <td style="padding: 12px 16px;">
-                        <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; background: {{ $log->trangthai === 'failed' ? '#fee2e2' : '#dcfce7' }}; color: {{ $log->trangthai === 'failed' ? '#991b1b' : '#166534' }};">
-                            {{ $log->trangthai === 'failed' ? 'Thất bại' : 'Thành công' }}
-                        </span>
-                        @if ($log->http_code)
-                            <span style="display: block; font-size: 11px; color: var(--admin-muted); margin-top: 3px;">HTTP {{ $log->http_code }}</span>
-                        @endif
-                    </td>
-                    <td style="padding: 12px 16px; font-family: monospace; font-size: 12px;">{{ $log->model }}</td>
-                    <td style="padding: 12px 16px; font-size: 13px;">
-                        {{ $log->token_vao ?? 0 }} / {{ $log->token_ra ?? 0 }}
-                    </td>
-                    <td style="padding: 12px 16px; font-size: 13px; color: var(--admin-muted);">
-                        {{ $log->ngaytao ? $log->ngaytao->format('H:i:s d/m/Y') : '' }}
-                    </td>
-                    <td style="padding: 12px 16px; text-align: right;">
-                        <a href="{{ route('admin.ailogs.show', $log->id) }}" style="color: #2563eb; text-decoration: none; font-weight: 600; font-size: 13px;">
-                            Xem chi tiết &rarr;
-                        </a>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="8" style="padding: 32px 16px; text-align: center; color: var(--admin-muted);">
-                        Không tìm thấy nhật ký AI nào phù hợp với bộ lọc.
-                    </td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
-
-    <div style="padding: 16px;">
-        {{ $logs->links() }}
+            <div class="admin-filter__actions">
+                <button type="submit" class="admin-btn">Lọc</button>
+                @if ($coBoLoc)
+                    <a href="{{ route('admin.ai-logs.index') }}" class="admin-btn admin-btn--ghost">Xóa lọc</a>
+                @endif
+            </div>
+        </form>
     </div>
-</div>
-@endsection
 
+    <div class="admin-panel">
+        <div class="admin-panel__header">
+            <div>
+                <h2>Danh sách lượt gọi</h2>
+                <p class="admin-muted">
+                    @if ($ailogs->total() === 0)
+                        Chưa có lượt gọi AI nào khớp bộ lọc.
+                    @else
+                        Hiển thị {{ $ailogs->firstItem() }}–{{ $ailogs->lastItem() }}
+                        trong {{ number_format($ailogs->total(), 0, ',', '.') }} lượt.
+                    @endif
+                </p>
+            </div>
+        </div>
+
+        @if ($ailogs->isNotEmpty())
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Thời gian</th>
+                            <th>Người dùng</th>
+                            <th>Loại</th>
+                            <th>Trạng thái</th>
+                            <th>Model</th>
+                            <th>Token</th>
+                            <th>Nội dung</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($ailogs as $ailog)
+                            <tr>
+                                <td>{{ $ailog->id }}</td>
+                                <td class="admin-muted">
+                                    {{ $ailog->ngaytao?->format('d/m/Y H:i:s') ?? '—' }}
+                                </td>
+                                <td>
+                                    {{ $ailog->nguoidung?->hoten ?? 'Tài khoản đã xóa' }}
+                                    <div class="admin-muted">{{ $ailog->nguoidung?->email ?? '—' }}</div>
+                                </td>
+                                <td>
+                                    <span class="admin-badge admin-badge--draft">
+                                        {{ $loaiNhan[$ailog->loai] ?? $ailog->loai }}
+                                    </span>
+                                </td>
+                                <td>
+                                    @if ($ailog->trangthai === 'failed')
+                                        <span class="admin-badge admin-badge--danger">Thất bại</span>
+                                    @else
+                                        <span class="admin-badge admin-badge--published">Thành công</span>
+                                    @endif
+                                    @if ($ailog->http_code)
+                                        <div class="admin-muted">HTTP {{ $ailog->http_code }}</div>
+                                    @endif
+                                </td>
+                                <td>{{ $ailog->model ?? '—' }}</td>
+                                <td class="admin-muted">
+                                    {{ $ailog->token_vao ?? 0 }} / {{ $ailog->token_ra ?? 0 }}
+                                </td>
+                                <td class="admin-table__wide">
+                                    <details class="admin-details">
+                                        <summary>
+                                            {{ \Illuminate\Support\Str::limit(strip_tags((string) $ailog->dauvao), 90) ?: 'Xem nội dung' }}
+                                        </summary>
+                                        <div class="admin-details__body">
+                                            <h3>Đầu vào</h3>
+                                            <pre class="admin-code">{{ $ailog->dauvao ?? '—' }}</pre>
+                                            <h3>Đầu ra</h3>
+                                            <pre class="admin-code">{{ $ailog->daura ?? '—' }}</pre>
+                                            <p>
+                                                <a href="{{ route('admin.ai-logs.show', $ailog->id) }}">
+                                                    Xem chi tiết đầy đủ &rarr;
+                                                </a>
+                                            </p>
+                                        </div>
+                                    </details>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            {{ $ailogs->links('admin.partials.pagination') }}
+        @endif
+    </div>
+@endsection

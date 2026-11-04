@@ -10,31 +10,114 @@
     <div class="admin-shell">
         <aside class="admin-sidebar">
             <a class="admin-brand" href="{{ route('admin.dashboard') }}">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <rect x="2" y="2" width="20" height="20" rx="6" fill="#58cc02"/>
-                    <path d="M7 12.5l3 3 7-7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <span>DET Admin</span>
+                <span class="admin-brand__mark">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M7 12.5l3 3 7-7" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <span class="admin-brand__text">
+                    <strong>DET Admin</strong>
+                    <small>Bảng điều khiển</small>
+                </span>
             </a>
 
-            <nav class="admin-nav">
-                <a class="admin-nav__item {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">Tổng quan</a>
-                <a class="admin-nav__item {{ request()->routeIs('admin.questions.*') ? 'is-active' : '' }}" href="{{ route('admin.questions.import.create') }}">Câu hỏi / Import</a>
-                <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Dạng bài</span>
-                <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Chủ đề</span>
-                <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Đề thi</span>
-                <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Người dùng</span>
-                <a class="admin-nav__item {{ request()->routeIs('admin.ailogs.*') ? 'is-active' : '' }}" href="{{ route('admin.ailogs.index') }}">Nhật ký AI</a>
+            <nav class="admin-nav" aria-label="Điều hướng quản trị">
+                <p class="admin-nav__label">Tổng quan</p>
+                <a class="admin-nav__item {{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}"
+                   href="{{ route('admin.dashboard') }}">
+                    @include('admin.partials.icon', ['icon' => 'dashboard'])
+                    <span>Tổng quan</span>
+                </a>
+
+                <p class="admin-nav__label">Nội dung</p>
+                <a class="admin-nav__item {{ request()->routeIs('admin.questions.*') ? 'is-active' : '' }}"
+                   href="{{ route('admin.questions.index') }}">
+                    @include('admin.partials.icon', ['icon' => 'questions'])
+                    <span>Ngân hàng câu hỏi</span>
+                </a>
+                <a class="admin-nav__item {{ request()->routeIs('admin.question-types.*') ? 'is-active' : '' }}"
+                   href="{{ route('admin.question-types.index') }}">
+                    @include('admin.partials.icon', ['icon' => 'types'])
+                    <span>Dạng bài</span>
+                </a>
+                <a class="admin-nav__item {{ request()->routeIs('admin.categories.*') ? 'is-active' : '' }}"
+                   href="{{ route('admin.categories.index') }}">
+                    @include('admin.partials.icon', ['icon' => 'categories'])
+                    <span>Chủ đề</span>
+                </a>
+                <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">
+                    @include('admin.partials.icon', ['icon' => 'exam'])
+                    <span>Đề thi</span>
+                    <span class="admin-nav__soon">Sắp có</span>
+                </span>
+
+                <p class="admin-nav__label">Hệ thống</p>
+                <a class="admin-nav__item {{ request()->routeIs('admin.users.*') ? 'is-active' : '' }}"
+                   href="{{ route('admin.users.index') }}">
+                    @include('admin.partials.icon', ['icon' => 'users'])
+                    <span>Người dùng</span>
+                </a>
+                <a class="admin-nav__item {{ request()->routeIs('admin.ai-logs.*') ? 'is-active' : '' }}"
+                   href="{{ route('admin.ai-logs.index') }}">
+                    @include('admin.partials.icon', ['icon' => 'ai'])
+                    <span>Nhật ký AI</span>
+                </a>
             </nav>
+
+            <div class="admin-sidebar__footer">
+                <div class="admin-user">
+                    <span class="admin-user__avatar">{{ mb_substr(auth()->user()->hoten ?? 'Q', 0, 1) }}</span>
+                    <span class="admin-user__meta">
+                        <strong>{{ auth()->user()->hoten ?? 'Quản trị viên' }}</strong>
+                        <small>Quản trị viên</small>
+                    </span>
+                </div>
+            </div>
         </aside>
 
         <div class="admin-main">
             <header class="admin-topbar">
-                <h1 class="admin-topbar__title">@yield('heading', 'Quản trị')</h1>
-                <span class="admin-topbar__user">{{ auth()->user()->hoten ?? 'Quản trị viên' }}</span>
+                <div>
+                    <p class="admin-topbar__eyebrow">Quản trị nội dung</p>
+                    <h1 class="admin-topbar__title">@yield('heading', 'Quản trị')</h1>
+                </div>
+                <div class="admin-topbar__actions">
+                    <a class="admin-topbar__link" href="{{ url('/') }}">← Về trang chủ</a>
+                </div>
             </header>
 
             <main class="admin-content">
+                @if (session('success'))
+                    <div class="admin-alert admin-alert--success">{{ session('success') }}</div>
+                @endif
+
+                @if (session('error'))
+                    <div class="admin-alert admin-alert--error">{{ session('error') }}</div>
+                @endif
+
+                @php($bagLoi = session('errors'))
+                @if ($bagLoi && $bagLoi->any())
+                    <div class="admin-alert admin-alert--error">
+                        <strong>Vui lòng kiểm tra lại:</strong>
+                        <ul>
+                            @foreach ($bagLoi->all() as $loi)
+                                <li>{{ $loi }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                @if (session('bulk_skipped'))
+                    <div class="admin-alert admin-alert--warning">
+                        <strong>Một số câu hỏi bị bỏ qua:</strong>
+                        <ul>
+                            @foreach (session('bulk_skipped') as $boQua)
+                                <li><code>{{ $boQua['ma'] }}</code>: {{ $boQua['ly_do'] }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 @yield('content')
             </main>
         </div>

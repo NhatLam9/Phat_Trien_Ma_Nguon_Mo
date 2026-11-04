@@ -1,126 +1,465 @@
 @extends('layouts.app')
 
-@section('title', 'DET Practice - Luyện thi DET mỗi ngày')
-@section('main_class', 'app-main--home')
+@section('title', 'DET Practice - Nền tảng luyện thi Duolingo English Test')
+
+@push('styles')
+<style>
+    /* --- HERO BANNER --- */
+    .hero-banner {
+        position: relative;
+        background: linear-gradient(135deg, #ffffff 0%, #eefcf4 60%, #e1f8eb 100%);
+        border: 1px solid #cceee0;
+        border-radius: 20px;
+        padding: 56px 40px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 184, 107, 0.08);
+        margin-bottom: 48px;
+        overflow: hidden;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #e6f9f0;
+        color: #00874e;
+        border: 1px solid #b2ecd1;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 18px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .hero-title {
+        font-size: 38px;
+        font-weight: 800;
+        color: #1a202c;
+        line-height: 1.25;
+        margin: 0 auto 16px;
+        max-width: 820px;
+    }
+
+    .hero-title span {
+        color: #00b86b;
+    }
+
+    .hero-subtitle {
+        font-size: 17px;
+        color: #4a5568;
+        max-width: 740px;
+        margin: 0 auto 28px;
+        line-height: 1.65;
+    }
+
+    .hero-cta {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 36px;
+    }
+
+    .stats-bar {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 18px 24px;
+        max-width: 820px;
+        margin: 0 auto;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 800;
+        color: #00b86b;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: #64748b;
+        margin-top: 2px;
+        font-weight: 600;
+    }
+
+    /* --- SECTION HEADINGS --- */
+    .section-header {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .section-header h2 {
+        font-size: 26px;
+        font-weight: 800;
+        color: #1e293b;
+    }
+
+    .section-header p {
+        font-size: 15px;
+        color: #64748b;
+        margin-top: 6px;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* --- ABOUT DET EXAM SECTION --- */
+    .det-intro-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 36px 32px;
+        margin-bottom: 48px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    }
+
+    .det-intro-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 32px;
+        align-items: center;
+    }
+
+    .det-intro-text h3 {
+        font-size: 22px;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 12px;
+    }
+
+    .det-intro-text p {
+        font-size: 14.5px;
+        color: #475569;
+        line-height: 1.7;
+        margin-bottom: 14px;
+    }
+
+    .det-highlights {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+
+    .det-highlight-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px;
+    }
+
+    .det-highlight-box strong {
+        display: block;
+        font-size: 15px;
+        color: #00b86b;
+        margin-bottom: 4px;
+    }
+
+    .det-highlight-box span {
+        font-size: 13px;
+        color: #64748b;
+        line-height: 1.5;
+    }
+
+    /* --- 4 CORE PLATFORM FEATURES --- */
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 22px;
+        margin-bottom: 48px;
+    }
+
+    .feature-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .feature-card:hover {
+        border-color: #00b86b;
+        box-shadow: 0 8px 20px rgba(0, 184, 107, 0.08);
+    }
+
+    .feature-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        background: #e6f9f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        margin-bottom: 16px;
+    }
+
+    .feature-title {
+        font-size: 19px;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 8px;
+    }
+
+    .feature-desc {
+        font-size: 14px;
+        color: #64748b;
+        line-height: 1.65;
+        margin-bottom: 16px;
+    }
+
+    .feature-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .feature-tag {
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 6px;
+    }
+
+    /* --- BOTTOM CTA --- */
+    .cta-banner {
+        background: #ffffff;
+        border: 2px solid #00b86b;
+        border-radius: 16px;
+        padding: 36px 28px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .cta-banner h3 {
+        font-size: 24px;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 8px;
+    }
+
+    .cta-banner p {
+        font-size: 15px;
+        color: #64748b;
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 868px) {
+        .hero-title {
+            font-size: 28px;
+        }
+        .stats-bar {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .det-intro-grid,
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+        .det-highlights {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+@endpush
 
 @section('content')
-    <section class="det-hero">
-        <svg class="det-art" viewBox="0 0 420 300" role="img" aria-label="Minh họa luyện thi DET">
-            <path d="M40 224c-22-44-6-102 37-126 32-18 70-16 100-2 28-41 89-54 132-23 33 24 45 69 29 105 32 11 54 44 45 77-9 35-45 55-81 49-26 34-78 43-114 16-36 19-85 3-99-35-18 2-37-8-49-21z" fill="#e9ffd9"/>
-            <circle cx="344" cy="66" r="24" fill="#ffc800"/>
-            <circle cx="72" cy="74" r="10" fill="#1cb0f6"/>
-            <path d="M62 120l6 14 14 6-14 6-6 14-6-14-14-6 14-6 6-14z" fill="#ffc800"/>
-            <path d="M352 154l5 11 11 5-11 5-5 11-5-11-11-5 11-5 5-11z" fill="#1cb0f6"/>
+    <!-- 1. HERO BANNER GIỚI THIỆU & NÚT BẮT ĐẦU NGAY DẪN ĐẾN ĐĂNG KÝ -->
+    <section class="hero-banner">
+        <div class="hero-badge">
+            ✨ Nền tảng luyện thi Duolingo English Test trực tuyến
+        </div>
 
-            <rect x="78" y="62" width="264" height="176" rx="24" fill="#fff" stroke="#e5e5e5" stroke-width="4"/>
-            <path d="M78 86c0-13 11-24 24-24h216c13 0 24 11 24 24v22H78V86z" fill="#58cc02"/>
-            <circle cx="101" cy="85" r="5" fill="#fff" opacity=".9"/>
-            <circle cx="119" cy="85" r="5" fill="#fff" opacity=".7"/>
-            <circle cx="137" cy="85" r="5" fill="#fff" opacity=".5"/>
+        <h1 class="hero-title">
+            Chinh Phục Điểm Số Mục Tiêu Cùng <span>DET Practice</span>
+        </h1>
 
-            <rect x="108" y="130" width="126" height="14" rx="7" fill="#e5e5e5"/>
-            <rect x="108" y="156" width="194" height="10" rx="5" fill="#f0f0f0"/>
-            <rect x="108" y="176" width="164" height="10" rx="5" fill="#f0f0f0"/>
-            <rect x="108" y="201" width="98" height="18" rx="9" fill="#d7ffb8"/>
-
-            <circle cx="299" cy="196" r="34" fill="#d7ffb8"/>
-            <path d="M284 196l10 10 20-21" stroke="#58cc02" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-
-            <rect x="102" y="246" width="76" height="10" rx="5" fill="#ffc800" opacity=".9"/>
-            <rect x="188" y="246" width="108" height="10" rx="5" fill="#d7ffb8"/>
-        </svg>
-
-        <p class="det-eyebrow">Duolingo English Test</p>
-        <h1 class="det-title">Luyện thi DET<br><span>mọi lúc, mọi nơi</span></h1>
-        <p class="det-lead">
-            Làm quen với các dạng bài, luyện đề mock test và theo dõi tiến độ của bạn.
+        <p class="hero-subtitle">
+            Hệ thống ôn luyện và mô phỏng bài thi <strong>Duolingo English Test (DET)</strong> chuẩn quốc tế. Tích hợp ngân hàng câu hỏi 4 kỹ năng, thi thử thích ứng (Adaptive Mock Test), chấm điểm Writing & Speaking bằng AI và cấp chứng chỉ thi thử trực tuyến.
         </p>
 
-        <div class="det-actions">
+        <div class="hero-cta">
             @auth
-                <a class="det-btn det-btn--primary" href="{{ route('practice.index') }}">Vào luyện tập</a>
-                @if (auth()->user()->vaitro === 'admin')
-                    <a class="det-btn det-btn--ghost" href="{{ route('admin.dashboard') }}">Trang quản trị</a>
-                @endif
+                <a href="{{ route('practice.index') }}" class="btn btn-primary" style="padding: 13px 32px; font-size: 16px;">
+                    Bắt đầu luyện tập ngay →
+                </a>
+                <a href="{{ url('/mock-test') }}" class="btn btn-outline" style="padding: 13px 26px; font-size: 15px;">
+                    Vào phòng Thi thử (Mock Test)
+                </a>
             @else
-                <a class="det-btn det-btn--primary" href="{{ route('register') }}">Bắt đầu miễn phí</a>
-                <a class="det-btn det-btn--ghost" href="{{ route('login') }}">Đăng nhập</a>
+                <!-- Đúng ngữ cảnh Khách: Nút "Bắt đầu ngay" dẫn đến trang Đăng ký -->
+                <a href="{{ route('register') }}" class="btn btn-primary" style="padding: 13px 32px; font-size: 16px;">
+                    Bắt đầu ngay →
+                </a>
+                <a href="{{ route('login') }}" class="btn btn-outline" style="padding: 13px 26px; font-size: 15px;">
+                    Đăng nhập tài khoản
+                </a>
             @endauth
+        </div>
 
-            <a class="det-btn det-btn--ghost"
-            href="{{ route('mock-test.index') }}">
-                Thi thử DET
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value">14</div>
+                <div class="stat-label">Dạng bài DET chuẩn</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">4</div>
+                <div class="stat-label">Kỹ năng Nghe-Nói-Đọc-Viết</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">10–160</div>
+                <div class="stat-label">Thang điểm chuẩn DET</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">Auto & AI</div>
+                <div class="stat-label">Chấm tự động & Nhận xét AI</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. GIỚI THIỆU VỀ KỲ THI DUOLINGO ENGLISH TEST (DET) -->
+    <section class="det-intro-card">
+        <div class="det-intro-grid">
+            <div class="det-intro-text">
+                <h3>Giới thiệu về kỳ thi Duolingo English Test (DET)</h3>
+                <p>
+                    <strong>Duolingo English Test (DET)</strong> là bài thi đánh giá năng lực tiếng Anh học thuật trực tuyến hiện đại, được hơn 5.000 trường đại học và tổ chức giáo dục trên toàn thế giới công nhận (tương đương chứng chỉ IELTS và TOEFL iBT).
+                </p>
+                <p>
+                    Điểm đặc trưng của kỳ thi DET là cơ chế <strong>Thi thích ứng máy tính (Computer-Adaptive Testing)</strong>: độ khó của câu hỏi kế tiếp sẽ tự động thay đổi từ cấp độ 1 đến 10 dựa trên năng lực trả lời thực tế của thí sinh, giúp đánh giá chính xác trình độ chỉ trong 45–60 phút.
+                </p>
+                <p style="margin-bottom: 0;">
+                    Bài thi chấm điểm trên thang <strong>10 – 160</strong> (quy đổi tương ứng từ CEFR A1 đến C2) cùng 4 điểm thành phần: <strong>Reading (Đọc), Listening (Nghe), Writing (Viết) và Speaking (Nói)</strong>.
+                </p>
+            </div>
+
+            <div class="det-highlights">
+                <div class="det-highlight-box">
+                    <strong>📖 Reading (Đọc)</strong>
+                    <span>Read and Select, Fill in the Blanks, Read and Complete, Interactive Reading.</span>
+                </div>
+                <div class="det-highlight-box">
+                    <strong>🎧 Listening (Nghe)</strong>
+                    <span>Listen and Type, Interactive Listening (Listen & Complete, Respond, Summarise).</span>
+                </div>
+                <div class="det-highlight-box">
+                    <strong>✍️ Writing (Viết)</strong>
+                    <span>Write About the Photo, Interactive Writing, Writing Sample (chấm bằng AI).</span>
+                </div>
+                <div class="det-highlight-box">
+                    <strong>🎙️ Speaking (Nói)</strong>
+                    <span>Read Aloud, Speak About the Photo, Read/Listen Then Speak, Speaking Sample.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. CÁC TÍNH NĂNG CHÍNH CỦA NỀN TẢNG (Luyện tập, Mock Test, AI chấm bài, Chứng chỉ thi thử) -->
+    <section>
+        <div class="section-header">
+            <h2>Các tính năng chính của nền tảng DET Practice</h2>
+            <p>Hệ sinh thái ôn luyện toàn diện giúp người học làm quen từng dạng câu hỏi, thi thử sát thực tế và theo dõi sự tiến bộ mỗi ngày.</p>
+        </div>
+
+        <div class="features-grid">
+            <!-- Tính năng 1: Luyện tập (Practice) -->
+            <div class="feature-card">
+                <div>
+                    <div class="feature-icon">🎯</div>
+                    <h3 class="feature-title">1. Luyện tập theo dạng bài (Practice)</h3>
+                    <p class="feature-desc">
+                        Luyện tập chuyên sâu từng dạng bài thuộc 4 kỹ năng Đọc, Nghe, Viết, Nói; lọc câu hỏi theo chủ đề và độ khó từ 1–10 (ưu tiên câu chưa làm). Nhận đáp án và giải thích chi tiết ngay sau khi nộp, hỗ trợ đánh dấu câu hỏi yếu (Bookmark) để ôn tập lại.
+                    </p>
+                </div>
+                <div class="feature-tags">
+                    <span class="feature-tag">Lọc độ khó 1–10</span>
+                    <span class="feature-tag">Chấm tự động tức thì</span>
+                    <span class="feature-tag">Đánh dấu câu yếu</span>
+                    <span class="feature-tag">Lịch sử luyện tập</span>
+                </div>
+            </div>
+
+            <!-- Tính năng 2: Mock Test (Thi thử) -->
+            <div class="feature-card">
+                <div>
+                    <div class="feature-icon">⏱️</div>
+                    <h3 class="feature-title">2. Thi thử thích ứng (Mock Test)</h3>
+                    <p class="feature-desc">
+                        Mô phỏng bài thi DET đầy đủ (Full Test) hoặc từng kỹ năng (Section Test). Hệ thống cấp câu hỏi kế tiếp theo thuật toán thích ứng năng lực (Adaptive), kiểm soát chặt chẽ thời gian làm bài và lập báo cáo điểm tổng 10–160 cùng 4 điểm thành phần.
+                    </p>
+                </div>
+                <div class="feature-tags">
+                    <span class="feature-tag">Adaptive 1–10</span>
+                    <span class="feature-tag">Full / Section Test</span>
+                    <span class="feature-tag">Kiểm soát thời gian</span>
+                    <span class="feature-tag">Báo cáo chi tiết</span>
+                </div>
+            </div>
+
+            <!-- Tính năng 3: AI chấm bài & AI Tutor -->
+            <div class="feature-card">
+                <div>
+                    <div class="feature-icon">🤖</div>
+                    <h3 class="feature-title">3. AI chấm bài & Trợ lý AI Tutor</h3>
+                    <p class="feature-desc">
+                        Tích hợp dịch vụ AI chấm điểm tự động cho các dạng bài tự luận Writing và ghi âm Speaking theo bộ tiêu chí ngữ pháp, từ vựng, độ trôi chảy, phát âm và mạch lạc. Hỗ trợ AI Tutor sửa lỗi ngữ pháp, dịch thuật Anh–Việt và gợi ý viết lại câu học thuật.
+                    </p>
+                </div>
+                <div class="feature-tags">
+                    <span class="feature-tag">Chấm Writing & Speaking</span>
+                    <span class="feature-tag">Nhận xét chi tiết</span>
+                    <span class="feature-tag">Sửa ngữ pháp</span>
+                    <span class="feature-tag">Dịch & Viết lại bài</span>
+                </div>
+            </div>
+
+            <!-- Tính năng 4: Chứng chỉ thi thử & Dashboard -->
+            <div class="feature-card">
+                <div>
+                    <div class="feature-icon">🎓</div>
+                    <h3 class="feature-title">4. Chứng chỉ thi thử & Dashboard tiến độ</h3>
+                    <p class="feature-desc">
+                        Sau khi hoàn thành bài thi thử Mock Test, hệ thống cấp Chứng chỉ thi thử DET có mã định danh duy nhất, hiển thị điểm tổng, 4 điểm kỹ năng và cấp độ CEFR. Theo dõi thống kê học tập, biểu đồ lịch sử điểm số và chuỗi ngày học liên tiếp (Streak) trên Dashboard.
+                    </p>
+                </div>
+                <div class="feature-tags">
+                    <span class="feature-tag">Chứng chỉ thi thử DET</span>
+                    <span class="feature-tag">Tra cứu mã chứng chỉ</span>
+                    <span class="feature-tag">Biểu đồ điểm SVG</span>
+                    <span class="feature-tag">Chuỗi ngày học (Streak)</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. KÊU GỌI HÀNH ĐỘNG (CTA) -->
+    <section class="cta-banner">
+        @auth
+            <h3>Sẵn sàng chinh phục mục tiêu điểm DET của bạn?</h3>
+            <p>Hãy chọn dạng bài luyện tập hoặc làm bài thi thử để đánh giá năng lực ngay hôm nay.</p>
+            <a href="{{ route('practice.index') }}" class="btn btn-primary" style="padding: 12px 30px; font-size: 15px;">
+                Vào khu vực Luyện tập →
             </a>
-        </div>
-
-        <ul class="det-stats">
-            <li><strong>8</strong><span>dạng bài DET</span></li>
-            <li><strong>Mock</strong><span>test fixed &amp; adaptive</span></li>
-            <li><strong>Miễn phí</strong><span>không cần cài đặt</span></li>
-        </ul>
-    </section>
-
-    <section class="det-section">
-        <h2 class="det-section__title">Luyện đúng phần bạn cần</h2>
-        <p class="det-section__lead">
-            Tập trung vào từng kỹ năng và từng dạng bài để tiến bộ nhanh hơn.
-        </p>
-
-        <div class="det-features">
-            <article class="det-card">
-                <div class="det-card__icon" aria-hidden="true">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                        <path d="M5 5.5A2.5 2.5 0 017.5 3H19v16H7.5A2.5 2.5 0 005 21.5V5.5z" stroke="#3f9e00" stroke-width="1.8"/>
-                        <path d="M8 7h7M8 10.5h5" stroke="#3f9e00" stroke-width="1.8" stroke-linecap="round"/>
-                    </svg>
-                </div>
-                <h3>Luyện theo dạng bài</h3>
-                <p>Tám dạng bài DET được chia nhỏ theo kỹ năng đọc, nghe, viết và nói.</p>
-            </article>
-
-            <article class="det-card">
-                <div class="det-card__icon" aria-hidden="true">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                        <circle cx="12" cy="13" r="8" stroke="#3f9e00" stroke-width="1.8"/>
-                        <path d="M12 9v4l2.5 1.5M9 2h6" stroke="#3f9e00" stroke-width="1.8" stroke-linecap="round"/>
-                    </svg>
-                </div>
-                <h3>Mock test như thi thật</h3>
-                <p>Làm đề fixed hoặc adaptive để làm quen cấu trúc và áp lực thời gian.</p>
-            </article>
-
-            <article class="det-card">
-                <div class="det-card__icon" aria-hidden="true">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                        <path d="M4 19V5M4 19h16" stroke="#3f9e00" stroke-width="1.8" stroke-linecap="round"/>
-                        <path d="M7 15l4-4 3 2 5-6" stroke="#3f9e00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-                <h3>Theo dõi tiến độ</h3>
-                <p>Lưu lịch sử luyện tập, câu hỏi đã đánh dấu và kết quả từng lần làm.</p>
-            </article>
-        </div>
-    </section>
-
-    <section class="det-section det-section--steps">
-        <h2 class="det-section__title">Bắt đầu trong 3 bước</h2>
-
-        <div class="det-steps">
-            <article class="det-step">
-                <span class="det-step__number">1</span>
-                <h3>Tạo tài khoản</h3>
-                <p>Đăng ký bằng email hoặc Google chỉ trong vài giây.</p>
-            </article>
-            <article class="det-step">
-                <span class="det-step__number">2</span>
-                <h3>Chọn dạng bài</h3>
-                <p>Luyện từng kỹ năng hoặc làm một đề mock test hoàn chỉnh.</p>
-            </article>
-            <article class="det-step">
-                <span class="det-step__number">3</span>
-                <h3>Luyện và xem kết quả</h3>
-                <p>Làm bài, nhận phản hồi và tiếp tục với phần cần cải thiện.</p>
-            </article>
-        </div>
+        @else
+            <h3>Bắt đầu lộ trình luyện thi Duolingo English Test ngay hôm nay</h3>
+            <p>Tạo tài khoản miễn phí chỉ trong 30 giây để mở khóa toàn bộ tính năng Luyện tập, Mock Test, AI chấm bài và Chứng chỉ thi thử.</p>
+            <a href="{{ route('register') }}" class="btn btn-primary" style="padding: 12px 32px; font-size: 15px;">
+                Bắt đầu ngay →
+            </a>
+        @endauth
     </section>
 @endsection
