@@ -32,6 +32,7 @@
                         <a href="{{ route('admin.dashboard') }}">Quản trị</a>
                     @endif
                     <a href="{{ route('practice.index') }}">Luyện tập</a>
+                    <a href="{{ route('tutor.index') }}">AI Tutor</a>
                     <span class="app-user">{{ auth()->user()->hoten }}</span>
                     <form method="POST" action="{{ route('logout') }}" class="app-logout">
                         @csrf

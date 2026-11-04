@@ -8,9 +8,14 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\PracticeController;
+use App\Http\Controllers\Practice\PracticeController;
 use App\Http\Controllers\MockTest\MockTestController;
+use App\Http\Controllers\MockTest\MockTestDashboardController;
+use App\Http\Controllers\MockTest\MockTestHistoryController;
 use App\Http\Controllers\MockTest\MockTestResultController;
+use App\Http\Controllers\Certificate\CertificateController;
+use App\Http\Controllers\Tutor\TutorController;
+use App\Http\Controllers\Practice\PracticeAIController;
 
 // Trang chu
 Route::view('/', 'welcome');
@@ -51,9 +56,23 @@ Route::get('/mock-test', [MockTestController::class, 'index'])
 // Cac chuc nang yeu cau dang nhap
 Route::middleware('auth')->group(function () {
 
-    // PRACTICE - Luyen tap
-    Route::get('/practice', [PracticeController::class, 'index'])
-        ->name('practice.index');
+    // // MT07 - Lich su thi cua nguoi dung dang dang nhap
+    // Route::get('/mock-test/history', [MockTestHistoryController::class, 'index'])
+    //     ->name('mock-test.history');
+
+    // // MT09 - Cap va xem chung chi cho luot thi cua nguoi dung dang nhap
+    // Route::post('/mock-test/{id}/certificate', [CertificateController::class, 'issue'])
+    //     ->whereNumber('id')->name('certificate.issue');
+    // Route::get('/certificate/{id}', [CertificateController::class, 'show'])
+    //     ->whereNumber('id')->name('certificate.show');
+
+    // // DB01-DB05 - Dashboard tien do va thong ke cua nguoi hoc
+    // Route::get('/learning-dashboard', [MockTestDashboardController::class, 'index'])
+    //     ->name('learning.dashboard');
+
+    // // PRACTICE - Luyen tap
+    // Route::get('/practice', [PracticeController::class, 'index'])
+    //     ->name('practice.index');
 
     // MT01 - Bat dau hoac tiep tuc bai thi
     Route::post('/mock-test/start', [MockTestController::class, 'start'])
@@ -82,5 +101,33 @@ Route::middleware('auth')->group(function () {
     // MT08 / MT04 - Bo do hoac xu ly het gio
     Route::post('/mock-test/{id}/abandon', [MockTestController::class, 'abandon'])
         ->whereNumber('id')->name('mock-test.abandon');
+
+    // ==========================================
+    // AI TUTOR - Tro ly hoc tap thong minh (TV3)
+    // ==========================================
+    Route::prefix('tutor')->name('tutor.')->group(function () {
+        Route::get('/', [TutorController::class, 'index'])->name('index');
+        Route::get('/grammar', [TutorController::class, 'showGrammar'])->name('grammar');
+        Route::post('/grammar', [TutorController::class, 'processGrammar'])->name('grammar.process');
+        Route::get('/translate', [TutorController::class, 'showTranslate'])->name('translate');
+        Route::post('/translate', [TutorController::class, 'processTranslate'])->name('translate.process');
+        Route::get('/rewrite', [TutorController::class, 'showRewrite'])->name('rewrite');
+        Route::post('/rewrite', [TutorController::class, 'processRewrite'])->name('rewrite.process');
+        Route::get('/history', [TutorController::class, 'history'])->name('history');
+    });
+
+    // ===================================================
+    // PRACTICE AI - Luyen tap cham diem Writing/Speaking
+    // ===================================================
+    Route::prefix('practice/ai')->name('practice.ai.')->group(function () {
+        Route::get('/question/{id}', [PracticeAIController::class, 'showQuestion'])
+            ->whereNumber('id')->name('question');
+        Route::post('/submit/{id}', [PracticeAIController::class, 'submit'])
+            ->whereNumber('id')->name('submit');
+        Route::get('/status/{id}', [PracticeAIController::class, 'status'])
+            ->whereNumber('id')->name('status');
+        Route::post('/retry/{id}', [PracticeAIController::class, 'retry'])
+            ->whereNumber('id')->name('retry');
+    });
 
 });

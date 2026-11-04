@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\QuestionImportController;
+use App\Http\Controllers\Admin\AilogController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,4 +27,9 @@ Route::middleware('admin')
             ->name('questions.import.preview');
         Route::post('questions/import', [QuestionImportController::class, 'store'])
             ->name('questions.import.store');
+
+        // AD06 - Quản trị nhật ký AI
+        Route::get('ai-logs', [AilogController::class, 'index'])->name('ailogs.index');
+        Route::get('ai-logs/{id}', [AilogController::class, 'show'])
+            ->whereNumber('id')->name('ailogs.show');
     });

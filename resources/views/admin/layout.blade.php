@@ -24,7 +24,7 @@
                 <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Chủ đề</span>
                 <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Đề thi</span>
                 <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Người dùng</span>
-                <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">Nhật ký AI</span>
+                <a class="admin-nav__item {{ request()->routeIs('admin.ailogs.*') ? 'is-active' : '' }}" href="{{ route('admin.ailogs.index') }}">Nhật ký AI</a>
             </nav>
         </aside>
 

@@ -33,7 +33,9 @@ return new class extends Migration
             $table->foreign('nguoitao')->references('id')->on('nguoidung')->nullOnDelete();
         });
 
-        DB::statement('ALTER TABLE cauhoi ADD CONSTRAINT chk_cauhoi_dokho CHECK (dokho BETWEEN 1 AND 10)');
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement('ALTER TABLE cauhoi ADD CONSTRAINT chk_cauhoi_dokho CHECK (dokho BETWEEN 1 AND 10)');
+        }
     }
 
     public function down(): void
