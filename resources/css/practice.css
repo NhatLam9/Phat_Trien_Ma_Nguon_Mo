@@ -1,0 +1,104 @@
+.practice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.practice-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.practice-subtitle {
+    color: #64748b;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+/* Question choice options */
+.choice-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.choice-option:hover {
+    border-color: #00b86b;
+    background: #f0fdf4;
+}
+
+.choice-option input[type="radio"]:checked + span {
+    font-weight: 700;
+    color: #00b86b;
+}
+
+/* Result overview banner */
+.result-banner {
+    text-align: center;
+    padding: 36px 24px;
+    border-radius: 14px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 24px;
+}
+
+.result-banner.passed {
+    border-top: 6px solid #00b86b;
+}
+
+.result-banner.failed {
+    border-top: 6px solid #ef4444;
+}
+
+.result-score-box {
+    display: inline-flex;
+    gap: 28px;
+    background: #f8fafc;
+    padding: 16px 32px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    margin: 20px 0;
+}
+
+/* Practice History and Bookmarks Table */
+.data-table-container {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    text-align: left;
+}
+
+.data-table th {
+    background: #f8fafc;
+    padding: 14px 20px;
+    color: #475569;
+    font-weight: 600;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.data-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.data-table tr:hover td {
+    background: #fdfefe;
+}
+
