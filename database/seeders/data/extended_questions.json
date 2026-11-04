@@ -1,0 +1,432 @@
+{
+  "questions": [
+    {
+      "ma": "ext-ras-001",
+      "loai": "read_and_select",
+      "danhmuc": "Daily Life",
+      "noidung": "The concert was postponed ___ the heavy rain.",
+      "giaithich": "“Because of” đứng trước cụm danh từ (the heavy rain). “Although” cần một mệnh đề, “despite” cũng đi với danh từ nhưng nghĩa tương phản không phù hợp.",
+      "dokho": 3,
+      "thoigian": 60,
+      "diem": 1,
+      "trangthai": "published",
+      "luachon": [
+        { "noidung": "because of", "ladung": true },
+        { "noidung": "although", "ladung": false },
+        { "noidung": "despite", "ladung": false },
+        { "noidung": "so that", "ladung": false }
+      ]
+    },
+    {
+      "ma": "ext-ras-002",
+      "loai": "read_and_select",
+      "danhmuc": "Daily Life",
+      "noidung": "By the time we arrived, the film ___.",
+      "giaithich": "Hành động phim bắt đầu trước một hành động quá khứ khác, nên dùng thì quá khứ hoàn thành: had already started.",
+      "dokho": 4,
+      "thoigian": 60,
+      "diem": 1,
+      "trangthai": "published",
+      "luachon": [
+        { "noidung": "had already started", "ladung": true },
+        { "noidung": "has already started", "ladung": false },
+        { "noidung": "already started", "ladung": false },
+        { "noidung": "was already starting", "ladung": false }
+      ]
+    },
+    {
+      "ma": "ext-ras-003",
+      "loai": "read_and_select",
+      "danhmuc": "Education",
+      "noidung": "Neither the teacher nor the students ___ satisfied with the new schedule.",
+      "giaithich": "Với “neither ... nor ...”, động từ chia theo chủ ngữ gần nhất. “Students” là số nhiều nên dùng “were”.",
+      "dokho": 5,
+      "thoigian": 60,
+      "diem": 1,
+      "trangthai": "published",
+      "luachon": [
+        { "noidung": "were", "ladung": true },
+        { "noidung": "was", "ladung": false },
+        { "noidung": "is", "ladung": false },
+        { "noidung": "has been", "ladung": false }
+      ]
+    },
+    {
+      "ma": "ext-ras-004",
+      "loai": "read_and_select",
+      "danhmuc": "Science & Technology",
+      "noidung": "This is the laboratory ___ we conducted the experiment last week.",
+      "giaithich": "“Where” thay cho cụm chỉ nơi chốn (in the laboratory) trong mệnh đề quan hệ.",
+      "dokho": 3,
+      "thoigian": 60,
+      "diem": 1,
+      "trangthai": "published",
+      "luachon": [
+        { "noidung": "where", "ladung": true },
+        { "noidung": "which", "ladung": false },
+        { "noidung": "that", "ladung": false },
+        { "noidung": "when", "ladung": false }
+      ]
+    },
+    {
+      "ma": "ext-ras-005",
+      "loai": "read_and_select",
+      "danhmuc": "Work & Business",
+      "noidung": "The company aims ___ its carbon emissions by 2030.",
+      "giaithich": "Cấu trúc “aim to + động từ nguyên mẫu” nghĩa là đặt mục tiêu làm gì.",
+      "dokho": 3,
+      "thoigian": 60,
+      "diem": 1,
+      "trangthai": "published",
+      "luachon": [
+        { "noidung": "to reduce", "ladung": true },
+        { "noidung": "reducing", "ladung": false },
+        { "noidung": "reduce", "ladung": false },
+        { "noidung": "reduced", "ladung": false }
+      ]
+    },
+    {
+      "ma": "ext-ras-006",
+      "loai": "read_and_select",
+      "danhmuc": "Travel",
+      "noidung": "Had I known about the delay, I ___ earlier.",
+      "giaithich": "Đây là câu điều kiện loại 3 đảo ngữ: Had + S + V3, S + would have + V3.",
+      "dokho": 6,
+      "thoigian": 60,
+      "diem": 1,
+      "trangthai": "published",
+      "luachon": [
+        { "noidung": "would have left", "ladung": true },
+        { "noidung": "would leave", "ladung": false },
+        { "noidung": "had left", "ladung": false },
+        { "noidung": "will leave", "ladung": false }
+      ]
+    },
+    {
+      "ma": "ext-fib-001",
+      "loai": "fill_in_the_blanks",
+      "danhmuc": "Travel",
+      "noidung": "The hotel offers a free ___ service from the airport.",
+      "giaithich": "“Shuttle service” là dịch vụ xe đưa đón, phù hợp ngữ cảnh khách sạn và sân bay.",
+      "dokho": 2,
+      "thoigian": 90,
+      "diem": 1,
+      "trangthai": "published",
+      "luachon": [
+        { "noidung": "shuttle", "ladung": true },
+        { "noidung": "journey", "ladung": false },
+        { "noidung": "traffic", "ladung": false },
+        { "noidung": "route", "ladung": false }
+      ]
+    },
+    {
+      "ma": "ext-fib-002",
+      "loai": "fill_in_the_blanks",
+      "danhmuc": "Science & Technology",
+      "noidung": "Researchers need to ___ the data before drawing conclusions.",
+      "giaithich": "Sau “to” cần một động từ. “Analyse” là động từ, còn “analysis” là danh từ.",
+      "dokho": 3,
+      "thoigian": 90,
+      "diem": 1,
+      "trangthai": "published",
+      "luachon": [
+        { "noidung": "analyse", "ladung": true },
+        { "noidung": "analysis", "ladung": false },
+        { "noidung": "analytical", "ladung": false },
+        { "noidung": "analytically", "ladung": false }
+      ]
+    },
+    {
+      "ma": "ext-fib-003",
+      "loai": "fill_in_the_blanks",
+      "danhmuc": "Work & Business",
+      "noidung": "She was ___ for the position because she lacked experience.",
+      "giaithich": "“Rejected for a position” là bị từ chối cho một vị trí công việc. Các từ còn lại không đi với “for the position” theo nghĩa này.",
+      "dokho": 4,
+      "thoigian": 90,
+      "diem": 1,
+      "trangthai": "published",
+      "luachon": [
+        { "noidung": "rejected", "ladung": true },
+        { "noidung": "refused", "ladung": false },
+        { "noidung": "denied", "ladung": false },
+        { "noidung": "declined", "ladung": false }
+      ]
+    },
+    {
+      "ma": "ext-fib-004",
+      "loai": "fill_in_the_blanks",
+      "danhmuc": "Education",
+      "noidung": "Regular exercise can ___ the risk of heart disease.",
+      "giaithich": "“Reduce the risk” là giảm nguy cơ — cụm từ cố định trong ngữ cảnh sức khỏe.",
+      "dokho": 2,
+      "thoigian": 90,
+      "diem": 1,
+      "trangthai": "published",
+      "luachon": [
+        { "noidung": "reduce", "ladung": true },
+        { "noidung": "produce", "ladung": false },
+        { "noidung": "increase", "ladung": false },
+        { "noidung": "conduct", "ladung": false }
+      ]
+    },
+    {
+      "ma": "ext-rac-001",
+      "loai": "read_and_complete",
+      "danhmuc": "Education",
+      "noidung": "Many students find it hard to focus when they study in a noisy room. A quiet environment helps them ___ information more effectively.",
+      "giaithich": "“Absorb information” nghĩa là tiếp thu thông tin, phù hợp với ngữ cảnh học tập.",
+      "dokho": 3,
+      "thoigian": 90,
+      "diem": 1,
+      "trangthai": "published",
+      "luachon": [
+        { "noidung": "absorb", "ladung": true },
+        { "noidung": "borrow", "ladung": false },
+        { "noidung": "refuse", "ladung": false },
+        { "noidung": "divide", "ladung": false }
+      ]
+    },
+    {
+      "ma": "ext-rac-002",
+      "loai": "read_and_complete",
+      "danhmuc": "Travel",
+      "noidung": "The city has decided to ___ more money on public transport, hoping to reduce traffic jams.",
+      "giaithich": "“Spend money on something” là cấu trúc đúng để nói chi tiền cho việc gì.",
+      "dokho": 2,
+      "thoigian": 90,
+      "diem": 1,
+      "trangthai": "published",
+      "luachon": [
+        { "noidung": "spend", "ladung": true },
+        { "noidung": "take", "ladung": false },
+        { "noidung": "make", "ladung": false },
+        { "noidung": "give", "ladung": false }
+      ]
+    },
+    {
+      "ma": "ext-rac-003",
+      "loai": "read_and_complete",
+      "danhmuc": "Science & Technology",
+      "noidung": "Although the prototype was small, it ___ to be highly effective in tests.",
+      "giaithich": "Cấu trúc “prove to be + tính từ” nghĩa là tỏ ra/có vẻ là. Ở quá khứ dùng “proved”.",
+      "dokho": 4,
+      "thoigian": 90,
+      "diem": 1,
+      "trangthai": "published",
+      "luachon": [
+        { "noidung": "proved", "ladung": true },
+        { "noidung": "proof", "ladung": false },
+        { "noidung": "proving", "ladung": false },
+        { "noidung": "proven", "ladung": false }
+      ]
+    },
+    {
+      "ma": "ext-ir-001",
+      "loai": "interactive_reading",
+      "danhmuc": "Science & Technology",
+      "noidung": "Urban trees do much more than decorate a city. They absorb carbon dioxide, release oxygen and provide shade on hot days. Their roots also help rainwater soak into the ground instead of rushing into drains. As a result, neighbourhoods with many trees tend to be cooler and less likely to flood. For city planners, planting trees is therefore an investment in both public health and infrastructure.",
+      "dokho": 4,
+      "thoigian": 120,
+      "diem": 1,
+      "trangthai": "published",
+      "cauhoi_doc": [
+        {
+          "loai": "identify_idea",
+          "noidung": "What is the main idea of the passage?",
+          "giaithich": "Đoạn văn nhấn mạnh lợi ích kép của cây xanh: môi trường và hạ tầng đô thị.",
+          "luachon": [
+            { "noidung": "Urban trees bring environmental and practical benefits.", "ladung": true },
+            { "noidung": "Cities should plant only decorative trees.", "ladung": false },
+            { "noidung": "Rainwater drains are the main cause of floods.", "ladung": false },
+            { "noidung": "Trees make city streets more crowded.", "ladung": false }
+          ]
+        },
+        {
+          "loai": "complete_sentence",
+          "noidung": "According to the passage, tree roots help rainwater ___.",
+          "giaithich": "Câu 3 nêu rõ rễ cây giúp nước mưa thấm vào lòng đất.",
+          "luachon": [
+            { "noidung": "soak into the ground", "ladung": true },
+            { "noidung": "flow directly into drains", "ladung": false },
+            { "noidung": "evaporate immediately", "ladung": false },
+            { "noidung": "damage the roads", "ladung": false }
+          ]
+        },
+        {
+          "loai": "title_passage",
+          "noidung": "Choose the best title for the passage.",
+          "giaithich": "Tiêu đề bao quát được vai trò của cây xanh đối với thành phố.",
+          "dapandung": "Cities That Breathe"
+        }
+      ]
+    },
+    {
+      "ma": "ext-ir-002",
+      "loai": "interactive_reading",
+      "danhmuc": "Work & Business",
+      "noidung": "Remote work was once a rare privilege. Today, many companies allow employees to work from home several days a week. Supporters say this arrangement saves commuting time and gives workers more control over their schedules. Critics, however, worry that new employees may find it harder to learn from colleagues. Most organisations now try to balance both sides by combining remote days with regular time in the office.",
+      "dokho": 4,
+      "thoigian": 120,
+      "diem": 1,
+      "trangthai": "published",
+      "cauhoi_doc": [
+        {
+          "loai": "complete_sentence",
+          "noidung": "Supporters of remote work believe that it ___.",
+          "giaithich": "Đoạn văn nêu người ủng hộ cho rằng làm việc từ xa tiết kiệm thời gian đi lại và tăng quyền chủ động.",
+          "luachon": [
+            { "noidung": "saves commuting time and gives more control", "ladung": true },
+            { "noidung": "makes all employees more productive", "ladung": false },
+            { "noidung": "removes the need for an office entirely", "ladung": false },
+            { "noidung": "reduces the number of new employees", "ladung": false }
+          ]
+        },
+        {
+          "loai": "highlight_answer",
+          "noidung": "What do critics worry about?",
+          "giaithich": "Đoạn văn nêu lo ngại rằng nhân viên mới khó học hỏi từ đồng nghiệp hơn.",
+          "dapandung": "New employees may find it harder to learn from colleagues."
+        },
+        {
+          "loai": "identify_idea",
+          "noidung": "What is the main idea of the passage?",
+          "giaithich": "Đoạn văn trình bày cả ưu điểm và lo ngại, kết luận bằng giải pháp cân bằng.",
+          "luachon": [
+            { "noidung": "Remote work has benefits and drawbacks, so many firms combine it with office time.", "ladung": true },
+            { "noidung": "Remote work should replace the office completely.", "ladung": false },
+            { "noidung": "Only senior employees should work remotely.", "ladung": false },
+            { "noidung": "Remote work increases commuting time.", "ladung": false }
+          ]
+        }
+      ]
+    },
+    {
+      "ma": "ext-il-001",
+      "loai": "interactive_listening",
+      "danhmuc": "Education",
+      "audio": "audio/questions/listening-bank-01.wav",
+      "noidung": "Listen to a short conversation between a student and a librarian.",
+      "dokho": 3,
+      "thoigian": 120,
+      "diem": 1,
+      "trangthai": "published",
+      "cauhoi_nghe": [
+        {
+          "loai": "listen_and_respond",
+          "noidung": "The student asks how to borrow a book. What is the most appropriate response?",
+          "giaithich": "Thư viện thường yêu cầu thẻ thư viện khi mượn sách.",
+          "luachon": [
+            { "noidung": "You need to show your library card at the desk.", "ladung": true },
+            { "noidung": "The book was written by a famous author.", "ladung": false },
+            { "noidung": "I prefer reading in the morning.", "ladung": false },
+            { "noidung": "The library closes at six on Sundays.", "ladung": false }
+          ]
+        },
+        {
+          "loai": "listen_and_complete",
+          "noidung": "Books can normally be borrowed for ___ weeks.",
+          "giaithich": "Thông tin thời hạn mượn sách được nêu trong đoạn hội thoại.",
+          "luachon": [
+            { "noidung": "three", "ladung": true },
+            { "noidung": "one", "ladung": false },
+            { "noidung": "six", "ladung": false },
+            { "noidung": "ten", "ladung": false }
+          ]
+        }
+      ]
+    },
+    {
+      "ma": "ext-il-002",
+      "loai": "interactive_listening",
+      "danhmuc": "Travel",
+      "audio": "audio/questions/listening-bank-02.wav",
+      "noidung": "Listen to a telephone conversation about a hotel booking.",
+      "dokho": 4,
+      "thoigian": 120,
+      "diem": 1,
+      "trangthai": "published",
+      "cauhoi_nghe": [
+        {
+          "loai": "listen_and_complete",
+          "noidung": "The guest changes the booking from two nights to ___ nights.",
+          "giaithich": "Khách thay đổi số đêm lưu trú trong cuộc gọi.",
+          "luachon": [
+            { "noidung": "three", "ladung": true },
+            { "noidung": "one", "ladung": false },
+            { "noidung": "four", "ladung": false },
+            { "noidung": "five", "ladung": false }
+          ]
+        },
+        {
+          "loai": "summarise_conversation",
+          "noidung": "Summarise the conversation in one sentence.",
+          "giaithich": "Cần tóm tắt được mục đích chính của cuộc gọi: thay đổi đặt phòng.",
+          "dapandung": "A guest calls the hotel to extend an existing booking by one night."
+        }
+      ]
+    },
+    {
+      "ma": "ext-wap-001",
+      "loai": "write_about_photo",
+      "danhmuc": "Daily Life",
+      "anh": "images/questions/photo-1.svg",
+      "noidung": "Describe the photo in 2–3 sentences. Mention what the people are doing and how the scene feels.",
+      "dokho": 5,
+      "thoigian": 180,
+      "diem": 1,
+      "trangthai": "published"
+    },
+    {
+      "ma": "ext-wap-002",
+      "loai": "write_about_photo",
+      "danhmuc": "Travel",
+      "anh": "images/questions/photo-2.svg",
+      "noidung": "Describe the photo in 2–3 sentences. Include details about the place and the weather.",
+      "dokho": 5,
+      "thoigian": 180,
+      "diem": 1,
+      "trangthai": "published"
+    },
+    {
+      "ma": "ext-ra-001",
+      "loai": "read_aloud",
+      "danhmuc": "Education",
+      "noidung": "Learning a language is like building a house. Each new word is a brick, and every conversation is a wall. Progress may feel slow at first, but small daily efforts soon become a solid foundation.",
+      "dokho": 4,
+      "thoigian": 60,
+      "diem": 1,
+      "trangthai": "published"
+    },
+    {
+      "ma": "ext-ra-002",
+      "loai": "read_aloud",
+      "danhmuc": "Travel",
+      "noidung": "The train left the station exactly on time. Outside the window, rice fields gave way to hills covered in mist. By noon, the passengers could see the sea shining in the distance.",
+      "dokho": 4,
+      "thoigian": 60,
+      "diem": 1,
+      "trangthai": "published"
+    },
+    {
+      "ma": "ext-rts-001",
+      "loai": "read_then_speak",
+      "danhmuc": "Work & Business",
+      "noidung": "Read the statement and then speak for about one minute: “Working from home is better for young employees than working in an office.” Give reasons and examples to support your opinion.",
+      "dokho": 7,
+      "thoigian": 120,
+      "diem": 1,
+      "trangthai": "published"
+    },
+    {
+      "ma": "ext-rts-002",
+      "loai": "read_then_speak",
+      "danhmuc": "Science & Technology",
+      "noidung": "Read the statement and then speak for about one minute: “Schools should teach students how to use artificial intelligence responsibly.” Explain your view with examples.",
+      "dokho": 7,
+      "thoigian": 120,
+      "diem": 1,
+      "trangthai": "published"
+    }
+  ]
+}
