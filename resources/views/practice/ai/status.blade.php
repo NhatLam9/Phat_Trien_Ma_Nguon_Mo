@@ -69,7 +69,7 @@
                 <div style="margin-bottom: 1.5rem; background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;">
                     <strong style="display: block; color: #334155; margin-bottom: 0.5rem; font-size: 0.95rem;">File ghi âm bài nói:</strong>
                     <audio controls style="width: 100%;">
-                        <source src="{{ asset($traloi->audio) }}">
+                        <source src="{{ route('practice.ai.audio', $traloi->id) }}">
                         Trình duyệt không hỗ trợ phát âm thanh.
                     </audio>
                 </div>
@@ -86,7 +86,7 @@
 
             <div>
                 <strong style="display: block; color: #334155; margin-bottom: 0.5rem; font-size: 1rem;">Nhận xét & Tiêu chí chi tiết từ AI Examiner:</strong>
-                <div style="background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 4px; padding: 1.25rem; color: #064e3b; font-size: 1rem; line-height: 1.6; white-space: pre-wrap;">{{ $traloi->nhanxet_ai }}</div>
+                <div style="background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 4px; padding: 1.25rem; color: #064e3b; font-size: 1rem; line-height: 1.6; white-space: pre-wrap;">{{ $nhanXet }}</div>
             </div>
         </div>
 
@@ -102,7 +102,7 @@
             </div>
 
             <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 1rem; color: #7f1d1d; margin-bottom: 1.5rem; line-height: 1.5;">
-                <strong>Lý do:</strong> {{ $traloi->nhanxet_ai ?: 'Không nhận được kết quả từ máy chủ AI.' }}
+                <strong>Lý do:</strong> {{ $nhanXet ?: 'Không nhận được kết quả từ máy chủ AI.' }}
             </div>
 
             @if ($isTranscriptTooLong)

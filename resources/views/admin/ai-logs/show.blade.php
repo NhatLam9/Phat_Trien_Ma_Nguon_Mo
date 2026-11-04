@@ -26,6 +26,15 @@
             <strong style="font-size: 14px; font-family: monospace;">{{ $log->model }}</strong>
         </div>
         <div>
+            <span style="font-size: 12px; color: var(--admin-muted); display: block; text-transform: uppercase;">Trạng thái lần gọi</span>
+            <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-top: 4px; background: {{ $log->trangthai === 'failed' ? '#fee2e2' : '#dcfce7' }}; color: {{ $log->trangthai === 'failed' ? '#991b1b' : '#166534' }};">
+                {{ $log->trangthai === 'failed' ? 'Thất bại' : 'Thành công' }}
+            </span>
+            @if ($log->http_code)
+                <span style="font-size: 12px; color: var(--admin-muted); margin-left: 6px;">HTTP {{ $log->http_code }}</span>
+            @endif
+        </div>
+        <div>
             <span style="font-size: 12px; color: var(--admin-muted); display: block; text-transform: uppercase;">Tokens tiêu thụ</span>
             <span style="font-size: 14px;">Vào: <strong>{{ $log->token_vao ?? 0 }}</strong> · Ra: <strong>{{ $log->token_ra ?? 0 }}</strong></span>
         </div>

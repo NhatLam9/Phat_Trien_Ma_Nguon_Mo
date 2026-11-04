@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 class PracticeAIController extends Controller
 {
@@ -127,6 +129,13 @@ class PracticeAIController extends Controller
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['ai_limit' => $e->getMessage()]);
+        } catch (Throwable $e) {
+            // Không để lại file audio mồ côi khi lưu database thất bại.
+            if ($audioPath && Storage::disk('local')->exists($audioPath)) {
+                Storage::disk('local')->delete($audioPath);
+            }
+
+            throw $e;
         }
     }
 
@@ -159,17 +168,32 @@ class PracticeAIController extends Controller
         }
 
         // Kiểm tra nếu lỗi do transcript quá dài thì ẩn nút Chấm lại
-        $isTranscriptTooLong = false;
-        if ($traloi->trangthai_ai === 'failed' && $traloi->nhanxet_ai) {
-            if (str_contains($traloi->nhanxet_ai, 'quá dài') || str_contains($traloi->nhanxet_ai, 'transcript')) {
-                $isTranscriptTooLong = true;
-            }
-        }
+        $isTranscriptTooLong = $traloi->trangthai_ai === 'failed'
+            && AIService::isTranscriptTooLong($traloi->nhanxet_ai);
+
+        $nhanXet = AIService::cleanFeedback($traloi->nhanxet_ai);
 
         $cauhoi = $traloi->lanThiCauHoi?->cauHoi;
-        $isSpeaking = !empty($traloi->audio) || strtolower((string) ($cauhoi?->loai?->kynang ?? '')) === 'speaking';
+        $isSpeaking = ! empty($traloi->audio) || strtolower((string) ($cauhoi?->loai?->kynang ?? '')) === 'speaking';
 
-        return view('practice.ai.status', compact('traloi', 'cauhoi', 'isSpeaking', 'isTranscriptTooLong'));
+        return view('practice.ai.status', compact('traloi', 'cauhoi', 'isSpeaking', 'isTranscriptTooLong', 'nhanXet'));
+    }
+
+    /**
+     * Phát file ghi âm Speaking từ private storage.
+     * File không nằm trong public/ nên phải đi qua route có kiểm tra quyền sở hữu.
+     */
+    public function audio(int $id): StreamedResponse
+    {
+        $traloi = Traloi::with(['lanThiCauHoi.lanThi'])->findOrFail($id);
+
+        $chuSoHuuId = (int) ($traloi->lanThiCauHoi?->lanThi?->nguoidung_id ?? 0);
+        abort_unless($chuSoHuuId === (int) Auth::id(), 403, 'Bạn không có quyền nghe file ghi âm này.');
+
+        $path = (string) $traloi->audio;
+        abort_if($path === '' || ! Storage::disk('local')->exists($path), 404, 'Không tìm thấy file ghi âm.');
+
+        return Storage::disk('local')->response($path);
     }
 
     /**
@@ -182,10 +206,30 @@ class PracticeAIController extends Controller
 
         abort_unless($userId === (int) Auth::id(), 403, 'Bạn không có quyền chấm lại bài làm này.');
 
-        $today = today();
-        $newAttempt = (int) $traloi->luot_cham + 1;
+        // Chỉ chấm lại khi bài đang ở trạng thái thất bại.
+        // pending/done không được phép trừ thêm lượt của người dùng.
+        if ($traloi->trangthai_ai !== 'failed') {
+            return redirect()->route('practice.ai.status', $id);
+        }
 
-        // Cập nhật có điều kiện để chống 2 tab cùng bấm trừ 2 lần
+        // Bài nói quá dài: bắt buộc nộp audio mới, không cho chấm lại (tránh lãng phí lượt).
+        if (AIService::isTranscriptTooLong($traloi->nhanxet_ai)) {
+            return redirect()->route('practice.ai.status', $id)
+                ->withErrors(['ai_limit' => 'Bài nói quá dài so với quy định, vui lòng nộp bản ghi âm mới thay vì chấm lại.']);
+        }
+
+        $today = today();
+        $attemptCu = (int) $traloi->luot_cham;
+
+        // 1. Trừ lượt trước: hết hạn mức thì giữ nguyên bản ghi ở trạng thái failed.
+        try {
+            $this->aiService->checkAndDeductLimit($userId);
+        } catch (AiLimitExceededException $e) {
+            return redirect()->route('practice.ai.status', $id)
+                ->withErrors(['ai_limit' => $e->getMessage()]);
+        }
+
+        // 2. Chuyển failed -> pending có điều kiện để hai tab cùng bấm chỉ thắng một lần.
         $affected = Traloi::query()
             ->where('id', $id)
             ->where('trangthai_ai', 'failed')
@@ -196,31 +240,16 @@ class PracticeAIController extends Controller
                 'thoidiem_cham' => now(),
             ]);
 
-        if ($affected === 1) {
-            try {
-                // Trừ 1 lượt mới
-                $this->aiService->checkAndDeductLimit($userId);
+        if ($affected !== 1) {
+            // Tab khác đã chuyển bản ghi sang pending trước: hoàn lại lượt vừa trừ.
+            $this->aiService->refundUsage($userId, $today);
 
-                // Dispatch Job
-                ProcessAIGradingJob::dispatch($traloi->id, $userId, $today, $newAttempt)->afterCommit();
-
-                return redirect()->route('practice.ai.status', $id)
-                    ->with('success', 'Đã gửi yêu cầu chấm lại thành công!');
-            } catch (AiLimitExceededException $e) {
-                // Nếu hết hạn mức, hoàn lại trạng thái failed
-                Traloi::query()
-                    ->where('id', $id)
-                    ->update([
-                        'trangthai_ai' => 'failed',
-                        'nhanxet_ai' => 'Hết hạn mức AI hôm nay: ' . $e->getMessage(),
-                    ]);
-
-                return redirect()->route('practice.ai.status', $id)
-                    ->withErrors(['ai_limit' => $e->getMessage()]);
-            }
+            return redirect()->route('practice.ai.status', $id);
         }
 
-        return redirect()->route('practice.ai.status', $id);
+        ProcessAIGradingJob::dispatch($traloi->id, $userId, $today, $attemptCu + 1)->afterCommit();
+
+        return redirect()->route('practice.ai.status', $id)
+            ->with('success', 'Đã gửi yêu cầu chấm lại thành công!');
     }
 }
-

@@ -24,7 +24,7 @@ class FullMockTestSeederTest extends TestCase
         $this->assertSame('full', $exam->chedo);
         $this->assertSame('fixed', $exam->kieu);
         $this->assertSame('published', $exam->trangthai);
-        $this->assertSame('20.00', (string) $exam->tongdiem);
+        $this->assertEqualsWithDelta(20.0, (float) $exam->tongdiem, 0.001);
         $this->assertSame(3600, (int) $exam->thoigian);
 
         $this->assertSame(

@@ -11,7 +11,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -36,8 +35,11 @@ class ProcessAIGradingJob implements ShouldQueue
     public array $backoff = [10, 30];
 
     public int $traloiId;
+
     public ?int $userId;
+
     public mixed $date;
+
     public int $attempt;
 
     /**
@@ -59,13 +61,14 @@ class ProcessAIGradingJob implements ShouldQueue
         // 1. Kiểm tra đầu Job: nếu không còn pending hoặc attempt cũ thì bỏ qua (Idempotency)
         $traloi = Traloi::query()->find($this->traloiId);
 
-        if (!$traloi || $traloi->trangthai_ai !== 'pending' || (int) $traloi->luot_cham !== $this->attempt) {
-            Log::info("ProcessAIGradingJob: Bỏ qua do trạng thái hoặc luot_cham không khớp.", [
+        if (! $traloi || $traloi->trangthai_ai !== 'pending' || (int) $traloi->luot_cham !== $this->attempt) {
+            Log::info('ProcessAIGradingJob: Bỏ qua do trạng thái hoặc luot_cham không khớp.', [
                 'traloi_id' => $this->traloiId,
                 'current_attempt' => $traloi?->luot_cham,
                 'job_attempt' => $this->attempt,
                 'status' => $traloi?->trangthai_ai,
             ]);
+
             return;
         }
 
@@ -79,7 +82,7 @@ class ProcessAIGradingJob implements ShouldQueue
                 $cauHoi = Cauhoi::with('loai')->find($lanThiCauHoi->cauhoi_id);
                 $loaiCauHoi = $cauHoi?->loai;
             }
-            if (!$this->userId && $lanThiCauHoi?->lanThi) {
+            if (! $this->userId && $lanThiCauHoi?->lanThi) {
                 $this->userId = (int) $lanThiCauHoi->lanThi->nguoidung_id;
             }
         }
@@ -88,7 +91,7 @@ class ProcessAIGradingJob implements ShouldQueue
         $questionType = $loaiCauHoi?->ten ?? $loaiCauHoi?->ma ?? 'General';
         $questionContent = $cauHoi?->noidung ?? 'Evaluate the student submission according to DET criteria.';
 
-        $isSpeaking = $kyNang === 'speaking' || !empty($traloi->audio);
+        $isSpeaking = $kyNang === 'speaking' || ! empty($traloi->audio);
 
         // 3. Gọi chấm điểm ngoài transaction
         if ($isSpeaking) {
@@ -104,6 +107,7 @@ class ProcessAIGradingJob implements ShouldQueue
             if (isset($gradeResult['too_long']) && $gradeResult['too_long']) {
                 Traloi::query()
                     ->where('id', $this->traloiId)
+                    ->where('trangthai_ai', 'pending')
                     ->where('luot_cham', $this->attempt)
                     ->update(['noidung' => null]);
 
@@ -114,13 +118,15 @@ class ProcessAIGradingJob implements ShouldQueue
                     $this->attempt,
                     $gradeResult['message']
                 );
+
                 return;
             }
 
             // Nếu vừa nhận transcript mới, lưu vào noidung để lần sau chấm lại không cần gọi lại STT
-            if (!empty($gradeResult['transcript']) && empty($traloi->noidung)) {
+            if (! empty($gradeResult['transcript']) && empty($traloi->noidung)) {
                 Traloi::query()
                     ->where('id', $this->traloiId)
+                    ->where('trangthai_ai', 'pending')
                     ->where('luot_cham', $this->attempt)
                     ->update(['noidung' => $gradeResult['transcript']]);
             }
@@ -144,6 +150,7 @@ class ProcessAIGradingJob implements ShouldQueue
                 $this->attempt,
                 $gradeResult['message'] ?? 'Chấm bài thất bại, hệ thống đã hoàn lại lượt cho bạn.'
             );
+
             return;
         }
 
@@ -151,8 +158,8 @@ class ProcessAIGradingJob implements ShouldQueue
         $score = $gradeResult['score'] ?? null;
         $feedback = $gradeResult['feedback'] ?? null;
 
-        if (!empty($gradeResult['subscores'])) {
-            $feedback .= "\n\n--- TIÊU CHÍ CHI TIẾT ---\n" . json_encode($gradeResult['subscores'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        if (! empty($gradeResult['subscores'])) {
+            $feedback .= "\n\n--- TIÊU CHÍ CHI TIẾT ---\n".json_encode($gradeResult['subscores'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         }
 
         $affected = Traloi::query()
@@ -166,7 +173,7 @@ class ProcessAIGradingJob implements ShouldQueue
             ]);
 
         if ($affected === 0) {
-            Log::warning("ProcessAIGradingJob: Kết quả bị hủy do bản ghi đã được cập nhật hoặc chấm lại.", [
+            Log::warning('ProcessAIGradingJob: Kết quả bị hủy do bản ghi đã được cập nhật hoặc chấm lại.', [
                 'traloi_id' => $this->traloiId,
                 'attempt' => $this->attempt,
             ]);
@@ -178,7 +185,7 @@ class ProcessAIGradingJob implements ShouldQueue
      */
     public function failed(?Throwable $exception): void
     {
-        Log::error("ProcessAIGradingJob failed: " . ($exception ? $exception->getMessage() : 'Unknown error'), [
+        Log::error('ProcessAIGradingJob failed: '.($exception ? $exception->getMessage() : 'Unknown error'), [
             'traloi_id' => $this->traloiId,
             'user_id' => $this->userId,
             'attempt' => $this->attempt,
@@ -194,4 +201,3 @@ class ProcessAIGradingJob implements ShouldQueue
         );
     }
 }
-

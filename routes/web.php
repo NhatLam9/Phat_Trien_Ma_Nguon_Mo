@@ -1,21 +1,20 @@
 
 <?php
 
-use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Auth\GoogleController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\Practice\PracticeController;
+use App\Http\Controllers\Certificate\CertificateController;
 use App\Http\Controllers\MockTest\MockTestController;
 use App\Http\Controllers\MockTest\MockTestDashboardController;
 use App\Http\Controllers\MockTest\MockTestHistoryController;
 use App\Http\Controllers\MockTest\MockTestResultController;
-use App\Http\Controllers\Certificate\CertificateController;
-use App\Http\Controllers\Tutor\TutorController;
 use App\Http\Controllers\Practice\PracticeAIController;
+use App\Http\Controllers\PracticeController;
+use App\Http\Controllers\Tutor\TutorController;
+use Illuminate\Support\Facades\Route;
 
 // Trang chu
 Route::view('/', 'welcome');
@@ -70,9 +69,9 @@ Route::middleware('auth')->group(function () {
     // Route::get('/learning-dashboard', [MockTestDashboardController::class, 'index'])
     //     ->name('learning.dashboard');
 
-    // // PRACTICE - Luyen tap
-    // Route::get('/practice', [PracticeController::class, 'index'])
-    //     ->name('practice.index');
+    // PRACTICE - Luyen tap
+    Route::get('/practice', [PracticeController::class, 'index'])
+        ->name('practice.index');
 
     // MT01 - Bat dau hoac tiep tuc bai thi
     Route::post('/mock-test/start', [MockTestController::class, 'start'])
@@ -126,6 +125,8 @@ Route::middleware('auth')->group(function () {
             ->whereNumber('id')->name('submit');
         Route::get('/status/{id}', [PracticeAIController::class, 'status'])
             ->whereNumber('id')->name('status');
+        Route::get('/audio/{id}', [PracticeAIController::class, 'audio'])
+            ->whereNumber('id')->name('audio');
         Route::post('/retry/{id}', [PracticeAIController::class, 'retry'])
             ->whereNumber('id')->name('retry');
     });

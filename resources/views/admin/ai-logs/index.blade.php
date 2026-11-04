@@ -23,6 +23,16 @@
         </div>
 
         <div style="width: 150px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--admin-muted); margin-bottom: 6px;">Trạng thái</label>
+            <select name="trangthai" style="width: 100%; padding: 8px 12px; border: 1px solid var(--admin-border); border-radius: 6px; font-size: 14px; background: #fff;">
+                <option value="">Tất cả trạng thái</option>
+                @foreach ($trangthaiOptions as $value => $label)
+                    <option value="{{ $value }}" {{ $trangthai === $value ? 'selected' : '' }}>{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div style="width: 150px;">
             <label style="display: block; font-size: 13px; font-weight: 600; color: var(--admin-muted); margin-bottom: 6px;">Từ ngày</label>
             <input type="date" name="date_from" value="{{ $dateFrom }}" style="width: 100%; padding: 8px 12px; border: 1px solid var(--admin-border); border-radius: 6px; font-size: 14px;">
         </div>
@@ -51,6 +61,7 @@
                 <th style="padding: 12px 16px;">Mã</th>
                 <th style="padding: 12px 16px;">Người dùng</th>
                 <th style="padding: 12px 16px;">Loại</th>
+                <th style="padding: 12px 16px;">Trạng thái</th>
                 <th style="padding: 12px 16px;">Model</th>
                 <th style="padding: 12px 16px;">Tokens (Vào / Ra)</th>
                 <th style="padding: 12px 16px;">Thời gian</th>
@@ -70,6 +81,14 @@
                             {{ $log->loai }}
                         </span>
                     </td>
+                    <td style="padding: 12px 16px;">
+                        <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; background: {{ $log->trangthai === 'failed' ? '#fee2e2' : '#dcfce7' }}; color: {{ $log->trangthai === 'failed' ? '#991b1b' : '#166534' }};">
+                            {{ $log->trangthai === 'failed' ? 'Thất bại' : 'Thành công' }}
+                        </span>
+                        @if ($log->http_code)
+                            <span style="display: block; font-size: 11px; color: var(--admin-muted); margin-top: 3px;">HTTP {{ $log->http_code }}</span>
+                        @endif
+                    </td>
                     <td style="padding: 12px 16px; font-family: monospace; font-size: 12px;">{{ $log->model }}</td>
                     <td style="padding: 12px 16px; font-size: 13px;">
                         {{ $log->token_vao ?? 0 }} / {{ $log->token_ra ?? 0 }}
@@ -85,7 +104,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" style="padding: 32px 16px; text-align: center; color: var(--admin-muted);">
+                    <td colspan="8" style="padding: 32px 16px; text-align: center; color: var(--admin-muted);">
                         Không tìm thấy nhật ký AI nào phù hợp với bộ lọc.
                     </td>
                 </tr>

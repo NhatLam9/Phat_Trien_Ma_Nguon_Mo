@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ailog;
-use App\Models\Nguoidung;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -16,6 +15,7 @@ class AilogController extends Controller
     public function index(Request $request): View
     {
         $loai = $request->query('loai');
+        $trangthai = $request->query('trangthai');
         $search = $request->query('search');
         $dateFrom = $request->query('date_from');
         $dateTo = $request->query('date_to');
@@ -26,10 +26,14 @@ class AilogController extends Controller
             $query->where('loai', $loai);
         }
 
+        if (in_array($trangthai, ['success', 'failed'], true)) {
+            $query->where('trangthai', $trangthai);
+        }
+
         if ($search) {
             $query->whereHas('nguoidung', function ($q) use ($search) {
                 $q->where('hoten', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -44,8 +48,9 @@ class AilogController extends Controller
         $logs = $query->paginate(20)->withQueryString();
 
         $loaiOptions = ['speaking', 'writing', 'grammar', 'translate', 'rewrite', 'chat'];
+        $trangthaiOptions = ['success' => 'Thành công', 'failed' => 'Thất bại'];
 
-        return view('admin.ai-logs.index', compact('logs', 'loai', 'search', 'dateFrom', 'dateTo', 'loaiOptions'));
+        return view('admin.ai-logs.index', compact('logs', 'loai', 'trangthai', 'search', 'dateFrom', 'dateTo', 'loaiOptions', 'trangthaiOptions'));
     }
 
     /**
@@ -58,4 +63,3 @@ class AilogController extends Controller
         return view('admin.ai-logs.show', compact('log'));
     }
 }
-
