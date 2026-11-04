@@ -281,32 +281,34 @@
     <!-- 1. HERO BANNER GIỚI THIỆU & NÚT BẮT ĐẦU NGAY DẪN ĐẾN ĐĂNG KÝ -->
     <section class="hero-banner">
         <div class="hero-badge">
-            ✨ Nền tảng luyện thi Duolingo English Test trực tuyến
+            Luyện thi Duolingo English Test
         </div>
 
         <h1 class="hero-title">
-            Chinh Phục Điểm Số Mục Tiêu Cùng <span>DET Practice</span>
+            Luyện tập mỗi ngày.<br>
+            <span>Tiến gần mục tiêu.</span>
         </h1>
 
         <p class="hero-subtitle">
-            Hệ thống ôn luyện và mô phỏng bài thi <strong>Duolingo English Test (DET)</strong> chuẩn quốc tế. Tích hợp ngân hàng câu hỏi 4 kỹ năng, thi thử thích ứng (Adaptive Mock Test), chấm điểm Writing & Speaking bằng AI và cấp chứng chỉ thi thử trực tuyến.
+            Rèn luyện bốn kỹ năng, làm bài thi thử và xem lại kết quả
+            để biết mình cần cải thiện điều gì.
         </p>
 
         <div class="hero-cta">
             @auth
                 <a href="{{ route('practice.index') }}" class="btn btn-primary" style="padding: 13px 32px; font-size: 16px;">
-                    Bắt đầu luyện tập ngay →
+                    Bắt đầu luyện tập
                 </a>
                 <a href="{{ url('/mock-test') }}" class="btn btn-outline" style="padding: 13px 26px; font-size: 15px;">
-                    Vào phòng Thi thử (Mock Test)
+                    Làm bài thi thử
                 </a>
             @else
                 <!-- Đúng ngữ cảnh Khách: Nút "Bắt đầu ngay" dẫn đến trang Đăng ký -->
                 <a href="{{ route('register') }}" class="btn btn-primary" style="padding: 13px 32px; font-size: 16px;">
-                    Bắt đầu ngay →
+                    Tạo tài khoản
                 </a>
                 <a href="{{ route('login') }}" class="btn btn-outline" style="padding: 13px 26px; font-size: 15px;">
-                    Đăng nhập tài khoản
+                    Đăng nhập
                 </a>
             @endauth
         </div>

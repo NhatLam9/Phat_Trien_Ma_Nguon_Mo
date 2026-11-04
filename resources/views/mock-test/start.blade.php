@@ -13,7 +13,7 @@
 
         <!-- Gioi thieu -->
         <div class="page-intro">
-            <span class="eyebrow">MOCK TEST · MT01</span>
+            <span class="eyebrow">LUYỆN THI DUOLINGO ENGLISH TEST</span>
 
             <h1>Danh sách đề thi thử</h1>
 
@@ -57,17 +57,15 @@
 
         <div class="exam-grid">
             @forelse ($deThi as $de)
-                <article class="exam-card">
+                <article class="exam-card {{ $lanThiDangMo && $lanThiDangMo->dethi_id == $de->id ? 'exam-card--ongoing' : '' }}">
 
                     <div class="card-top">
                         <span class="exam-label">
-                            {{ strtoupper($de->chedo) }}
+                            {{ $de->chedo === 'full' ? 'Toàn bài' : 'Theo kỹ năng' }}
                         </span>
 
                         <span class="exam-type">
-                            {{ $de->kieu === 'adaptive'
-                                ? 'Adaptive'
-                                : 'Fixed' }}
+                            {{ $de->kieu === 'adaptive' ? 'Thích ứng' : 'Cố định' }}
                         </span>
                     </div>
 

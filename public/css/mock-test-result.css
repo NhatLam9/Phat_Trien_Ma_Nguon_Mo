@@ -1057,6 +1057,405 @@
     }
 }
 
+/* KẾT QUẢ VÀ THỐNG KÊ — BENTO */
+
+.mock-test-result-body,
+.app-main--mock-result,
+.mr-page {
+    --mt-green: #ea580c;
+    --mt-green-dark: #c2410c;
+    --mt-green-deep: #9a3412;
+    --mt-green-light: #ffedd5;
+    --mt-mint: #f7f2ea;
+    --mt-text: #3e2723;
+    --mt-muted: #795548;
+    --mt-border: #e5d5c0;
+    --mt-shadow: 0 5px 0 #e5d5c0;
+}
+
+body.mock-test-result-body {
+    font-family: "Montserrat", "Segoe UI", sans-serif;
+    color: #3e2723;
+    background-color: #f7f2ea;
+    background-image: radial-gradient(#e5d7c4 0.85px, transparent 0.85px);
+    background-size: 22px 22px;
+}
+
+.mock-test-result-body .app-main--mock-result {
+    background: transparent;
+}
+
+.mr-page {
+    width: 100%;
+    max-width: 1160px;
+    padding-bottom: 32px;
+}
+
+/* Thanh đầu trang */
+
+.mr-page .mr-topline {
+    gap: 14px;
+    padding: 18px 22px;
+    border: 2px solid #e5d5c0;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 0 5px 0 #e5d5c0;
+    backdrop-filter: none;
+}
+
+.mr-page .mr-crumbs,
+.mr-page .mr-crumbs a {
+    color: #795548;
+}
+
+.mr-page .mr-crumbs strong {
+    color: #3e2723;
+}
+
+.mr-page .mr-pill {
+    border-radius: 10px;
+    font-weight: 800;
+}
+
+.mr-page .mr-pill--success {
+    border-color: #fed7aa;
+    background: #ffedd5;
+    color: #9a3412;
+}
+
+.mr-page .mr-pill--neutral {
+    border-color: #e5d5c0;
+    background: #faf5ee;
+    color: #795548;
+}
+
+/* Tiêu đề */
+
+.mr-page .mr-heading {
+    padding: 32px 0 24px;
+    border-bottom: 1px dashed #e5d5c0;
+}
+
+.mr-page .mr-heading h1 {
+    color: #2e1d17;
+    font-size: clamp(26px, 3vw, 38px);
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.mr-page .mr-kicker,
+.mr-page .mr-label {
+    color: #9a3412;
+    font-weight: 800;
+}
+
+.mr-page .mr-kicker span,
+.mr-page .mr-subtitle {
+    color: #795548;
+}
+
+/* Các thẻ và bảng điểm */
+
+.mr-page .mr-card,
+.mr-page .mr-bottom-actions {
+    border: 2px solid #e5d5c0;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 0 5px 0 #e5d5c0;
+    backdrop-filter: none;
+}
+
+.mr-page .mr-scoreboard {
+    margin: 26px 0;
+    padding: 26px;
+}
+
+.mr-page .mr-score-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 24px;
+}
+
+.mr-page .mr-score strong {
+    color: #c2410c;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+.mr-page .mr-accuracy > strong {
+    color: #3e2723;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+.mr-page .mr-accuracy > span:last-child {
+    color: #795548;
+}
+
+.mr-page .mr-assessment {
+    grid-column: 1 / -1;
+    padding: 18px 20px;
+    border: 1px solid #fcd34d;
+    border-radius: 16px;
+    background: #fffbeb;
+}
+
+.mr-page .mr-assessment strong {
+    color: #854d0e;
+}
+
+.mr-page .mr-assessment p {
+    color: #795548;
+}
+
+/* Thống kê đúng / sai / bỏ trống / chờ chấm */
+
+.mr-page .mr-stats {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 145px), 1fr));
+    gap: 14px;
+}
+
+.mr-page .mr-stat {
+    padding: 16px;
+    border: 1px solid #e5d5c0;
+    border-radius: 16px;
+    background: #faf5ee;
+}
+
+.mr-page .mr-stat-icon {
+    border-radius: 12px;
+}
+
+.mr-page .mr-stat-icon--correct {
+    background: #ffedd5;
+    color: #9a3412;
+}
+
+.mr-page .mr-stat-icon--skipped {
+    background: #eae3da;
+    color: #6b584c;
+}
+
+.mr-page .mr-stat strong {
+    color: #3e2723;
+    font-weight: 800;
+}
+
+/* Bố cục vừa với vùng nội dung cạnh sidebar */
+
+.mr-page .mr-columns {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.mr-page .mr-answer-sheet {
+    position: static;
+    grid-row: 1;
+}
+
+.mr-page .mr-answer-grid {
+    grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
+}
+
+.mr-page .mr-section-title h2 {
+    color: #3e2723;
+    font-weight: 800;
+}
+
+/* Thống kê kỹ năng */
+
+.mr-page .mr-skill {
+    border: 1px solid #e5d5c0;
+    border-radius: 16px;
+    background: #faf5ee;
+}
+
+.mr-page .mr-ring {
+    background: conic-gradient(
+        #ea580c var(--mr-p, 0%),
+        #eae0d3 0
+    );
+}
+
+.mr-page .mr-ring::before {
+    background: #faf5ee;
+}
+
+.mr-page .mr-ring span,
+.mr-page .mr-skill strong {
+    color: #3e2723;
+    font-weight: 800;
+}
+
+/* Phiếu trả lời */
+
+.mr-page .mr-legend {
+    border: 1px solid #e5d5c0;
+    background: #faf5ee;
+    color: #795548;
+}
+
+.mr-page .mr-legend-dot--correct {
+    background: #c2410c;
+}
+
+.mr-page .mr-legend-dot--skipped {
+    background: #a89483;
+}
+
+.mr-page .mr-q-btn--correct {
+    border-color: #9a3412;
+    background: #c2410c;
+}
+
+.mr-page .mr-q-btn--skipped,
+.mr-page .mr-q-btn--unissued {
+    border-color: #e5d5c0;
+    background: #f3eee7;
+    color: #795548 !important;
+}
+
+.mr-page .mr-q-btn--graded {
+    background: #5d4037;
+}
+
+.mr-page .mr-q-btn--active {
+    outline: 3px solid #9a3412;
+    outline-offset: 3px;
+    box-shadow: none;
+}
+
+/* Nội dung xem lại */
+
+.mr-page .mr-question-text,
+.mr-page .mr-free-answer,
+.mr-page .mr-empty-review {
+    border: 1px solid #e5d5c0;
+    border-radius: 16px;
+    background: #faf5ee;
+    color: #3e2723;
+}
+
+.mr-page .mr-option {
+    flex-wrap: wrap;
+    border: 1px solid #e5d5c0;
+    background: #fff;
+    color: #3e2723;
+}
+
+.mr-page .mr-option-letter {
+    border-color: #e5d5c0;
+    background: #faf5ee;
+    color: #795548;
+}
+
+.mr-page .mr-option--correct {
+    border-color: #fdba74;
+    background: #fff7ed;
+}
+
+.mr-page .mr-option--correct .mr-option-letter {
+    border-color: #c2410c;
+    background: #ea580c;
+    color: #fff;
+}
+
+.mr-page .mr-option--incorrect {
+    border-color: #f1afbf;
+    background: #fff2f5;
+}
+
+.mr-page .mr-option:not(.mr-option--incorrect) small {
+    color: #9a3412;
+}
+
+.mr-page .mr-result-status--correct {
+    background: #ffedd5;
+    color: #9a3412;
+}
+
+.mr-page .mr-result-status--skipped,
+.mr-page .mr-result-status--unissued {
+    background: #f3eee7;
+    color: #795548;
+}
+
+.mr-page .mr-result-status--graded {
+    background: #efe7e1;
+    color: #5d4037;
+}
+
+.mr-page .mr-explanation {
+    border: 1px solid #fcd34d;
+    background: #fffbeb;
+}
+
+.mr-page .mr-free-answer strong,
+.mr-page .mr-explanation strong {
+    color: #5d4037;
+}
+
+.mr-page .mr-free-answer p,
+.mr-page .mr-explanation p {
+    color: #795548;
+}
+
+/* Nút thao tác */
+
+.mr-page .mr-btn {
+    border-width: 2px;
+    border-radius: 13px;
+    font-weight: 800;
+}
+
+.mr-page .mr-btn--primary {
+    border-color: #c2410c;
+    background: #ea580c;
+    box-shadow: 0 4px 0 #9a3412;
+}
+
+.mr-page .mr-btn--primary:hover {
+    background: #c2410c;
+}
+
+.mr-page .mr-btn--outline {
+    border-color: #e5d5c0;
+    background: #fff;
+    box-shadow: 0 3px 0 #e5d5c0;
+    color: #5d4037 !important;
+}
+
+.mr-page .mr-btn--outline:hover {
+    border-color: #d4b996;
+    background: #faf5ee;
+}
+
+.mr-page :is(a, button):focus-visible {
+    outline: 3px solid #9a3412;
+    outline-offset: 4px;
+}
+
+@media (max-width: 700px) {
+    .mr-page {
+        width: calc(100% - 28px);
+    }
+
+    .mr-page .mr-topline {
+        padding: 16px;
+        border-radius: 18px;
+    }
+
+    .mr-page .mr-scoreboard {
+        padding: 20px;
+    }
+
+    .mr-page .mr-score-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mr-page .mr-assessment {
+        grid-column: auto;
+    }
+}
+
 /* 18. IN PDF */
 
 @media print {
