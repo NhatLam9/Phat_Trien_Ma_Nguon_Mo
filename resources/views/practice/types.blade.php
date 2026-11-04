@@ -79,9 +79,7 @@
                             <div>
                                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
                                     <span class="badge {{ $skillNames[$skill]['badge'] ?? 'badge-user' }}">{{ $type->kynang }}</span>
-                                    @if(!empty($type->thoigian))
-                                        <span style="font-size: 12px; color: #64748b;">⏳ {{ $type->thoigian }} giây</span>
-                                    @endif
+    
                                 </div>
                                 <h3 style="font-size: 17px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">
                                     {{ $type->ten }}
@@ -91,14 +89,12 @@
                                 </p>
                             </div>
 
-                            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 14px;">
-                                <span style="font-size: 12px; color: #94a3b8;">
-                                    Chấm: {{ ($type->cachcham ?? 'auto') === 'ai' ? '🤖 AI chấm' : '⚡ Tự động' }}
-                                </span>
-                                <a href="{{ route('practice.select', ['loai_id' => $type->id]) }}" class="btn btn-primary btn-sm">
-                                    Luyện tập ngay →
-                                </a>
-                            </div>
+                            <div style="display: flex; justify-content: flex-end; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 14px;">
+
+                            <a href="{{ route('practice.select', ['loai_id' => $type->id]) }}" class="btn btn-primary btn-sm">
+                            Luyện tập ngay 
+                            </a>
+                           </div>
                         </div>
                     @endforeach
                 </div>
