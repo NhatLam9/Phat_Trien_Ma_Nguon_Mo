@@ -44,7 +44,7 @@
 
                 <div class="profile-meta-tags">
                     <span class="profile-meta-tag">
-                        📧 {{ $user->email }}
+                         {{ $user->email }}
                         @if($user->hasVerifiedEmail())
                             <span class="badge badge-speaking" style="padding: 2px 8px; font-size: 11px;">✓ Đã xác minh</span>
                         @else
@@ -52,7 +52,7 @@
                         @endif
                     </span>
                     <span class="profile-meta-tag">
-                        📅 Tham gia: {{ $user->ngaytao ? \Carbon\Carbon::parse($user->ngaytao)->format('d/m/Y') : 'Mới tham gia' }}
+                         Tham gia: {{ $user->ngaytao ? \Carbon\Carbon::parse($user->ngaytao)->format('d/m/Y') : 'Mới tham gia' }}
                     </span>
                 </div>
             </div>
@@ -72,9 +72,6 @@
     <div class="profile-stats-row">
         <!-- Mục tiêu điểm DET -->
         <div class="profile-stat-box">
-            <div class="profile-stat-icon" style="background: #e0f2fe; color: #0284c7;">
-                🎯
-            </div>
             <div class="profile-stat-info" style="flex: 1;">
                 <div class="stat-title">Mục tiêu điểm DET</div>
                 <div class="stat-value">
@@ -93,9 +90,6 @@
 
         <!-- Trạng thái tài khoản -->
         <div class="profile-stat-box">
-            <div class="profile-stat-icon" style="background: #dcfce7; color: #16a34a;">
-                🛡️
-            </div>
             <div class="profile-stat-info">
                 <div class="stat-title">Trạng thái bảo mật</div>
                 <div class="stat-value" style="font-size: 16px;">
@@ -106,9 +100,6 @@
 
         <!-- Phương thức xác thực -->
         <div class="profile-stat-box">
-            <div class="profile-stat-icon" style="background: #fef3c7; color: #d97706;">
-                🔑
-            </div>
             <div class="profile-stat-info">
                 <div class="stat-title">Đăng nhập qua</div>
                 <div class="stat-value" style="font-size: 16px;">
@@ -235,7 +226,7 @@
 
                     <!-- Thông báo khi bấm Gỡ ảnh -->
                     <div id="remove-avatar-notice" style="display: none; margin-top: 8px; color: #b91c1c; font-size: 12px; font-weight: 600; background: #fef2f2; padding: 6px 12px; border-radius: 6px; border: 1px solid #fecaca;">
-                        ⚠️ Đã chọn gỡ ảnh đại diện về mặc định. Nhấn nút <strong>"Lưu thay đổi hồ sơ"</strong> bên dưới để hoàn tất.
+                        Đã chọn gỡ ảnh đại diện về mặc định. Nhấn nút <strong>"Lưu thay đổi hồ sơ"</strong> bên dưới để hoàn tất.
                         <button type="button" onclick="cancelRemoveAvatar()" style="background: none; border: none; color: #0284c7; text-decoration: underline; cursor: pointer; margin-left: 6px; font-size: 12px; font-weight: 700;">Hoàn tác</button>
                     </div>
 

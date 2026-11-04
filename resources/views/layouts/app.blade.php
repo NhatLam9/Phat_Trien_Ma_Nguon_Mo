@@ -75,8 +75,18 @@
                     </a>
 
                     <a href="{{ route('mock-test.index') }}"
-                    class="{{ request()->routeIs('mock-test.*') ? 'active' : '' }}">
+                    class="{{ request()->routeIs('mock-test.*') && !request()->routeIs('mock-test.history') ? 'active' : '' }}">
                         Thi thử
+                    </a>
+
+                    <a href="{{ route('mock-test.history') }}"
+                    class="{{ request()->routeIs('mock-test.history') ? 'active' : '' }}">
+                        Lịch sử thi thử
+                    </a>
+
+                    <a href="{{ route('learning.dashboard') }}"
+                    class="{{ request()->routeIs('learning.dashboard') ? 'active' : '' }}">
+                        Thống kê học tập
                     </a>
 
                     <a href="{{ route('practice.bookmarks') }}"

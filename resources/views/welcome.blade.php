@@ -284,10 +284,21 @@
             Luyện thi Duolingo English Test
         </div>
 
-        <h1 class="hero-title">
-            Luyện tập mỗi ngày.<br>
-            <span>Tiến gần mục tiêu.</span>
-        </h1>
+        <div class="hero-heading-row">
+            <h1 class="hero-title">
+                Luyện tập mỗi ngày.<br>
+                <span>Tiến gần mục tiêu.</span>
+            </h1>
+
+            <img
+                class="hero-fox"
+                src="{{ asset('images/fox.png') }}"
+                alt="Linh vật cáo AmberDET"
+                width="280"
+                height="280"
+                fetchpriority="high"
+            >
+        </div>
 
         <p class="hero-subtitle">
             Rèn luyện bốn kỹ năng, làm bài thi thử và xem lại kết quả

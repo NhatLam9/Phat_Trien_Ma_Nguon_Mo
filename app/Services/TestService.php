@@ -1,600 +1,922 @@
 <?php
 
-    namespace App\Services;
+namespace App\Services;
 
-    use App\Models\Lanthi;
-    use App\Models\Lanthicauhoi;
-    use App\Models\Traloi;
-    use App\Models\Vipham;
-    use Carbon\Carbon;
-    use Illuminate\Support\Facades\DB;
-    use Illuminate\Validation\ValidationException;
+use App\Models\CauhoiDoc;
+use App\Models\CauhoiNghe;
+use App\Models\Lanthi;
+use App\Models\Lanthicauhoi;
+use App\Models\Traloi;
+use App\Models\Vipham;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
-    class TestService
+class TestService
+{
+    private const NHOM_KY_NANG = [
+        'literacy' => ['reading', 'writing'],
+        'comprehension' => ['reading', 'listening'],
+        'conversation' => ['listening', 'speaking'],
+        'production' => ['writing', 'speaking'],
+    ];
+
+    private const LOAI_INTERACTIVE = [
+        'interactive_reading',
+        'interactive_listening',
+    ];
+
+    public function batDauThi(int $nguoiDungId, int $deThiId): Lanthi
     {
-        /* MT01 - Bat dau hoac tiep tuc bai thi. */
-        public function batDauThi(int $nguoiDungId, int $deThiId): Lanthi {
-            return DB::transaction(function () use ($nguoiDungId, $deThiId) {
+        return DB::transaction(function () use ($nguoiDungId, $deThiId) {
+            $nguoiDung = DB::table('nguoidung')
+                ->where('id', $nguoiDungId)
+                ->lockForUpdate()
+                ->first();
 
-                // 1. Khoa nguoi dung de tranh tao nhieu lan thi dong thoi.
-                $nguoiDung = DB::table('nguoidung')
-                    ->where('id', $nguoiDungId)
-                    ->lockForUpdate()
-                    ->first();
-                if (!$nguoiDung || $nguoiDung->trangthai !== 'active') {
-                    throw ValidationException::withMessages(['nguoidung' => 'Tai khoan khong ton tai hoac da bi khoa.']);
-                }
-
-                // 2. Kiem tra de thi da duoc xuat ban.
-                $deThi = DB::table('dethi')
-                    ->where('id', $deThiId)
-                    ->where('trangthai', 'published')
-                    ->first();
-                if (!$deThi) {
-                    throw ValidationException::withMessages(['dethi_id' => 'De thi khong ton tai hoac chua duoc xuat ban.']);
-                }
-                if ((int) $deThi->thoigian <= 0) {
-                    throw ValidationException::withMessages([
-                        'dethi_id' =>
-                            'De thi chua co thoi gian hop le.',
-                    ]);
-                }
-
-                // 3. Tim lan thi dang dien ra.
-                $lanThiDangMo = Lanthi::query()
-                    ->where('nguoidung_id', $nguoiDungId)
-                    ->where('trangthai', 'in_progress')
-                    ->lockForUpdate()
-                    ->first();
-                // MT04: Dong phien cu neu da het gio.
-                if ($lanThiDangMo) {
-                    if ($this->xuLyHetGio($lanThiDangMo)) {
-                        $lanThiDangMo = null;
-                    }
-                }
-
-                // 4. Neu van con phien dang thi.
-                if ($lanThiDangMo) {
-                    // Cung de thi: tiep tuc phien cu.
-                    if ((int) $lanThiDangMo->dethi_id === $deThiId) {
-                        return $lanThiDangMo;
-                    }
-                    throw ValidationException::withMessages([
-                        'dethi_id' =>
-                            'Ban dang co mot bai thi chua hoan thanh. '
-                            . 'Hay tiep tuc hoac bo do bai thi do.',
-                    ]);
-                }
-
-                // 5. Tao lan thi moi.
-                return Lanthi::create([
-                    'nguoidung_id' => $nguoiDungId,
-                    'dethi_id' => $deThiId,
-                    'dokho_hientai' => 5.00,
-                    'batdau' => now(),
-                    'trangthai' => 'in_progress',
-                ]);
-            }, 3);
-        }
-
-        /* MT02 - Cap cau hoi tiep theo. */
-        public function capCauHoiTiepTheo(
-            int $lanThiId, int $nguoiDungId,
-            bool $boQua = false, ?int $cauHienTaiId = null
-        ): ?Lanthicauhoi {
-            return DB::transaction(function () use ($lanThiId, $nguoiDungId, $boQua, $cauHienTaiId) {
-
-                // 1. Khoa lan thi tranh cap cau trung.
-                $lanThi = Lanthi::query()
-                    ->whereKey($lanThiId)
-                    ->lockForUpdate()
-                    ->firstOrFail();
-
-                // 2. Kiem tra quyen so huu.
-                abort_unless(
-                    (int) $lanThi->nguoidung_id ===
-                    $nguoiDungId,
-                    403,
-                    'Ban khong co quyen truy cap lan thi nay.'
+            if (!$nguoiDung || $nguoiDung->trangthai !== 'active') {
+                $this->baoLoi(
+                    'nguoidung',
+                    'Tài khoản không tồn tại hoặc đã bị khóa.'
                 );
+            }
 
-                // 3. MT04: Xu ly neu da het gio.
-                if ($this->xuLyHetGio($lanThi)) {
-                    return null;
+            $deThi = DB::table('dethi')
+                ->where('id', $deThiId)
+                ->where('trangthai', 'published')
+                ->first();
+
+            if (!$deThi || (int) $deThi->thoigian <= 0) {
+                $this->baoLoi(
+                    'dethi_id',
+                    'Đề thi chưa được xuất bản hoặc thời gian không hợp lệ.'
+                );
+            }
+
+            $lanThiDangMo = Lanthi::query()
+                ->where('nguoidung_id', $nguoiDungId)
+                ->where('trangthai', 'in_progress')
+                ->lockForUpdate()
+                ->first();
+
+            if ($lanThiDangMo && $this->xuLyHetGio($lanThiDangMo)) {
+                $lanThiDangMo = null;
+            }
+
+            if ($lanThiDangMo) {
+                if ((int) $lanThiDangMo->dethi_id === $deThiId) {
+                    return $lanThiDangMo;
                 }
 
-                // 4. Chan cap cau hoi cho phien da dong.
-                if ($lanThi->trangthai !== 'in_progress') {
-                    throw ValidationException::withMessages([
-                        'lanthi' => 'Lan thi khong con hoat dong.',
-                    ]);
-                }
-                // Kiem tra cau hoi duoc yeu cau bo qua.
-                $cauHienTai = null;
+                $this->baoLoi(
+                    'dethi_id',
+                    'Bạn đang có bài thi chưa hoàn thành. '
+                        . 'Hãy tiếp tục hoặc bỏ dở bài thi đó.'
+                );
+            }
 
-                if ($boQua) {
-                    $cauHienTai = Lanthicauhoi::query()
-                        ->whereKey($cauHienTaiId)
-                        ->where('lanthi_id', $lanThiId)
-                        ->first();
+            return Lanthi::create([
+                'nguoidung_id' => $nguoiDungId,
+                'dethi_id' => $deThiId,
+                'dokho_hientai' => 5.00,
+                'batdau' => now(),
+                'trangthai' => 'in_progress',
+            ]);
+        }, 3);
+    }
 
-                    if (!$cauHienTai) {
-                        throw ValidationException::withMessages([
-                            'cauhoi' => 'Cau hoi khong hop le hoac da duoc nop.',
-                        ]);
-                    }
-                }
-                // Ưu tiên câu chưa trả lời đã được cấp ở phía sau.
-                if ($boQua && $cauHienTai) {
-                    $cauDaCapTiepTheo = Lanthicauhoi::query()
-                        ->where('lanthi_id', $lanThiId)
-                        ->where('datraloi', false)
-                        ->where('thutu', '>', $cauHienTai->thutu)
-                        ->orderBy('thutu')
-                        ->first();
+    public function capCauHoiTiepTheo(
+        int $lanThiId,
+        int $nguoiDungId,
+        bool $boQua = false,
+        ?int $cauHienTaiId = null
+    ): ?Lanthicauhoi {
+        return DB::transaction(function () use (
+            $lanThiId,
+            $nguoiDungId,
+            $boQua,
+            $cauHienTaiId
+        ) {
+            $lanThi = $this->khoaLanThi($lanThiId, $nguoiDungId);
 
-                    if ($cauDaCapTiepTheo) {
-                        return $cauDaCapTiepTheo;
-                    }
-                }
-                // 5. Lay cau chua tra loi neu khong yeu cau bo qua.
-                if (!$boQua) {
-                    $cauDangLam = Lanthicauhoi::query()
-                        ->where('lanthi_id', $lanThiId)
-                        ->where('datraloi', false)
-                        ->orderByDesc('thutu')
-                        ->first();
+            if ($this->xuLyHetGio($lanThi)) {
+                return null;
+            }
 
-                    if ($cauDangLam) {
-                        return $cauDangLam;
-                    }
-                }
+            $this->kiemTraDangThi($lanThi);
 
-                // 6. Lay thong tin de thi.
-                $deThi = DB::table('dethi')
-                    ->where('id', $lanThi->dethi_id)
+            if ($boQua) {
+                $cauHienTai = Lanthicauhoi::query()
+                    ->whereKey($cauHienTaiId)
+                    ->where('lanthi_id', $lanThiId)
                     ->first();
-                if (!$deThi) {
-                    throw ValidationException::withMessages([
-                        'dethi' => 'Khong tim thay de thi.',
-                    ]);
-                }
 
-                // 7. Lay nhung cau hoi thuoc de, da published va chua tung duoc cap.
-                $ungVien = DB::table('dethicauhoi as dc')
-                    ->join(
-                        'cauhoi as ch',
-                        'ch.id',
-                        '=',
-                        'dc.cauhoi_id'
-                    )
-                    ->where(
-                        'dc.dethi_id',
-                        $lanThi->dethi_id
-                    )
-                    ->where('ch.trangthai', 'published')
-                    ->whereNotIn(
-                        'ch.id',
-                        function ($query) use ($lanThiId) {
-                            $query->select('cauhoi_id')
-                                ->from('lanthicauhoi')
-                                ->where('lanthi_id', $lanThiId);
-                        }
-                    )
-                    ->select(
-                        'dc.cauhoi_id',
-                        'dc.thutu',
-                        'dc.diem',
-                        'ch.dokho'
+                if (!$cauHienTai) {
+                    $this->baoLoi(
+                        'cauhoi',
+                        'Câu hỏi không thuộc lần thi này.'
                     );
-
-                // 8. Chon cau hoi theo kieu de.
-                if ($deThi->kieu === 'fixed') {
-                    $cauHoi = $ungVien
-                        ->orderBy('dc.thutu')
-                        ->first();
-                } elseif ($deThi->kieu === 'adaptive') {
-                    $cauHoi = $ungVien
-                        ->orderByRaw(
-                            'ABS(ch.dokho - ?) ASC',
-                            [(float) $lanThi->dokho_hientai]
-                        )
-                        ->orderBy('dc.thutu')
-                        ->first();
-                } else {
-                    throw ValidationException::withMessages([
-                        'dethi' => 'Kieu de thi khong hop le.',
-                    ]);
                 }
 
-                // Không còn câu phía sau thì dừng, không quay lại câu đầu.
-                if (!$cauHoi) {
-                    return null;
+                $cauTiepTheo = Lanthicauhoi::query()
+                    ->where('lanthi_id', $lanThiId)
+                    ->where('datraloi', false)
+                    ->where('thutu', '>', $cauHienTai->thutu)
+                    ->orderBy('thutu')
+                    ->first();
+
+                if ($cauTiepTheo) {
+                    return $cauTiepTheo;
                 }
+            } else {
+                $cauDangLam = Lanthicauhoi::query()
+                    ->where('lanthi_id', $lanThiId)
+                    ->where('datraloi', false)
+                    ->orderByDesc('thutu')
+                    ->first();
 
-                // 10. Xac dinh thu tu cau trong lan thi.
-                $thuTu = (
-                    (int) Lanthicauhoi::query()
-                        ->where('lanthi_id', $lanThiId)
-                        ->max('thutu')
-                ) + 1;
+                if ($cauDangLam) {
+                    return $cauDangLam;
+                }
+            }
 
-                // 11. Luu cau hoi duoc cap.
-                return Lanthicauhoi::create([
-                    'lanthi_id' => $lanThiId,
-                    'cauhoi_id' => $cauHoi->cauhoi_id,
-                    'thutu' => $thuTu,
-                    'dokho_lucra' => $cauHoi->dokho,
-                    'diemtoida' => $cauHoi->diem,
-                    'thoigian_cap' => now(),
-                    'datraloi' => false,
-                ]);
-            }, 3);
-        }
-
-        /* MT04 - Lay thoi diem het han. */
-        public function layHanThi(Lanthi $lanThi): Carbon
-    {
             $deThi = DB::table('dethi')
                 ->where('id', $lanThi->dethi_id)
                 ->first();
-            if (
-                !$deThi ||
-                (int) $deThi->thoigian <= 0
-            ) {
-                throw ValidationException::withMessages([
-                    'dethi' =>
-                        'De thi chua co thoi gian hop le.',
-                ]);
-            }
-            return Carbon::parse(
-                $lanThi->batdau,
-                config('app.timezone')
-            )->addSeconds((int) $deThi->thoigian);
-        }
 
-        /* MT04 - Xu ly bai thi het gio. */
-        private function xuLyHetGio(Lanthi $lanThi): bool
-        {
-            // Chi xu ly phien dang thi.
-            if ($lanThi->trangthai !== 'in_progress') {
-                return false;
+            if (!$deThi) {
+                $this->baoLoi('dethi', 'Không tìm thấy đề thi.');
             }
-            $hanThi = $this->layHanThi($lanThi);
-            // Chua toi han.
-            if (now()->lt($hanThi)) {
-                return false;
+
+            $ungVien = $this->cauHoiChuaCap($lanThi)
+                ->select([
+                    'dc.cauhoi_id',
+                    'dc.diem',
+                    'ch.dokho',
+                ]);
+
+            if ($deThi->kieu === 'fixed') {
+                $ungVien->orderBy('dc.thutu');
+            } elseif ($deThi->kieu === 'adaptive') {
+                $ungVien
+                    ->orderByRaw(
+                        'ABS(ch.dokho - ?) ASC',
+                        [(float) $lanThi->dokho_hientai]
+                    )
+                    ->orderBy('dc.thutu');
+            } else {
+                $this->baoLoi('dethi', 'Kiểu đề thi không hợp lệ.');
             }
-            // Da het gio.
-            // Ghi dung moc het han, khong phai thoi diem nguoi dung truy cap lai.
-            // MT04: Tu dong nop bai khi het gio.
-            $lanThi->trangthai = 'completed';
-            $lanThi->ketthuc = $hanThi;
-            $lanThi->save();
-            // Ghi nhat ky timeout.
-            Vipham::create([
-                'lanthi_id' => $lanThi->id,
-                'loai' => 'timeout',
-                'nguon' => 'auto',
-                'mota' =>
-                    'Bai thi tu dong ket thuc do het thoi gian.',
+
+            $cauHoi = $ungVien->first();
+
+            if (!$cauHoi) {
+                return null;
+            }
+
+            $thuTu = (int) Lanthicauhoi::query()
+                ->where('lanthi_id', $lanThiId)
+                ->max('thutu') + 1;
+
+            return Lanthicauhoi::create([
+                'lanthi_id' => $lanThiId,
+                'cauhoi_id' => $cauHoi->cauhoi_id,
+                'thutu' => $thuTu,
+                'dokho_lucra' => $cauHoi->dokho,
+                'diemtoida' => $cauHoi->diem,
+                'thoigian_cap' => now(),
+                'datraloi' => false,
+            ]);
+        }, 3);
+    }
+
+    public function nopCauTraLoi(
+        int $lanThiId,
+        int $nguoiDungId,
+        int $lanThiCauHoiId,
+        ?int $luaChonId,
+        ?string $noiDung
+    ): ?Traloi {
+        return DB::transaction(function () use (
+            $lanThiId,
+            $nguoiDungId,
+            $lanThiCauHoiId,
+            $luaChonId,
+            $noiDung
+        ) {
+            $lanThi = $this->khoaLanThi($lanThiId, $nguoiDungId);
+
+            if ($this->xuLyHetGio($lanThi)) {
+                return null;
+            }
+
+            $this->kiemTraDangThi($lanThi);
+
+            $cau = Lanthicauhoi::query()
+                ->whereKey($lanThiCauHoiId)
+                ->where('lanthi_id', $lanThiId)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if (
+                $cau->datraloi
+                || Traloi::query()
+                    ->where('lanthicauhoi_id', $cau->id)
+                    ->exists()
+            ) {
+                $this->baoLoi(
+                    'traloi',
+                    'Câu hỏi này đã được nộp trước đó.'
+                );
+            }
+
+            $loai = DB::table('cauhoi as ch')
+                ->join('loaicauhoi as loai', 'loai.id', '=', 'ch.loai_id')
+                ->where('ch.id', $cau->cauhoi_id)
+                ->first(['loai.ma', 'loai.cachcham']);
+
+            if (!$loai) {
+                $this->baoLoi('cauhoi', 'Không tìm thấy loại câu hỏi.');
+            }
+
+            $noiDung = trim($noiDung ?? '');
+            $laDung = null;
+            $diem = null;
+            $trangThaiAi = null;
+
+            $laInteractive = in_array(
+                $loai->ma,
+                self::LOAI_INTERACTIVE,
+                true
+            );
+
+            $coLuaChon = !$laInteractive
+                && DB::table('luachon')
+                    ->where('cauhoi_id', $cau->cauhoi_id)
+                    ->exists();
+
+            if ($laInteractive) {
+                if ($luaChonId !== null) {
+                    $this->baoLoi(
+                        'traloi',
+                        'Đáp án Interactive không hợp lệ.'
+                    );
+                }
+
+                $ketQua = $this->chamInteractive(
+                    (int) $cau->cauhoi_id,
+                    $loai->ma,
+                    $noiDung,
+                    (float) $cau->diemtoida
+                );
+
+                $diem = $ketQua['diem'];
+                $laDung = $ketQua['ladung'];
+                $noiDung = $ketQua['noidung'];
+            } elseif ($coLuaChon) {
+                if ($luaChonId === null || $noiDung !== '') {
+                    $this->baoLoi(
+                        'luachon_id',
+                        'Vui lòng chọn một đáp án hợp lệ.'
+                    );
+                }
+
+                $luaChon = DB::table('luachon')
+                    ->where('id', $luaChonId)
+                    ->where('cauhoi_id', $cau->cauhoi_id)
+                    ->first();
+
+                if (!$luaChon) {
+                    $this->baoLoi(
+                        'luachon_id',
+                        'Đáp án không thuộc câu hỏi này.'
+                    );
+                }
+
+                $laDung = (bool) $luaChon->ladung;
+                $diem = $laDung ? (float) $cau->diemtoida : 0.0;
+            } else {
+                if ($luaChonId !== null || $noiDung === '') {
+                    $this->baoLoi(
+                        'noidung',
+                        'Vui lòng nhập nội dung trả lời.'
+                    );
+                }
+
+                if ($loai->cachcham === 'auto') {
+                    $coDapAnChuan = DB::table('dap_an')
+                        ->where('cauhoi_id', $cau->cauhoi_id)
+                        ->where('ladung', 1)
+                        ->exists();
+
+                    if (!$coDapAnChuan) {
+                        $this->baoLoi(
+                            'cauhoi',
+                            'Câu hỏi tự động chưa có đáp án chuẩn. '
+                                . 'Vui lòng báo người quản lý đề.'
+                        );
+                    }
+
+                    $ketQua = app(ScoringService::class)->calculateResult(
+                        ['id' => $cau->cauhoi_id],
+                        ['noidung' => $noiDung],
+                        (float) $cau->diemtoida
+                    );
+
+                    $laDung = $ketQua['is_correct'];
+                    $diem = $ketQua['diem'];
+                } elseif ($loai->cachcham === 'ai') {
+                    $trangThaiAi = 'pending';
+                }
+            }
+
+            $traLoi = Traloi::create([
+                'lanthicauhoi_id' => $cau->id,
+                'luachon_id' => $coLuaChon ? $luaChonId : null,
+                'noidung' => $coLuaChon ? null : $noiDung,
+                'ladung' => $laDung,
+                'diem' => $diem,
+                'trangthai_ai' => $trangThaiAi,
                 'thoigian' => now(),
             ]);
-            return true;
-        }
 
-        /* MT04 - Kiem tra va dong lan thi het han. */
-        public function kiemTraHetHan(
-            int $lanThiId,
-            int $nguoiDungId
-        ): Lanthi {
-            return DB::transaction(function () use (
-                $lanThiId,
-                $nguoiDungId
-            ) {
-                // Khoa ban ghi de tranh xu ly trung.
-                $lanThi = Lanthi::query()
-                    ->whereKey($lanThiId)
-                    ->lockForUpdate()
-                    ->firstOrFail();
-                // Kiem tra quyen.
-                abort_unless(
-                    (int) $lanThi->nguoidung_id ===
-                    $nguoiDungId,
-                    403,
-                    'Ban khong co quyen xem lan thi nay.'
-                );
-                // Xu ly neu qua han.
-                $this->xuLyHetGio($lanThi);
-                return $lanThi->refresh();
-            }, 3);
-        }
+            $cau->datraloi = true;
+            $cau->thoigian_tra_loi = now();
+            $cau->save();
 
-        /* MT08 - Bo do bai thi. */
-        public function boDoBaiThi(
-            int $lanThiId,
-            int $nguoiDungId
-        ): Lanthi {
-            return DB::transaction(function () use (
-                $lanThiId,
-                $nguoiDungId
-            ) {
+            $kieuDe = DB::table('dethi')
+                ->where('id', $lanThi->dethi_id)
+                ->value('kieu');
 
-                // 1. Khoa lan thi.
-                $lanThi = Lanthi::query()
-                    ->whereKey($lanThiId)
-                    ->lockForUpdate()
-                    ->firstOrFail();
+            if ($kieuDe === 'adaptive' && $laDung !== null) {
+                $doKho = (float) $lanThi->dokho_hientai;
+                $doKho += $laDung ? 1.0 : -1.0;
 
-                // 2. Kiem tra quyen so huu.
-                abort_unless(
-                    (int) $lanThi->nguoidung_id ===
-                    $nguoiDungId,
-                    403,
-                    'Ban khong co quyen bo do lan thi nay.'
+                $lanThi->setAttribute(
+                    'dokho_hientai',
+                    max(1.0, min(10.0, $doKho))
                 );
 
-                // 3. MT04: Neu da het gio,
-                // ghi nhan timeout thay vi bo do thu cong.
-                if ($this->xuLyHetGio($lanThi)) {
-                    return $lanThi;
-                }
-
-                // 4. Neu da bo do, khong cap nhat lai.
-                if ($lanThi->trangthai === 'abandoned') {
-                    return $lanThi;
-                }
-
-                // 5. Khong duoc bo do bai da completed.
-                if ($lanThi->trangthai !== 'in_progress') {
-                    throw ValidationException::withMessages([
-                        'lanthi' =>
-                            'Bai thi khong con o trang thai dang thi.',
-                    ]);
-                }
-
-                // 6. Bo do thu cong.
-                $lanThi->trangthai = 'abandoned';
-                $lanThi->ketthuc = now();
                 $lanThi->save();
+            }
+
+            return $traLoi;
+        }, 3);
+    }
+
+    public function layHanThi(Lanthi $lanThi): Carbon
+    {
+        $thoiGian = DB::table('dethi')
+            ->where('id', $lanThi->dethi_id)
+            ->value('thoigian');
+
+        if ((int) $thoiGian <= 0) {
+            $this->baoLoi('dethi', 'Đề thi chưa có thời gian hợp lệ.');
+        }
+
+        return Carbon::parse(
+            $lanThi->batdau,
+            config('app.timezone')
+        )->addSeconds((int) $thoiGian);
+    }
+
+    public function kiemTraHetHan(
+        int $lanThiId,
+        int $nguoiDungId
+    ): Lanthi {
+        return DB::transaction(function () use ($lanThiId, $nguoiDungId) {
+            $lanThi = $this->khoaLanThi($lanThiId, $nguoiDungId);
+
+            $this->xuLyHetGio($lanThi);
+
+            return $lanThi->refresh();
+        }, 3);
+    }
+
+    public function chotBaiThi(
+        int $lanThiId,
+        int $nguoiDungId,
+        bool $xacNhanBoTrong = false
+    ): Lanthi {
+        return DB::transaction(function () use (
+            $lanThiId,
+            $nguoiDungId,
+            $xacNhanBoTrong
+        ) {
+            $lanThi = $this->khoaLanThi($lanThiId, $nguoiDungId);
+
+            if ($lanThi->trangthai === 'completed') {
                 return $lanThi;
-            }, 3);
-        }
+            }
 
-        /* MT03 - Nop cau tra loi. */
-        public function nopCauTraLoi(
-            int $lanThiId,
-            int $nguoiDungId,
-            int $lanThiCauHoiId,
-            ?int $luaChonId,
-            ?string $noiDung
-        ): ?Traloi {
-            return DB::transaction(function () use (
-                $lanThiId,
-                $nguoiDungId,
-                $lanThiCauHoiId,
-                $luaChonId,
-                $noiDung
-            ) {
-                // 1. Khoa lan thi va kiem tra quyen.
-                $lanThi = Lanthi::query()
-                    ->whereKey($lanThiId)
-                    ->lockForUpdate()
-                    ->firstOrFail();
-                abort_unless(
-                    (int) $lanThi->nguoidung_id === $nguoiDungId,
-                    403,
-                    'Ban khong co quyen nop bai thi nay.'
-                );
+            if ($this->xuLyHetGio($lanThi)) {
+                return $lanThi;
+            }
 
-                // 2. MT04 - Kiem tra timeout.
-                if ($this->xuLyHetGio($lanThi)) {
-                    return null;
-                }
-                if ($lanThi->trangthai !== 'in_progress') {
-                    throw ValidationException::withMessages([
-                        'lanthi' => 'Lan thi khong con hoat dong.',
-                    ]);
-                }
+            $this->kiemTraDangThi($lanThi);
 
-                // 3. Khoa cau hoi duoc cap.
-                $lanThiCauHoi = Lanthicauhoi::query()
-                    ->whereKey($lanThiCauHoiId)
-                    ->where('lanthi_id', $lanThiId)
-                    ->lockForUpdate()
-                    ->firstOrFail();
-
-                // 4. Chong nop trung.
-                if (
-                    $lanThiCauHoi->datraloi ||
-                    Traloi::query()
-                        ->where(
-                            'lanthicauhoi_id',
-                            $lanThiCauHoi->id
-                        )
-                        ->exists()
-                ) {
-                    throw ValidationException::withMessages([
-                        'traloi' => 'Cau hoi nay da duoc nop truoc do.',
-                    ]);
-                }
-
-                // 5. Phan biet trac nghiem va tu luan.
-                $coLuaChon = DB::table('luachon')
-                    ->where('cauhoi_id', $lanThiCauHoi->cauhoi_id)
-                    ->exists();
-                $noiDung = trim($noiDung ?? '');
-                $laDung = null;
-                $diem = null;
-                if ($coLuaChon) {
-                    // Cau trac nghiem bat buoc chon mot dap an.
-                    if ($luaChonId === null || $noiDung !== '') {
-                        throw ValidationException::withMessages([
-                            'luachon_id' =>
-                                'Vui long chon mot dap an hop le.',
-                        ]);
-                    }
-                    // Khong tin luachon_id do client gui len.
-                    // Chi lay lua chon thuoc dung cau hoi.
-                    $luaChon = DB::table('luachon')
-                        ->where('id', $luaChonId)
-                        ->where(
-                            'cauhoi_id',
-                            $lanThiCauHoi->cauhoi_id
-                        )
-                        ->first();
-                    if (!$luaChon) {
-                        throw ValidationException::withMessages([
-                            'luachon_id' =>
-                                'Dap an khong thuoc cau hoi nay.',
-                        ]);
-                    }
-                    $laDung = (bool) $luaChon->ladung;
-                    $diem = $laDung
-                        ? (float) $lanThiCauHoi->diemtoida
-                        : 0.0;
-                    }  else {
-                    // Kiểm tra dữ liệu câu trả lời dạng văn bản.
-                    if ($luaChonId !== null || $noiDung === '') {
-                        throw ValidationException::withMessages([
-                            'noidung' => 'Vui lòng nhập nội dung trả lời.',
-                        ]);
-                    }
-
-                    // Xác định phương pháp chấm của loại câu hỏi.
-                    $cachCham = DB::table('cauhoi as ch')
-                        ->join('loaicauhoi as l', 'l.id', '=', 'ch.loai_id')
-                        ->where('ch.id', $lanThiCauHoi->cauhoi_id)
-                        ->value('l.cachcham');
-
-                    // Chỉ tự động chấm nếu loại câu hỏi có đáp án chuẩn.
-                    if ($cachCham === 'auto') {
-                        $coDapAnChuan = DB::table('dap_an')
-                            ->where('cauhoi_id', $lanThiCauHoi->cauhoi_id)
-                            ->where('ladung', 1)
-                            ->exists();
-
-                        if ($coDapAnChuan) {
-                            $ketQua = app(ScoringService::class)->calculateResult(
-                                ['id' => $lanThiCauHoi->cauhoi_id],
-                                ['noidung' => $noiDung],
-                                (float) $lanThiCauHoi->diemtoida
-                            );
-
-                            $laDung = $ketQua['is_correct'];
-                            $diem = $ketQua['diem'];
-                        }
-                    }
-
-                    // AI/manual hoặc chưa có đáp án chuẩn:
-                    // giữ $laDung và $diem là null để chờ chấm.
-                }
-
-                // 6. Luu dap an.
-                $traLoi = Traloi::create([
-                    'lanthicauhoi_id' => $lanThiCauHoi->id,
-                    'luachon_id' => $coLuaChon
-                        ? $luaChonId
-                        : null,
-                    'noidung' => $coLuaChon
-                        ? null
-                        : $noiDung,
-                    'ladung' => $laDung,
-                    'diem' => $diem,
-                    'thoigian' => now(),
-                ]);
-
-                // 7. Danh dau cau hoi da duoc tra loi.
-                $lanThiCauHoi->datraloi = true;
-                $lanThiCauHoi->thoigian_tra_loi = now();
-                $lanThiCauHoi->save();
-
-                // 8. Cap nhat do kho cho de Adaptive,
-                // chi khi da cham duoc trac nghiem.
-                $deThi = DB::table('dethi')
-                    ->where('id', $lanThi->dethi_id)
-                    ->first();
-                if (
-                    $deThi &&
-                    $deThi->kieu === 'adaptive' &&
-                    $laDung !== null
-                ) {
-                    $doKho = (float) $lanThi->dokho_hientai;
-                    $doKho += $laDung ? 1.0 : -1.0;
-                    $lanThi->dokho_hientai = max(
-                        1.0,
-                        min(10.0, $doKho)
-                    );
-                    $lanThi->save();
-                }
-                return $traLoi;
-            }, 3);
-        }
-
-        /* MT05 - Chot bai thi, cho phep bo trong cau tra loi. */
-        public function chotBaiThi(
-            int $lanThiId,
-            int $nguoiDungId,
-            bool $xacNhanBoTrong = false
-        ): Lanthi {
-            return DB::transaction(function () use (
-                $lanThiId,
-                $nguoiDungId,
-                $xacNhanBoTrong
-            ) {
-                // Khoa phien thi
-                $lanThi = Lanthi::query()
-                    ->whereKey($lanThiId)
-                    ->lockForUpdate()
-                    ->firstOrFail();
-                abort_unless(
-                    (int) $lanThi->nguoidung_id === $nguoiDungId,
-                    403,
-                    'Ban khong co quyen chot bai thi nay.'
-                );
-                if ($lanThi->trangthai === 'completed') {
-                    return $lanThi;
-                }
-                // MT04 - Xu ly timeout
-                if ($this->xuLyHetGio($lanThi)) {
-                    return $lanThi;
-                }
-                if ($lanThi->trangthai !== 'in_progress') {
-                    throw ValidationException::withMessages([
-                        'lanthi' => 'Bai thi khong con hoat dong.',
-                    ]);
-                }
-                // Lay cac cau da cap nhung chua tra loi
-                $cauBoTrong = Lanthicauhoi::query()
+            if (!$xacNhanBoTrong) {
+                $coCauBoTrong = Lanthicauhoi::query()
                     ->where('lanthi_id', $lanThiId)
                     ->where('datraloi', false)
-                    ->orderBy('thutu')
-                    ->pluck('thutu')
-                    ->all();
-                // Bat buoc xac nhan neu con cau bo trong
-                $soCauChuaCap = DB::table('dethicauhoi as dc')
-                ->join('cauhoi as ch', 'ch.id', '=', 'dc.cauhoi_id')
-                ->where('dc.dethi_id', $lanThi->dethi_id)
-                ->where('ch.trangthai', 'published')
-                ->whereNotIn('ch.id', function ($query) use ($lanThiId) {
-                    $query->select('cauhoi_id')
-                        ->from('lanthicauhoi')
-                        ->where('lanthi_id', $lanThiId);
-                })
-                ->count();
-                if ((!empty($cauBoTrong) || $soCauChuaCap > 0) && !$xacNhanBoTrong) {
-                    throw ValidationException::withMessages([
-                        'lanthi' => 'Ban can xac nhan cac cau bo trong.',
-                    ]);
+                    ->exists();
+
+                if (
+                    $coCauBoTrong
+                    || $this->cauHoiChuaCap($lanThi)->exists()
+                ) {
+                    $this->baoLoi(
+                        'lanthi',
+                        'Bạn cần xác nhận các câu bỏ trống.'
+                    );
                 }
-                // Cho phép hoàn thành bài thi khi còn câu chờ AI/manual.
-                // Các câu chưa chấm vẫn giữ diem = NULL.
-                // Không coi câu chưa chấm là câu trả lời sai.
-                // Hoan thanh phien thi
-                $lanThi->trangthai = 'completed';
-                $lanThi->ketthuc = now();
-                $lanThi->save();
-                return $lanThi->refresh();
-            }, 3);
+            }
+
+            $this->ganDiemBaiThi($lanThi);
+
+            $lanThi->trangthai = 'completed';
+            $lanThi->setAttribute('ketthuc', now());
+            $lanThi->save();
+
+            return $lanThi->refresh();
+        }, 3);
+    }
+
+    public function tinhLaiDiem(
+        int $lanThiId,
+        int $nguoiDungId
+    ): Lanthi {
+        return DB::transaction(function () use ($lanThiId, $nguoiDungId) {
+            $lanThi = $this->khoaLanThi($lanThiId, $nguoiDungId);
+
+            if ($lanThi->trangthai !== 'completed') {
+                $this->baoLoi(
+                    'lanthi',
+                    'Chỉ tính lại điểm cho bài thi đã hoàn thành.'
+                );
+            }
+
+            $this->ganDiemBaiThi($lanThi);
+            $lanThi->save();
+
+            return $lanThi->refresh();
+        }, 3);
+    }
+
+    public function boDoBaiThi(
+        int $lanThiId,
+        int $nguoiDungId
+    ): Lanthi {
+        return DB::transaction(function () use ($lanThiId, $nguoiDungId) {
+            $lanThi = $this->khoaLanThi($lanThiId, $nguoiDungId);
+
+            if ($this->xuLyHetGio($lanThi)) {
+                return $lanThi;
+            }
+
+            if ($lanThi->trangthai === 'abandoned') {
+                return $lanThi;
+            }
+
+            $this->kiemTraDangThi($lanThi);
+
+            $lanThi->trangthai = 'abandoned';
+            $lanThi->setAttribute('ketthuc', now());
+            $lanThi->save();
+
+            return $lanThi;
+        }, 3);
+    }
+
+    private function khoaLanThi(
+        int $lanThiId,
+        int $nguoiDungId
+    ): Lanthi {
+        $lanThi = Lanthi::query()
+            ->whereKey($lanThiId)
+            ->lockForUpdate()
+            ->firstOrFail();
+
+        abort_unless(
+            (int) $lanThi->nguoidung_id === $nguoiDungId,
+            403,
+            'Bạn không có quyền truy cập lần thi này.'
+        );
+
+        return $lanThi;
+    }
+
+    private function kiemTraDangThi(Lanthi $lanThi): void
+    {
+        if ($lanThi->trangthai !== 'in_progress') {
+            $this->baoLoi(
+                'lanthi',
+                'Bài thi không còn ở trạng thái đang thi.'
+            );
         }
     }
+
+    private function cauHoiChuaCap(
+        Lanthi $lanThi
+    ): \Illuminate\Database\Query\Builder {
+        return DB::table('dethicauhoi as dc')
+            ->join('cauhoi as ch', 'ch.id', '=', 'dc.cauhoi_id')
+            ->where('dc.dethi_id', $lanThi->dethi_id)
+            ->where('ch.trangthai', 'published')
+            ->whereNotExists(function ($query) use ($lanThi) {
+                $query->selectRaw('1')
+                    ->from('lanthicauhoi as lc')
+                    ->whereColumn('lc.cauhoi_id', 'dc.cauhoi_id')
+                    ->where('lc.lanthi_id', $lanThi->id);
+            });
+    }
+
+    private function xuLyHetGio(Lanthi $lanThi): bool
+    {
+        if ($lanThi->trangthai !== 'in_progress') {
+            return false;
+        }
+
+        $hanThi = $this->layHanThi($lanThi);
+
+        if (now()->lt($hanThi)) {
+            return false;
+        }
+
+        $this->ganDiemBaiThi($lanThi);
+
+        $lanThi->trangthai = 'completed';
+        $lanThi->setAttribute('ketthuc', $hanThi);
+        $lanThi->save();
+
+        Vipham::create([
+            'lanthi_id' => $lanThi->id,
+            'loai' => 'timeout',
+            'nguon' => 'auto',
+            'mota' => 'Bài thi tự động kết thúc do hết thời gian.',
+            'thoigian' => now(),
+        ]);
+
+        return true;
+    }
+
+    private function chamInteractive(
+        int $cauHoiId,
+        string $maLoai,
+        string $noiDung,
+        float $diemToiDa
+    ): array {
+        $payload = json_decode($noiDung, true);
+
+        if (
+            !is_array($payload)
+            || ($payload['version'] ?? null) !== 1
+            || !isset($payload['answers'])
+            || !is_array($payload['answers'])
+        ) {
+            $this->baoLoi(
+                'noidung',
+                'Vui lòng trả lời từng câu hỏi con.'
+            );
+        }
+
+        $laDoc = $maLoai === 'interactive_reading';
+        $quanHe = $laDoc ? 'luachonDoc' : 'luachonNghe';
+
+        $query = $laDoc ? CauhoiDoc::query() : CauhoiNghe::query();
+
+        $cacCauCon = $query
+            ->where('cauhoi_id', $cauHoiId)
+            ->with($quanHe)
+            ->orderBy('thutu')
+            ->orderBy('id')
+            ->get();
+
+        if ($cacCauCon->isEmpty()) {
+            $this->baoLoi(
+                'cauhoi',
+                'Câu hỏi chưa có dữ liệu câu hỏi con.'
+            );
+        }
+
+        $answers = $payload['answers'];
+        $idHopLe = array_fill_keys(
+            $cacCauCon->pluck('id')->map(
+                fn ($id) => (string) $id
+            )->all(),
+            true
+        );
+
+        foreach ($answers as $id => $giaTri) {
+            if (
+                !isset($idHopLe[(string) $id])
+                || (!is_string($giaTri) && !is_int($giaTri))
+            ) {
+                $this->baoLoi(
+                    'noidung',
+                    'Dữ liệu đáp án câu hỏi con không hợp lệ.'
+                );
+            }
+        }
+
+        $soDung = 0;
+        $dapAnDaChuanHoa = [];
+
+        foreach ($cacCauCon as $con) {
+            $cacLuaChon = $con->getRelation($quanHe);
+            $dapAn = trim((string) ($answers[$con->id] ?? ''));
+
+            if (mb_strlen($dapAn, 'UTF-8') > 2000) {
+                $this->baoLoi(
+                    'noidung',
+                    'Mỗi đáp án câu con không được vượt quá 2000 ký tự.'
+                );
+            }
+
+            $dapAnDaChuanHoa[(string) $con->id] = $dapAn;
+
+            if ($cacLuaChon->isNotEmpty()) {
+                $coDapAnDung = $cacLuaChon->contains(
+                    fn ($lua) => (bool) $lua->ladung
+                );
+
+                if (!$coDapAnDung) {
+                    $this->baoLoi(
+                        'cauhoi',
+                        'Câu hỏi con chưa có đáp án chuẩn.'
+                    );
+                }
+
+                if ($dapAn === '') {
+                    continue;
+                }
+
+                if (!ctype_digit($dapAn)) {
+                    $this->baoLoi(
+                        'noidung',
+                        'Lựa chọn câu hỏi con không hợp lệ.'
+                    );
+                }
+
+                $luaChon = $cacLuaChon->first(
+                    fn ($lua) => (string) $lua->id === $dapAn
+                );
+
+                if (!$luaChon) {
+                    $this->baoLoi(
+                        'noidung',
+                        'Lựa chọn không thuộc câu hỏi con.'
+                    );
+                }
+
+                $soDung += (bool) $luaChon->ladung ? 1 : 0;
+                continue;
+            }
+
+            $dapAnChuan = trim((string) $con->dapandung);
+
+            if ($dapAnChuan === '') {
+                $this->baoLoi(
+                    'cauhoi',
+                    'Câu hỏi con chưa có đáp án tự động. '
+                        . 'Vui lòng báo người quản lý đề.'
+                );
+            }
+
+            if (
+                $dapAn !== ''
+                && $this->chuanHoaDapAn($dapAn)
+                    === $this->chuanHoaDapAn($dapAnChuan)
+            ) {
+                $soDung++;
+            }
+        }
+
+        $tongSoCauCon = $cacCauCon->count();
+
+        return [
+            'diem' => round(
+                $soDung / $tongSoCauCon * $diemToiDa,
+                2
+            ),
+            'ladung' => $soDung === $tongSoCauCon,
+            'noidung' => json_encode([
+                'version' => 1,
+                'answers' => (object) $dapAnDaChuanHoa,
+            ], JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
+        ];
+    }
+
+    private function chuanHoaDapAn(string $noiDung): string
+    {
+        $noiDung = preg_replace('/\s+/u', ' ', trim($noiDung));
+
+        return mb_strtolower($noiDung ?? '', 'UTF-8');
+    }
+
+    private function ganDiemBaiThi(Lanthi $lanThi): void
+    {
+        $cauDaCap = DB::table('lanthicauhoi as lc')
+            ->join('cauhoi as ch', 'ch.id', '=', 'lc.cauhoi_id')
+            ->join('loaicauhoi as loai', 'loai.id', '=', 'ch.loai_id')
+            ->leftJoin('traloi as tl', 'tl.lanthicauhoi_id', '=', 'lc.id')
+            ->where('lc.lanthi_id', $lanThi->id)
+            ->get([
+                'loai.kynang',
+                'lc.diemtoida',
+                'lc.datraloi',
+                'tl.diem',
+                'tl.trangthai_ai',
+            ]);
+
+        $cauChuaCap = $this->cauHoiChuaCap($lanThi)
+            ->join('loaicauhoi as loai', 'loai.id', '=', 'ch.loai_id')
+            ->get([
+                'loai.kynang',
+                'dc.diem as diemtoida',
+                DB::raw('0 as datraloi'),
+                DB::raw('NULL as diem'),
+                DB::raw('NULL as trangthai_ai'),
+            ]);
+
+        $tongHop = [];
+
+        foreach (self::NHOM_KY_NANG as $cot => $kyNang) {
+            $tongHop[$cot] = ['diem' => 0.0, 'toida' => 0.0];
+        }
+
+        foreach ($cauDaCap->concat($cauChuaCap) as $cau) {
+            $daTraLoi = (bool) $cau->datraloi;
+            $choCham = $daTraLoi && (
+                $cau->diem === null
+                || in_array(
+                    $cau->trangthai_ai,
+                    ['pending', 'failed'],
+                    true
+                )
+            );
+
+            if ($choCham) {
+                continue;
+            }
+
+            $diemToiDa = max(0.0, (float) $cau->diemtoida);
+            $diem = $daTraLoi
+                ? max(0.0, min($diemToiDa, (float) $cau->diem))
+                : 0.0;
+
+            foreach (self::NHOM_KY_NANG as $cot => $kyNang) {
+                if (in_array($cau->kynang, $kyNang, true)) {
+                    $tongHop[$cot]['diem'] += $diem;
+                    $tongHop[$cot]['toida'] += $diemToiDa;
+                }
+            }
+        }
+
+        $diemThanhPhan = [];
+
+        foreach ($tongHop as $cot => $nhom) {
+            $diem = $nhom['toida'] > 0
+                ? $this->lamTronDiem(
+                    $nhom['diem'] / $nhom['toida'] * 150 + 10
+                )
+                : null;
+
+            $lanThi->setAttribute($cot, $diem);
+            $diemThanhPhan[] = $diem;
+        }
+
+        $lanThi->setAttribute(
+            'tongdiem',
+            in_array(null, $diemThanhPhan, true)
+                ? null
+                : $this->lamTronDiem(array_sum($diemThanhPhan) / 4)
+        );
+    }
+        private function lamTronDiem(float $diem): int
+        {
+            $diem = (int) (round(
+                $diem / 5,
+                0,
+                PHP_ROUND_HALF_UP
+            ) * 5);
+
+            return max(10, min(160, $diem));
+        }
+
+        private function baoLoi(string $truong, string $thongBao): never
+        {
+            throw ValidationException::withMessages([
+                $truong => $thongBao,
+            ]);
+        }
+        public function ghiNhanDiemCham(
+        int $traLoiId,
+        float $diem,
+        string $nhanXet = '',
+        bool $laAi = true
+    ): Lanthi {
+        if (!is_finite($diem)) {
+            $this->baoLoi('diem', 'Điểm chấm không hợp lệ.');
+        }
+
+        return DB::transaction(function () use (
+            $traLoiId,
+            $diem,
+            $nhanXet,
+            $laAi
+        ) {
+            $thongTin = DB::table('traloi as tl')
+                ->join(
+                    'lanthicauhoi as lc',
+                    'lc.id',
+                    '=',
+                    'tl.lanthicauhoi_id'
+                )
+                ->where('tl.id', $traLoiId)
+                ->first([
+                    'lc.lanthi_id',
+                    'lc.id as cau_id',
+                ]);
+
+            abort_if(!$thongTin, 404, 'Không tìm thấy câu trả lời.');
+
+            $lanThi = Lanthi::query()
+                ->whereKey($thongTin->lanthi_id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if (!in_array($lanThi->trangthai, [
+                'in_progress',
+                'completed',
+            ], true)) {
+                $this->baoLoi(
+                    'lanthi',
+                    'Không cập nhật điểm cho bài thi đã bỏ dở.'
+                );
+            }
+
+            $cau = Lanthicauhoi::query()
+                ->whereKey($thongTin->cau_id)
+                ->where('lanthi_id', $lanThi->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $traLoi = Traloi::query()
+                ->whereKey($traLoiId)
+                ->where('lanthicauhoi_id', $cau->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $cachCham = DB::table('cauhoi as ch')
+                ->join('loaicauhoi as loai', 'loai.id', '=', 'ch.loai_id')
+                ->where('ch.id', $cau->cauhoi_id)
+                ->value('loai.cachcham');
+
+            if ($laAi && $cachCham !== 'ai') {
+                $this->baoLoi(
+                    'cauhoi',
+                    'Câu hỏi này không được cấu hình chấm bằng AI.'
+                );
+            }
+
+            $diemToiDa = (float) $cau->diemtoida;
+
+            if (
+                !$cau->datraloi
+                || $diemToiDa <= 0
+                || $diem < 0
+                || $diem > $diemToiDa
+            ) {
+                $this->baoLoi(
+                    'diem',
+                    'Điểm phải nằm trong khoảng 0 đến điểm tối đa của câu.'
+                );
+            }
+
+            $diem = round($diem, 2);
+
+            $traLoi->setAttribute('diem', $diem);
+            $traLoi->setAttribute('ladung', null);
+
+            if ($laAi) {
+                $traLoi->setAttribute('diem_ai', $diem);
+                $traLoi->setAttribute('nhanxet_ai', $nhanXet);
+                $traLoi->setAttribute('trangthai_ai', 'done');
+            } else {
+                $traLoi->setAttribute('trangthai_ai', null);
+                $traLoi->setAttribute('diem_ai', null);
+                $traLoi->setAttribute('nhanxet_ai', null);
+            }
+
+            $traLoi->save();
+
+            if ($lanThi->trangthai === 'completed') {
+                $this->ganDiemBaiThi($lanThi);
+                $lanThi->save();
+            }
+
+            return $lanThi->refresh();
+        }, 3);
+    }
+}
