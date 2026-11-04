@@ -38,13 +38,19 @@ class ExtendedQuestionBankTest extends TestCase
         $this->seed(AdminCatalogSeeder::class);
         $this->seed(OperationalQuestionBankSeeder::class);
 
-        $json = file_get_contents(database_path('seeders/data/extended_questions.json'));
-        $prepared = app(QuestionImportService::class)->prepare($json);
+        $questions = [];
+        foreach (glob(database_path('seeders/data/extended_questions*.json')) ?: [] as $file) {
+            $data = json_decode(file_get_contents($file), true);
+            $questions = array_merge($questions, $data['questions']);
+        }
+        $prepared = app(QuestionImportService::class)->prepare(
+            json_encode(['questions' => $questions], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+        );
 
         $this->assertSame([], $prepared['errors']);
         $this->assertSame([], $prepared['warnings']);
-        $this->assertCount(23, $prepared['questions']);
-        $this->assertSame(10, $prepared['summary']['reading_children'] + $prepared['summary']['listening_children']);
+        $this->assertCount(229, $prepared['questions']);
+        $this->assertSame(40, $prepared['summary']['reading_children'] + $prepared['summary']['listening_children']);
     }
 
     public function test_seed_them_cau_hoi_va_chay_lai_khong_tao_trung(): void
@@ -57,18 +63,23 @@ class ExtendedQuestionBankTest extends TestCase
 
         $this->seed(ExtendedQuestionBankSeeder::class);
 
-        $this->assertSame($truoc + 23, Cauhoi::count());
+        $this->assertSame($truoc + 229, Cauhoi::count());
         $this->assertDatabaseHas('cauhoi', ['ma' => 'ext-ras-001', 'trangthai' => 'published']);
+        $this->assertDatabaseHas('cauhoi', ['ma' => 'ext2-ras-080']);
         $this->assertDatabaseHas('cauhoi', ['ma' => 'ext-rts-002']);
 
         $doc = Cauhoi::query()->where('ma', 'ext-ir-001')->firstOrFail();
         $nghe = Cauhoi::query()->where('ma', 'ext-il-001')->firstOrFail();
+        $doc2 = Cauhoi::query()->where('ma', 'ext2-ir-006')->firstOrFail();
+        $nghe2 = Cauhoi::query()->where('ma', 'ext2-il-006')->firstOrFail();
 
         $this->assertSame(3, $doc->cauhoiDoc()->count());
         $this->assertSame(2, $nghe->cauhoiNghe()->count());
+        $this->assertSame(3, $doc2->cauhoiDoc()->count());
+        $this->assertSame(2, $nghe2->cauhoiNghe()->count());
 
         $this->seed(ExtendedQuestionBankSeeder::class);
 
-        $this->assertSame($truoc + 23, Cauhoi::count());
+        $this->assertSame($truoc + 229, Cauhoi::count());
     }
 }

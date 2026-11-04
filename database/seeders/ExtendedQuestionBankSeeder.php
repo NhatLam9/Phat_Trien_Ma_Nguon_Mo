@@ -11,11 +11,12 @@ use RuntimeException;
 /**
  * Bổ sung bộ câu hỏi mở rộng cho ngân hàng câu hỏi.
  *
- * Dữ liệu nằm trong database/seeders/data/extended_questions.json, dùng đúng
+ * Dữ liệu nằm trong database/seeders/data/extended_questions*.json, dùng đúng
  * định dạng import JSON của module quản trị nên có thể import lại thủ công
  * qua /admin/questions/import nếu cần.
  *
- * Seeder chạy lại nhiều lần vẫn không tạo trùng vì mỗi câu có mã "ma" ổn định.
+ * Seeder gộp tất cả file khớp mẫu extended_questions*.json, chạy lại nhiều lần
+ * vẫn không tạo trùng vì mỗi câu có mã "ma" ổn định.
  * Yêu cầu: đã chạy OperationalQuestionBankSeeder (hoặc AdminCatalogSeeder) để
  * có sẵn bảng loaicauhoi và danhmuc.
  */
@@ -23,11 +24,29 @@ class ExtendedQuestionBankSeeder extends Seeder
 {
     public function run(): void
     {
-        $path = database_path('seeders/data/extended_questions.json');
-        $json = file_get_contents($path);
+        $files = glob(database_path('seeders/data/extended_questions*.json')) ?: [];
+        sort($files);
 
-        if ($json === false) {
-            throw new RuntimeException("Không đọc được file dữ liệu: {$path}");
+        if ($files === []) {
+            throw new RuntimeException('Không tìm thấy file dữ liệu extended_questions*.json.');
+        }
+
+        $questions = [];
+
+        foreach ($files as $file) {
+            $json = file_get_contents($file);
+
+            if ($json === false) {
+                throw new RuntimeException("Không đọc được file dữ liệu: {$file}");
+            }
+
+            $data = json_decode($json, true);
+
+            if (! is_array($data) || ! isset($data['questions']) || ! is_array($data['questions'])) {
+                throw new RuntimeException("File dữ liệu không hợp lệ: {$file}");
+            }
+
+            $questions = array_merge($questions, $data['questions']);
         }
 
         $nguoiTaoId = $this->timNguoiTao();
@@ -41,7 +60,10 @@ class ExtendedQuestionBankSeeder extends Seeder
         }
 
         $service = app(QuestionImportService::class);
-        $prepared = $service->prepare($json);
+        $prepared = $service->prepare(json_encode(
+            ['questions' => $questions],
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        ));
 
         if (! empty($prepared['errors'])) {
             throw new RuntimeException(
@@ -50,7 +72,7 @@ class ExtendedQuestionBankSeeder extends Seeder
             );
         }
 
-        $result = $service->import($prepared, $nguoiTaoId, 'extended_questions.json');
+        $result = $service->import($prepared, $nguoiTaoId, 'extended_questions*.json');
 
         $this->command?->info(sprintf(
             'Đã nạp bộ câu hỏi mở rộng: %d câu mới, %d câu cập nhật, %d lựa chọn, %d câu con đọc, %d câu con nghe.',

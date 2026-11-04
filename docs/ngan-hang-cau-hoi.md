@@ -111,8 +111,9 @@ Các seeder liên quan:
 
 - `AdminCatalogSeeder`: bộ danh mục + câu hỏi mẫu ban đầu (đã publish).
 - `OperationalQuestionBankSeeder`: 120 câu cha, 60 câu con, 5 đề full.
-- `ExtendedQuestionBankSeeder`: 23 câu mở rộng thuộc đủ 8 dạng, 10 câu con, lấy từ
-  `database/seeders/data/extended_questions.json` (có mã `ma` ổn định `ext-*`).
+- `ExtendedQuestionBankSeeder`: 229 câu mở rộng thuộc đủ 8 dạng, 40 câu con, lấy từ
+  các file `database/seeders/data/extended_questions*.json` (mã ổn định `ext-*` / `ext2-*`).
+  Trong đó `extended_questions.json` có 23 câu và `extended_questions_batch2.json` có 206 câu.
 - `FullMockTestSeeder`: đề Full 01 với 20 câu cha + 9 câu con.
 
 Chạy lại seeder:
