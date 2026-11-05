@@ -191,6 +191,30 @@ class AITutorTest extends TestCase
         $this->assertEquals($rawText, session('_old_input.content'));
     }
 
+    public function test_tutor_history_displays_log_created_by_real_tutor_flow(): void
+    {
+        Config::set('ai.provider', 'mock');
+
+        $this->actingAs($this->user)
+            ->from('/tutor/grammar')
+            ->post('/tutor/grammar', [
+                'content' => 'She go to school every day.',
+            ])
+            ->assertRedirect('/tutor/grammar');
+
+        $this->assertDatabaseHas('ailog', [
+            'nguoidung_id' => $this->user->id,
+            'loai' => 'grammar',
+            'trangthai' => 'success',
+        ]);
+
+        $this->actingAs($this->user)
+            ->get('/tutor/history')
+            ->assertOk()
+            ->assertSee('She go to school every day.')
+            ->assertSee('grammar');
+    }
+
     public function test_tutor_history_displays_interactions(): void
     {
         Ailog::create([
@@ -208,4 +232,3 @@ class AITutorTest extends TestCase
         $response->assertSee('I have a question.');
     }
 }
-

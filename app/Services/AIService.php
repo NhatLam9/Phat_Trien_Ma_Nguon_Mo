@@ -14,6 +14,7 @@ use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 use Throwable;
@@ -212,19 +213,31 @@ class AIService
         string $trangthai = 'success',
         ?int $httpCode = null
     ): ?Ailog {
+        $duLieu = [
+            'nguoidung_id' => $userId,
+            'loai' => $loai,
+            'dauvao' => $dauVao,
+            'daura' => $dauRa,
+            'model' => $model ?: $this->getDefaultModel(),
+            'token_vao' => $tokenVao,
+            'token_ra' => $tokenRa,
+            'trangthai' => $trangthai,
+            'http_code' => $httpCode,
+            'ngaytao' => now(),
+        ];
+
+        // Tương thích database chưa chạy migration bổ sung trạng thái:
+        // vẫn ghi được lịch sử thay vì im lặng mất log.
+        if (! Schema::hasColumn('ailog', 'trangthai')) {
+            unset($duLieu['trangthai']);
+        }
+
+        if (! Schema::hasColumn('ailog', 'http_code')) {
+            unset($duLieu['http_code']);
+        }
+
         try {
-            return Ailog::create([
-                'nguoidung_id' => $userId,
-                'loai' => $loai,
-                'dauvao' => $dauVao,
-                'daura' => $dauRa,
-                'model' => $model ?: $this->getDefaultModel(),
-                'token_vao' => $tokenVao,
-                'token_ra' => $tokenRa,
-                'trangthai' => $trangthai,
-                'http_code' => $httpCode,
-                'ngaytao' => now(),
-            ]);
+            return Ailog::create($duLieu);
         } catch (Throwable $e) {
             Log::error('Lỗi khi ghi ailog: '.$e->getMessage(), [
                 'user_id' => $userId,
@@ -430,29 +443,29 @@ class AIService
             //             ],
             //         ]);
             try {
-    $model = config('ai.gemini.model', 'gemini-1.5-flash');
-    $url = rtrim(config('ai.gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta'), '/')
-        ."/models/{$model}:generateContent?key={$geminiKey}";
+                $model = config('ai.gemini.model', 'gemini-1.5-flash');
+                $url = rtrim(config('ai.gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta'), '/')
+                    ."/models/{$model}:generateContent?key={$geminiKey}";
 
-    $response = Http::timeout($timeout)
-        ->retry(1, 500, fn ($e) => $this->isTransientHttpError($e))
-        ->post($url, [
-            'contents' => [
-                [
-                    'role' => 'user',
-                    'parts' => [
-                        ['text' => 'Please transcribe this audio recording into English text accurately. Output only the verbatim transcription without commentary.'],
-                        [
-                            // ĐÃ SỬA: Đổi inline_data thành inlineData và mime_type thành mimeType
-                            'inlineData' => [
-                                'mimeType' => $mimeType,
-                                'data' => $audioData,
+                $response = Http::timeout($timeout)
+                    ->retry(1, 500, fn ($e) => $this->isTransientHttpError($e))
+                    ->post($url, [
+                        'contents' => [
+                            [
+                                'role' => 'user',
+                                'parts' => [
+                                    ['text' => 'Please transcribe this audio recording into English text accurately. Output only the verbatim transcription without commentary.'],
+                                    [
+                                        // ĐÃ SỬA: Đổi inline_data thành inlineData và mime_type thành mimeType
+                                        'inlineData' => [
+                                            'mimeType' => $mimeType,
+                                            'data' => $audioData,
+                                        ],
+                                    ],
+                                ],
                             ],
                         ],
-                    ],
-                ],
-            ],
-        ]);
+                    ]);
                 if ($response->successful()) {
                     $text = trim((string) ($response->json('candidates.0.content.parts.0.text') ?? ''));
                     if ($userId) {
@@ -833,29 +846,29 @@ class AIService
         //                 'responseMimeType' => 'application/json',
         //             ],
         //         ]);
-            try {
-        $response = Http::timeout($timeout)
-            ->retry(1, 500, fn ($e) => $this->isTransientHttpError($e))
-            ->post($url, [
-                // ĐÃ SỬA: Đổi system_instruction thành systemInstruction
-                'systemInstruction' => [
-                    'parts' => [
-                        ['text' => $systemPrompt],
-                    ],
-                ],
-                'contents' => [
-                    [
-                        'role' => 'user',
+        try {
+            $response = Http::timeout($timeout)
+                ->retry(1, 500, fn ($e) => $this->isTransientHttpError($e))
+                ->post($url, [
+                    // ĐÃ SỬA: Đổi system_instruction thành systemInstruction
+                    'systemInstruction' => [
                         'parts' => [
-                            ['text' => $userPrompt],
+                            ['text' => $systemPrompt],
                         ],
                     ],
-                ],
-                'generationConfig' => [
-                    'temperature' => 0.2,
-                    'responseMimeType' => 'application/json',
-                ],
-            ]);
+                    'contents' => [
+                        [
+                            'role' => 'user',
+                            'parts' => [
+                                ['text' => $userPrompt],
+                            ],
+                        ],
+                    ],
+                    'generationConfig' => [
+                        'temperature' => 0.2,
+                        'responseMimeType' => 'application/json',
+                    ],
+                ]);
             if ($response->successful()) {
                 $text = (string) ($response->json('candidates.0.content.parts.0.text') ?? '');
                 $usage = $response->json('usageMetadata') ?? [];
