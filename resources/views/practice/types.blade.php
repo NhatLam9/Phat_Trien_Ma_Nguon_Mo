@@ -81,37 +81,38 @@
                     <p>{{ $skill['description'] }}</p>
                 </div>
 
-                <div class="pc-grid">
-                    @foreach ($skillTypes as $type)
-                        <article class="pc-card">
-                            <div class="pc-card-meta">
-                                <span class="pc-badge">{{ $skill['label'] }}</span>
+               <div class="pc-grid">
+    @foreach ($skillTypes as $type)
+        <article class="pc-card">
+            <div class="pc-card-meta">
+                <!-- Đã sửa lỗi biến: Lấy đúng cột kynang từ bảng loaicauhoi trong CSDL -->
+                <span class="pc-badge">{{ ucfirst($type->kynang) }}</span>
 
-                                @if (!empty($type->thoigian))
-                                    <span>{{ $type->thoigian }} giây</span>
-                                @endif
-                            </div>
+                @if (!empty($type->thoigian))
+                    <span>{{ $type->thoigian }} giây</span>
+                @endif
+            </div>
 
-                            <h3>{{ $type->ten }}</h3>
+            <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 6px;">{{ $type->ten }}</h3>
 
-                            <p class="pc-description">
-                                {{ $type->mota ?: 'Làm quen và luyện tập dạng câu hỏi này.' }}
-                            </p>
+            <p class="pc-description">
+                {{ $type->mota ?: 'Luyện tập câu hỏi định dạng chuẩn theo format đề thi Duolingo English Test.' }}
+            </p>
 
-                            <div class="pc-card-footer">
-                                <span>
-                                    {{ ($type->cachcham ?? 'auto') === 'ai'
-                                        ? 'Chấm bằng AI'
-                                        : 'Chấm tự động' }}
-                                </span>
+            <div class="pc-card-footer" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 14px; margin-top: 14px;">
+                <span style="font-size: 13px; color: #64748b;">
+                    {{ ($type->cachcham ?? 'auto') === 'ai' ? 'Chấm bằng AI' : 'Chấm tự động' }}
+                </span>
 
-                                <a href="{{ route('practice.select', ['loai_id' => $type->id]) }}"
-                                   class="pc-start"
-                                   aria-label="Luyện tập {{ $type->ten }}">
-                                    Luyện tập
-                                </a>
-                            </div>
-                        </article>
+                <a href="{{ route('practice.select', ['loai_id' => $type->id]) }}"
+                   class="pc-start btn btn-primary btn-sm"
+                   aria-label="Luyện tập {{ $type->ten }}">
+                    Luyện tập ngay
+                </a>
+            </div>
+        </article>
+    @endforeach
+</div>
                     @endforeach
                 </div>
             </section>

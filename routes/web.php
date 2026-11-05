@@ -77,15 +77,30 @@ Route::middleware('auth')->prefix('practice')->name('practice.')->group(function
     // LT01: Danh sách các dạng bài luyện tập DET nhóm theo 4 kỹ năng
     Route::get('/', [PracticeController::class, 'index'])->name('index');
 
-    // LT02 & LT09: Chọn câu luyện tập có bộ lọc dạng bài, chủ đề, độ khó, từ khóa tìm kiếm
+    // LT02 & LT09: Chọn bài luyện tập theo Dạng bài & Cấp độ độ khó (gộp theo tiêu đề kỹ năng)
     Route::get('/select/{loai_id?}', [PracticeController::class, 'select'])->name('select');
+
+    // LUYỆN TẬP LIÊN TIẾP THEO DẠNG BÀI & ĐỘ KHÓ (Tự do, không đếm ngược thời gian, hiện kết quả & giải thích tức thì)
+    Route::get('/session', [PracticeController::class, 'session'])->name('session');
+    Route::post('/session/submit', [PracticeController::class, 'submitSession'])->name('session.submit');
+    Route::get('/session/result', [PracticeController::class, 'sessionResult'])->name('session.result');
+
+    // Chấm điểm & kiểm tra bài nói Speaking bằng AI qua nút voice ghi âm
+    Route::post('/speaking/evaluate', [PracticeController::class, 'evaluateSpeaking'])->name('speaking.evaluate');
+
+    // Tương thích ngược với liên kết mã đề cũ
+    Route::get('/set/{code}', [PracticeController::class, 'showSet'])->name('set.show');
+    Route::post('/set/{code}/submit', [PracticeController::class, 'submitSet'])->name('set.submit');
+    Route::get('/set/{code}/result', [PracticeController::class, 'resultSet'])->name('set.result');
 
     // LT08 & LT09: Lịch sử luyện tập và tìm kiếm lịch sử
     Route::get('/history', [PracticeController::class, 'history'])->name('history');
 
-    // LT07: Quản lý câu hỏi yếu đã đánh dấu (Bookmarks)
+    // LT07: Quản lý câu hỏi yếu đã đánh dấu (Bookmarks) & Dạng bài quan tâm
     Route::get('/bookmarks', [BookmarkController::class, 'index'])->name('bookmarks');
     Route::post('/question/{cauhoi_id}/bookmark', [BookmarkController::class, 'toggle'])->name('bookmark.toggle');
+    Route::post('/type/{loai_id}/bookmark', [BookmarkController::class, 'toggleType'])->name('bookmark.type.toggle');
+    Route::get('/bookmarks/practice', [BookmarkController::class, 'practiceSaved'])->name('bookmarks.practice');
 
     // LT03: Trang làm bài luyện tập
     Route::get('/question/{id}', [PracticeController::class, 'show'])->name('show');

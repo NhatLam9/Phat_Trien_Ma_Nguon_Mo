@@ -625,3 +625,68 @@ footer.app-footer {
     margin-bottom: 14px;
 }
 
+/* ==========================================================================
+   PAGINATION STYLING & SVG ICON SUPPRESSION
+   ========================================================================== */
+nav[role="navigation"] svg,
+.pagination svg,
+.det-pagination svg,
+[aria-label="Pagination Navigation"] svg {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    max-width: 0 !important;
+    max-height: 0 !important;
+}
+
+.det-pagination-wrapper {
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+.det-pagination {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.det-page-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 34px;
+    padding: 0 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.15s ease-in-out;
+    user-select: none;
+}
+
+.det-page-item:hover:not(.is-active):not(.is-disabled) {
+    background-color: #f8fafc;
+    border-color: #00b86b;
+    color: #00b86b;
+}
+
+.det-page-item.is-active {
+    background: #00b86b !important;
+    border-color: #00b86b !important;
+    color: #ffffff !important;
+    font-weight: 700;
+}
+
+.det-page-item.is-disabled {
+    color: #94a3b8 !important;
+    background: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+    cursor: not-allowed !important;
+}
+
+

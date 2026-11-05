@@ -307,7 +307,7 @@
                     </div>
                 @elseif(!empty($user->google_id))
                     <div style="font-size: 13px; color: #0369a1; background: #e0f2fe; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #bae6fd;">
-                        ℹ️ Tài khoản của bạn liên kết qua <strong>Google</strong>. Bạn có thể nhập mật khẩu mới bên dưới để tạo mật khẩu đăng nhập trực tiếp (không cần nhập mật khẩu cũ).
+                        Tài khoản của bạn liên kết qua <strong>Google</strong>. Bạn có thể nhập mật khẩu mới bên dưới để tạo mật khẩu đăng nhập trực tiếp (không cần nhập mật khẩu cũ).
                     </div>
                 @endif
 
@@ -346,7 +346,7 @@
             <!-- HÀNG NÚT HÀNH ĐỘNG -->
             <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid #e2e8f0; display: flex; gap: 12px; align-items: center;">
                 <button type="submit" class="btn btn-primary">
-                    💾 Lưu thay đổi hồ sơ
+                    Lưu thay đổi hồ sơ
                 </button>
                 <button type="button" class="btn btn-outline" onclick="toggleEditMode(false)">
                     ✕ Hủy bỏ

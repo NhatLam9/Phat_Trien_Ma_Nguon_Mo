@@ -19,7 +19,7 @@
 
             <div class="form-group">
                 <label for="email">Địa chỉ Email</label>
-                <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="example@domain.com" required autofocus>
+                <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="example@gmail.com" required autofocus>
                 @error('email')
                     <div class="error-message">{{ $message }}</div>
                 @enderror

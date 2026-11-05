@@ -58,7 +58,7 @@
                 <form method="POST" action="{{ route('practice.ai', $attempt->id) }}" style="display: inline;">
                     @csrf
                     <button type="submit" class="btn btn-outline btn-sm">
-                        🤖 Gửi bài cho trợ lý AI chấm chi tiết (Writing/Speaking)
+                         Gửi bài cho trợ lý AI chấm chi tiết (Writing/Speaking)
                     </button>
                 </form>
             </div>
@@ -68,7 +68,7 @@
     <!-- CHI TIẾT ĐỀ BÀI VÀ ĐÁP ÁN -->
     <div class="card">
         <h2 style="font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
-            📝 Chi tiết câu hỏi và bài làm của bạn
+             Chi tiết câu hỏi và bài làm của bạn
         </h2>
 
         <!-- Đề bài -->
@@ -118,7 +118,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-top: 1px solid #f1f5f9; padding-top: 16px;">
             @if(isset($cauhoi->id))
                 <a href="{{ route('practice.show', $cauhoi->id) }}" class="btn btn-outline">
-                    🔄 Làm lại câu này
+                    Làm lại câu này
                 </a>
             @endif
 
