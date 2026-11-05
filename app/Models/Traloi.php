@@ -22,6 +22,9 @@ class Traloi extends Model
         'trangthai_ai',
         'diem_ai',
         'nhanxet_ai',
+        'luot_cham',
+        'ngay_tru_luot',
+        'thoidiem_cham',
         'thoigian',
     ];
 
@@ -29,6 +32,9 @@ class Traloi extends Model
         'ladung' => 'boolean',
         'diem' => 'decimal:2',
         'diem_ai' => 'decimal:2',
+        'luot_cham' => 'integer',
+        'ngay_tru_luot' => 'date',
+        'thoidiem_cham' => 'datetime',
         'thoigian' => 'datetime',
     ];
 

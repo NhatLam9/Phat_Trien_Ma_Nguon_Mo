@@ -22,6 +22,8 @@ class Ailog extends Model
         'dauvao',
         'daura',
         'model',
+        'trangthai',
+        'http_code',
         'token_vao',
         'token_ra',
     ];
@@ -31,6 +33,7 @@ class Ailog extends Model
         return [
             'token_vao' => 'integer',
             'token_ra' => 'integer',
+            'http_code' => 'integer',
             'ngaytao' => 'datetime',
         ];
     }

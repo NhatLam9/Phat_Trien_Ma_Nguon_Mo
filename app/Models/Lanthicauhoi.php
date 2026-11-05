@@ -48,4 +48,13 @@ class Lanthicauhoi extends Model
             'id'
         );
     }
+
+    public function cauHoi(): BelongsTo
+    {
+        return $this->belongsTo(
+            Cauhoi::class,
+            'cauhoi_id',
+            'id'
+        );
+    }
 }

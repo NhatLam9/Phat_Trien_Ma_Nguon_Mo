@@ -77,4 +77,7 @@ Route::middleware('admin')
         // AD06 - Nhật ký AI (chỉ đọc).
         Route::get('ai-logs', [AiLogController::class, 'index'])
             ->name('ai-logs.index');
+        Route::get('ai-logs/{id}', [AiLogController::class, 'show'])
+            ->whereNumber('id')
+            ->name('ai-logs.show');
     });
