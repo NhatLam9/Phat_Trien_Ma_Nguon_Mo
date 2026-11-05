@@ -44,6 +44,11 @@ class CleanOldAudioFilesTest extends TestCase
             'noidung' => 'Please read the text aloud.',
         ]);
 
+        $cauhoi2 = Cauhoi::create([
+            'loai_id' => $loai->id,
+            'noidung' => 'Please read the second text aloud.',
+        ]);
+
         $lanThiCauHoi1 = Lanthicauhoi::create([
             'lanthi_id' => $lanThi->id,
             'cauhoi_id' => $cauhoi->id,
@@ -53,7 +58,7 @@ class CleanOldAudioFilesTest extends TestCase
 
         $lanThiCauHoi2 = Lanthicauhoi::create([
             'lanthi_id' => $lanThi->id,
-            'cauhoi_id' => $cauhoi->id,
+            'cauhoi_id' => $cauhoi2->id,
             'thutu' => 2,
             'datraloi' => true,
         ]);
@@ -93,4 +98,3 @@ class CleanOldAudioFilesTest extends TestCase
         $this->assertEquals($newPath, $recentTraloi->fresh()->audio);
     }
 }
-
