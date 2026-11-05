@@ -1,0 +1,200 @@
+{
+  "_huong_dan": "File mẫu dùng để kiểm thử chức năng Nhập câu hỏi từ JSON. Tất cả câu hỏi ở trạng thái draft và dùng mã có tiền tố demo-import- để không ảnh hưởng ngân hàng câu hỏi thật. Đường dẫn ảnh/audio là đường dẫn tương đối trong thư mục public/.",
+  "questions": [
+    {
+      "ma": "demo-import-read-and-select",
+      "loai": "read_and_select",
+      "danhmuc": "Daily Life",
+      "noidung": "The library is closed today, so we ___ meet at the café instead.",
+      "giaithich": "Cần một động từ khuyết thiếu chỉ khả năng/sự đồng ý: \"will meet\" là phương án phù hợp nhất.",
+      "dokho": 2,
+      "thoigian": 60,
+      "diem": 1,
+      "trangthai": "draft",
+      "luachon": [
+        { "noidung": "will", "ladung": true },
+        { "noidung": "are", "ladung": false },
+        { "noidung": "was", "ladung": false },
+        { "noidung": "been", "ladung": false }
+      ]
+    },
+    {
+      "ma": "demo-import-fill-in-the-blanks",
+      "loai": "fill_in_the_blanks",
+      "danhmuc": "Education",
+      "noidung": "Students should review their notes ___ the exam to remember key ideas.",
+      "giaithich": "Cụm \"before the exam\" chỉ thời điểm trước kỳ thi.",
+      "dokho": 3,
+      "thoigian": 45,
+      "diem": 1,
+      "trangthai": "draft",
+      "luachon": [
+        { "noidung": "before", "ladung": true },
+        { "noidung": "between", "ladung": false },
+        { "noidung": "during", "ladung": false },
+        { "noidung": "among", "ladung": false }
+      ]
+    },
+    {
+      "ma": "demo-import-interactive-reading",
+      "loai": "interactive_reading",
+      "danhmuc": "Science & Technology",
+      "noidung": "Read the passage: Coral reefs support a quarter of all marine species, yet they cover less than one percent of the ocean floor. Rising temperatures cause corals to expel the algae that give them colour and nutrients, a process known as bleaching. Scientists are now breeding heat-resistant corals and restoring damaged reefs to help these ecosystems survive.",
+      "giaithich": "Đoạn văn trình bày vai trò của rạn san hô và các biện pháp bảo tồn.",
+      "dokho": 5,
+      "thoigian": 180,
+      "diem": 3,
+      "trangthai": "draft",
+      "cauhoi_doc": [
+        {
+          "loai": "title_passage",
+          "noidung": "Which title best summarises the passage?",
+          "thutu": 1,
+          "giaithich": "Tiêu đề bao quát cả vai trò của rạn san hô và nỗ lực bảo tồn.",
+          "luachon": [
+            { "noidung": "Coral Reefs: Value and Recovery Efforts", "ladung": true },
+            { "noidung": "The History of Ocean Exploration", "ladung": false },
+            { "noidung": "Why Algae Are Dangerous", "ladung": false },
+            { "noidung": "How to Build an Aquarium", "ladung": false }
+          ]
+        },
+        {
+          "loai": "identify_idea",
+          "noidung": "What is the main cause of coral bleaching according to the passage?",
+          "thutu": 2,
+          "giaithich": "Đoạn văn nêu rõ nhiệt độ tăng khiến san hô đẩy tảo ra ngoài.",
+          "luachon": [
+            { "noidung": "Rising ocean temperatures", "ladung": true },
+            { "noidung": "Too many marine species", "ladung": false },
+            { "noidung": "A decrease in ocean depth", "ladung": false },
+            { "noidung": "The growth of new coral reefs", "ladung": false }
+          ]
+        },
+        {
+          "loai": "complete_sentence",
+          "noidung": "Scientists are breeding corals that can tolerate ___.",
+          "thutu": 3,
+          "giaithich": "Cuối đoạn văn nhắc tới \"heat-resistant corals\".",
+          "luachon": [
+            { "noidung": "higher temperatures", "ladung": true },
+            { "noidung": "fresh water", "ladung": false },
+            { "noidung": "less sunlight", "ladung": false },
+            { "noidung": "stronger currents", "ladung": false }
+          ]
+        }
+      ]
+    },
+    {
+      "ma": "demo-import-interactive-listening",
+      "loai": "interactive_listening",
+      "danhmuc": "Travel",
+      "noidung": "Listen to a short conversation at a train station and answer the questions.",
+      "audio": "audio/questions/listening-bank-01.wav",
+      "giaithich": "Bài nghe mô phỏng tình huống hỏi thông tin chuyến tàu.",
+      "dokho": 4,
+      "thoigian": 120,
+      "diem": 2,
+      "trangthai": "draft",
+      "cauhoi_nghe": [
+        {
+          "loai": "listen_and_complete",
+          "noidung": "The next train to Bristol leaves from platform ___.",
+          "thutu": 1,
+          "giaithich": "Người nói cung cấp số hiệu sân ga trong đoạn hội thoại.",
+          "luachon": [
+            { "noidung": "four", "ladung": true },
+            { "noidung": "nine", "ladung": false },
+            { "noidung": "two", "ladung": false },
+            { "noidung": "seven", "ladung": false }
+          ]
+        },
+        {
+          "loai": "listen_and_respond",
+          "noidung": "What should the traveller do if the train is delayed?",
+          "thutu": 2,
+          "giaithich": "Nhân viên nhà ga đề nghị theo dõi bảng thông báo.",
+          "luachon": [
+            { "noidung": "Check the departure board", "ladung": true },
+            { "noidung": "Buy a new ticket immediately", "ladung": false },
+            { "noidung": "Leave the station", "ladung": false },
+            { "noidung": "Call the police", "ladung": false }
+          ]
+        }
+      ]
+    },
+    {
+      "ma": "demo-import-listen-and-type",
+      "loai": "listen_and_type",
+      "danhmuc": "Daily Life",
+      "noidung": "Nghe câu sau và gõ lại chính xác nội dung bạn nghe được.",
+      "audio": "audio/listen-and-type-demo.mp3",
+      "giaithich": "Bài luyện nghe chép chính tả cơ bản.",
+      "dokho": 3,
+      "thoigian": 90,
+      "diem": 1,
+      "trangthai": "draft",
+      "cauhoi_nghe": [
+        {
+          "loai": "summarise_conversation",
+          "noidung": "The speaker mentions meeting a friend at the park.",
+          "dapandung": "The speaker is meeting a friend at the park this afternoon.",
+          "thutu": 1,
+          "giaithich": "Đáp án tóm tắt đúng nội dung câu nghe."
+        }
+      ]
+    },
+    {
+      "ma": "demo-import-read-aloud",
+      "loai": "read_aloud",
+      "danhmuc": "Education",
+      "noidung": "Reading widely helps learners build vocabulary and recognise natural sentence patterns.",
+      "giaithich": "Bài đọc to luyện phát âm và ngữ điệu.",
+      "dokho": 3,
+      "thoigian": 60,
+      "diem": 2,
+      "trangthai": "draft"
+    },
+    {
+      "ma": "demo-import-write-about-photo",
+      "loai": "write_about_photo",
+      "danhmuc": "Work & Business",
+      "noidung": "Write a short description of what you can see in the photo and what might be happening.",
+      "anh": "images/fox-logo.jpg",
+      "giaithich": "Bài viết mô tả ảnh, chấm bởi AI.",
+      "dokho": 4,
+      "thoigian": 300,
+      "diem": 5,
+      "trangthai": "draft"
+    },
+    {
+      "ma": "demo-import-write-about-topic",
+      "loai": "write_about_topic",
+      "danhmuc": "Work & Business",
+      "noidung": "Some people believe that working from home improves productivity, while others think it reduces teamwork. Discuss both views and give your opinion.",
+      "giaithich": "Bài viết luận ngắn theo chủ đề, chấm bởi AI.",
+      "dokho": 6,
+      "thoigian": 600,
+      "diem": 8,
+      "trangthai": "draft"
+    }
+  ],
+  "exam": {
+    "ten": "Đề kiểm thử import tự động",
+    "mota": "Đề mẫu gồm 8 câu thuộc nhiều dạng bài, dùng để kiểm tra luồng nhập JSON và hiển thị đề trong trang quản trị.",
+    "chedo": "full",
+    "kieu": "fixed",
+    "kynang": null,
+    "thoigian": 1800,
+    "trangthai": "draft",
+    "questions": [
+      "demo-import-read-and-select",
+      "demo-import-fill-in-the-blanks",
+      "demo-import-interactive-reading",
+      "demo-import-interactive-listening",
+      "demo-import-listen-and-type",
+      "demo-import-read-aloud",
+      "demo-import-write-about-photo",
+      "demo-import-write-about-topic"
+    ]
+  }
+}

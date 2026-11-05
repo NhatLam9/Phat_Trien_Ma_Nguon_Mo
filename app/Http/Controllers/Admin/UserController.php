@@ -14,7 +14,8 @@ use Illuminate\View\View;
  * AD04 - Quản lý người dùng (TV3 - Phi Phong).
  *
  * Cho phép tìm kiếm, lọc theo vai trò/trạng thái, khóa/mở tài khoản và đổi vai trò.
- * Không cho admin tự khóa hoặc tự hạ quyền chính mình để tránh mất quyền quản trị.
+ * Không cho admin tự khóa, và chỉ cho admin tự hạ quyền khi hệ thống còn
+ * ít nhất một quản trị viên khác đang hoạt động để tránh mất quyền quản trị.
  */
 class UserController extends Controller
 {
@@ -87,7 +88,18 @@ class UserController extends Controller
         ]);
 
         if ($user->is($request->user()) && $duLieu['vaitro'] !== 'admin') {
-            return back()->with('error', 'Bạn không thể tự hạ quyền quản trị của mình.');
+            $conAdminKhac = Nguoidung::query()
+                ->where('vaitro', 'admin')
+                ->where('trangthai', 'active')
+                ->where('id', '!=', $user->getKey())
+                ->exists();
+
+            if (! $conAdminKhac) {
+                return back()->with(
+                    'error',
+                    'Bạn là quản trị viên cuối cùng. Hãy cấp quyền quản trị cho một tài khoản khác trước khi tự hạ quyền.'
+                );
+            }
         }
 
         $user->update(['vaitro' => $duLieu['vaitro']]);

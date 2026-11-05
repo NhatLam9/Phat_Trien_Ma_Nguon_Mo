@@ -231,4 +231,36 @@ class AITutorTest extends TestCase
         $response->assertSee('I has a question.');
         $response->assertSee('I have a question.');
     }
+
+    public function test_tutor_history_hien_thi_ket_qua_json_than_thien(): void
+    {
+        Ailog::create([
+            'nguoidung_id' => $this->user->id,
+            'loai' => 'grammar',
+            'dauvao' => 'She go to school every day.',
+            'daura' => json_encode([
+                'corrected' => 'She goes to school every day.',
+                'error_count' => 1,
+                'errors' => [
+                    [
+                        'original' => 'She go',
+                        'replacement' => 'She goes',
+                        'explanation' => 'Chủ ngữ ngôi thứ ba số ít cần động từ thêm -es.',
+                    ],
+                ],
+                'overall_comment' => 'Câu đã được sửa và giải thích rõ ràng.',
+            ], JSON_UNESCAPED_UNICODE),
+            'model' => 'gemini-1.5-flash',
+        ]);
+
+        $this->actingAs($this->user)
+            ->get('/tutor/history')
+            ->assertOk()
+            ->assertSee('Đoạn văn đã được sửa')
+            ->assertSee('She goes to school every day.')
+            ->assertSee('Số lỗi phát hiện: 1')
+            ->assertSee('Chủ ngữ ngôi thứ ba số ít cần động từ thêm -es.')
+            ->assertSee('Nhận xét tổng quan')
+            ->assertDontSee('&quot;corrected&quot;');
+    }
 }

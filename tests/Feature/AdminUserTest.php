@@ -123,9 +123,47 @@ class AdminUserTest extends TestCase
         $this->assertSame('user', $hocVien->refresh()->vaitro);
     }
 
-    public function test_admin_khong_tu_ha_quyen_duoc(): void
+    public function test_admin_cuoi_cung_khong_tu_ha_quyen_duoc(): void
     {
         $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->from(route('admin.users.index'))
+            ->patch(route('admin.users.role', $admin), ['vaitro' => 'user'])
+            ->assertSessionHas('error');
+
+        $this->assertSame('admin', $admin->refresh()->vaitro);
+    }
+
+    public function test_admin_tu_ha_quyen_duoc_khi_con_admin_khac(): void
+    {
+        $admin = $this->admin();
+        $adminKhac = Nguoidung::create([
+            'hoten' => 'Quản trị viên dự phòng',
+            'email' => 'admin-du-phong@example.com',
+            'matkhau' => Hash::make('password'),
+            'trangthai' => 'active',
+            'vaitro' => 'admin',
+        ]);
+
+        $this->actingAs($admin)
+            ->patch(route('admin.users.role', $admin), ['vaitro' => 'user'])
+            ->assertSessionHas('success');
+
+        $this->assertSame('user', $admin->refresh()->vaitro);
+        $this->assertSame('admin', $adminKhac->refresh()->vaitro);
+    }
+
+    public function test_admin_khong_tu_ha_quyen_khi_admin_khac_bi_khoa(): void
+    {
+        $admin = $this->admin();
+        Nguoidung::create([
+            'hoten' => 'Quản trị viên bị khóa',
+            'email' => 'admin-bi-khoa@example.com',
+            'matkhau' => Hash::make('password'),
+            'trangthai' => 'locked',
+            'vaitro' => 'admin',
+        ]);
 
         $this->actingAs($admin)
             ->from(route('admin.users.index'))

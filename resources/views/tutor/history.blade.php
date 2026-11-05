@@ -3,6 +3,15 @@
 @section('title', 'Lịch sử tương tác AI - DET Practice')
 
 @section('content')
+@php
+    $nhanLoai = [
+        'grammar' => 'Ngữ pháp',
+        'translate' => 'Dịch thuật',
+        'rewrite' => 'Viết lại',
+        'writing' => 'Chấm Writing',
+        'speaking' => 'Chấm Speaking',
+    ];
+@endphp
 <div class="tutor-history-container" style="max-width: 1000px; margin: 2rem auto; padding: 0 1rem;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.5rem;">
         <div>
@@ -35,7 +44,7 @@
                 <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
                         <span style="font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; background: #e2e8f0; color: #334155; padding: 0.25rem 0.65rem; border-radius: 4px;">
-                            {{ $log->loai }}
+                            {{ $nhanLoai[$log->loai] ?? $log->loai }}
                         </span>
                         <span style="font-size: 0.85rem; color: #94a3b8;">
                             {{ $log->ngaytao ? $log->ngaytao->format('H:i:s d/m/Y') : '' }} · Model: {{ $log->model }}
@@ -49,7 +58,9 @@
 
                     <div>
                         <strong style="font-size: 0.9rem; color: #475569; display: block; margin-bottom: 0.25rem;">Kết quả từ AI:</strong>
-                        <div style="background: #f0fdf4; border-left: 3px solid #22c55e; padding: 0.65rem 0.85rem; color: #064e3b; font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap;">{{ Str::limit($log->daura, 500) }}</div>
+                        <div style="background: #f0fdf4; border-left: 3px solid #22c55e; padding: 0.75rem 0.9rem; color: #064e3b; font-size: 0.95rem; line-height: 1.5;">
+                            @include('tutor.partials.ai-result', ['log' => $log])
+                        </div>
                     </div>
                 </div>
             @endforeach

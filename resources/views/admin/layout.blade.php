@@ -45,11 +45,11 @@
                     @include('admin.partials.icon', ['icon' => 'categories'])
                     <span>Chủ đề</span>
                 </a>
-                <span class="admin-nav__item is-disabled" title="Sẽ làm ở bước tiếp theo">
+                <a class="admin-nav__item {{ request()->routeIs('admin.exams.*') ? 'is-active' : '' }}"
+                   href="{{ route('admin.exams.index') }}">
                     @include('admin.partials.icon', ['icon' => 'exam'])
                     <span>Đề thi</span>
-                    <span class="admin-nav__soon">Sắp có</span>
-                </span>
+                </a>
 
                 <p class="admin-nav__label">Hệ thống</p>
                 <a class="admin-nav__item {{ request()->routeIs('admin.users.*') ? 'is-active' : '' }}"

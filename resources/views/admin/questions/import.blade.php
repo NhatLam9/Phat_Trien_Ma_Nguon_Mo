@@ -41,6 +41,11 @@
                    class="admin-btn admin-btn--ghost">
                     Tải file mẫu
                 </a>
+                <a href="{{ asset('downloads/import-cau-hoi-mau.json') }}"
+                   class="admin-btn admin-btn--ghost"
+                   download>
+                    Tải file JSON kiểm thử (8 dạng)
+                </a>
             </div>
         </form>
     </div>
