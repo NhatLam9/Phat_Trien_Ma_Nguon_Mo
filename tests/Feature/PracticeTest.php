@@ -275,4 +275,214 @@ class PracticeTest extends TestCase
         $resDate->assertSee('Today answer test');
         $resDate->assertDontSee('Old answer test');
     }
+
+    /**
+     * Yêu cầu: Gộp câu hỏi theo tên tiêu đề kỹ năng và dạng bài kèm độ khó (1-10)
+     */
+    public function test_practice_grouped_by_skill_title_and_difficulty(): void
+    {
+        $response = $this->actingAs($this->user)->get(route('practice.select'));
+        $response->assertOk();
+        $response->assertSee('Reading');
+        $response->assertSee('Listening');
+        $response->assertSee('Writing');
+        $response->assertSee('Speaking');
+        $response->assertSee('Luyện tập ngay');
+    }
+
+    /**
+     * Yêu cầu: Xóa bỏ bộ đếm thời gian, luyện tập tự do và nộp bài bất cứ lúc nào
+     */
+    public function test_user_can_access_practice_session_without_countdown_timer(): void
+    {
+        $response = $this->actingAs($this->user)->get(route('practice.session', ['loai_id' => 1]));
+        $response->assertOk();
+        $response->assertSee('Chế độ luyện tập tự do');
+        $response->assertSee('PHIẾU CÂU HỎI');
+        $response->assertDontSee('practice-countdown');
+        $response->assertDontSee('THỜI GIAN CÒN LẠI');
+    }
+
+    /**
+     * Yêu cầu: Nộp bài luyện tập, tổng hợp điểm số và hiển thị kết quả
+     */
+    public function test_user_can_submit_practice_session_and_see_auto_graded_result(): void
+    {
+        $response = $this->actingAs($this->user)->post(route('practice.session.submit'), [
+            'loai_id' => 1,
+            'answers' => [
+                1 => 101,
+            ],
+            'time_spent' => 25,
+        ]);
+
+        $response->assertRedirect(route('practice.session.result'));
+
+        $resultResponse = $this->actingAs($this->user)->get(route('practice.session.result'));
+        $resultResponse->assertOk();
+        $resultResponse->assertSee('Hoàn thành');
+        $resultResponse->assertSee('ĐIỂM ĐẠT ĐƯỢC');
+        $resultResponse->assertSee('TỶ LỆ CHÍNH XÁC');
+    }
+
+    /**
+     * Kiểm tra câu hỏi lẻ không có bộ đếm ngược thời gian
+     */
+    public function test_single_question_has_no_countdown_timer(): void
+    {
+        $response = $this->actingAs($this->user)->get(route('practice.show', 1));
+        $response->assertOk();
+        $response->assertDontSee('single-countdown');
+        $response->assertSee('Luyện tập tự do');
+    }
+
+    /**
+     * Yêu cầu 1: Random các câu trắc nghiệm và lựa chọn mỗi lần luyện tập
+     */
+    public function test_practice_session_randomizes_questions_and_choices(): void
+    {
+        if (Schema::hasTable('luachon')) {
+            DB::table('luachon')->insertOrIgnore([
+                ['cauhoi_id' => 1, 'noidung' => 'Choice Alpha Test', 'ladung' => 1, 'thutu' => 1],
+                ['cauhoi_id' => 1, 'noidung' => 'Choice Beta Test', 'ladung' => 0, 'thutu' => 2],
+            ]);
+        }
+
+        $response = $this->actingAs($this->user)->get(route('practice.session', ['loai_id' => 1]));
+        $response->assertOk();
+        $response->assertSee('Chế độ luyện tập tự do');
+        $response->assertSee('Choice Alpha Test');
+    }
+
+    /**
+     * Yêu cầu 2: Luyện tập nói với nút voice ghi âm và AI kiểm tra
+     */
+    public function test_speaking_voice_evaluation_via_ai_endpoint(): void
+    {
+        $fakeAudio = \Illuminate\Http\UploadedFile::fake()->create('voice_sample.webm', 50, 'audio/webm');
+
+        $response = $this->actingAs($this->user)->post(route('practice.speaking.evaluate'), [
+            'cauhoi_id' => 1,
+            'duration' => 8.5,
+            'audio' => $fakeAudio,
+        ]);
+
+        $response->assertOk();
+        $response->assertJson([
+            'success' => true,
+            'is_correct' => true,
+        ]);
+
+        $data = $response->json();
+        $this->assertNotEmpty($data['audio_url']);
+        $this->assertNotEmpty($data['det_estimated']);
+        $this->assertArrayHasKey('pronunciation', $data['feedback']);
+        $this->assertArrayHasKey('fluency', $data['feedback']);
+
+        // Xác nhận dữ liệu được lưu vào bảng luyentap
+        $this->assertDatabaseHas('luyentap', [
+            'nguoidung_id' => $this->user->id,
+            'cauhoi_id' => 1,
+            'trangthai_ai' => 'done',
+        ]);
+    }
+
+    /**
+     * Yêu cầu: Câu hỏi đã lưu hiển thị đầy đủ Kỹ năng, Dạng bài và cho phép lọc
+     */
+    public function test_bookmarks_display_skills_and_question_types(): void
+    {
+        $this->actingAs($this->user)->post(route('practice.bookmark.toggle', 1));
+
+        $response = $this->actingAs($this->user)->get(route('practice.bookmarks'));
+        $response->assertOk();
+        $response->assertSee('#1');
+        $response->assertSee('Read Aloud');
+        $response->assertSee('Speaking');
+        $response->assertSee('Luyện câu này');
+    }
+
+    /**
+     * Yêu cầu: Lưu và quản lý Dạng bài quan tâm
+     */
+    public function test_user_can_toggle_question_type_bookmark(): void
+    {
+        $response = $this->actingAs($this->user)->postJson(route('practice.bookmark.type.toggle', 1));
+        $response->assertOk();
+        $response->assertJson([
+            'success' => true,
+            'is_bookmarked' => true,
+        ]);
+
+        $listResponse = $this->actingAs($this->user)->get(route('practice.bookmarks', ['tab' => 'types']));
+        $listResponse->assertOk();
+        $listResponse->assertSee('Read Aloud');
+    }
+
+    /**
+     * Yêu cầu: Trong phiên làm bài session có nút lưu câu hỏi và hiển thị trạng thái đã lưu
+     */
+    public function test_practice_session_contains_bookmark_button(): void
+    {
+        $this->actingAs($this->user)->post(route('practice.bookmark.toggle', 1));
+
+        $response = $this->actingAs($this->user)->get(route('practice.session', ['loai_id' => 1]));
+        $response->assertOk();
+        $response->assertSee('btn-bookmark-1');
+        $response->assertSee('Đã lưu câu này');
+    }
+
+    /**
+     * Yêu cầu: Xem kết quả và lời giải chi tiết cho câu hỏi đơn lẻ
+     */
+    public function test_single_question_result_shows_correct_answers_and_explanations(): void
+    {
+        $response = $this->actingAs($this->user)->post(route('practice.submit', 1), [
+            'noidung' => 'My test answer',
+            'thoigianlam' => 15,
+        ]);
+        $response->assertRedirect();
+
+        $resultUrl = $response->headers->get('Location');
+        $resultResponse = $this->actingAs($this->user)->get($resultUrl);
+        $resultResponse->assertOk();
+        $resultResponse->assertSee('Kết quả luyện tập');
+        $resultResponse->assertSee('ĐÁP ÁN CHUẨN', false);
+    }
+
+    /**
+     * Yêu cầu: Đọc hiểu tương tác hiển thị bài đọc và ô trả lời
+     */
+    public function test_interactive_reading_renders_passage_and_inputs(): void
+    {
+        $type = \App\Models\Loaicauhoi::create([
+            'ma' => 'interactive_reading',
+            'ten' => 'Interactive Reading',
+            'kynang' => 'reading',
+            'cachcham' => 'auto',
+            'thoigian' => 300,
+            'is_active' => true,
+        ]);
+
+        $parentQ = \App\Models\Cauhoi::create([
+            'loai_id' => $type->id,
+            'noidung' => 'Reading passage about technology and education.',
+            'dokho' => 3,
+            'diem' => 2.0,
+            'trangthai' => 'published',
+            'is_active' => true,
+        ]);
+
+        \App\Models\CauhoiDoc::create([
+            'cauhoi_id' => $parentQ->id,
+            'noidung' => 'What is the main topic of the passage?',
+            'loai' => 'complete_sentence',
+            'thutu' => 1,
+        ]);
+
+        $response = $this->actingAs($this->user)->get(route('practice.show', $parentQ->id));
+        $response->assertOk();
+        $response->assertSee('DANH SÁCH CÂU HỎI ĐỌC HIỂU TƯƠNG TÁC');
+        $response->assertSee('What is the main topic of the passage?');
+    }
 }

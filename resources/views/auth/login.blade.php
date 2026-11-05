@@ -22,7 +22,7 @@
 
             <div class="form-group">
                 <label for="email">Địa chỉ Email</label>
-                <input type="email" id="email" name="email" value="{{ $savedEmail }}" placeholder="example@domain.com" required {{ empty($savedEmail) ? 'autofocus' : '' }}>
+                <input type="email" id="email" name="email" value="{{ $savedEmail }}" placeholder="example@gmail.com" required {{ empty($savedEmail) ? 'autofocus' : '' }}>
             </div>
 
             <div class="form-group">

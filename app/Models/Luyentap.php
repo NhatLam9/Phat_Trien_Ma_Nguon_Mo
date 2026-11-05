@@ -32,4 +32,16 @@ class Luyentap extends Model
     {
         return $this->belongsTo(Nguoidung::class, 'nguoidung_id');
     }
+
+    // Quan hệ với bảng cauhoi
+    public function cauhoi()
+    {
+        return $this->belongsTo(Cauhoi::class, 'cauhoi_id');
+    }
+
+    // Quan hệ với bảng luachon
+    public function luachon()
+    {
+        return $this->belongsTo(Luachon::class, 'luachon_id');
+    }
 }

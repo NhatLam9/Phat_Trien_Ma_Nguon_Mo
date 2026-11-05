@@ -15,6 +15,8 @@ class Danhdau extends Model
     protected $fillable = [
         'nguoidung_id',
         'cauhoi_id',
+        'loai_id',
+        'kynang',
         'ngaytao',
     ];
 
@@ -22,5 +24,17 @@ class Danhdau extends Model
     public function nguoidung()
     {
         return $this->belongsTo(Nguoidung::class, 'nguoidung_id');
+    }
+
+    // Quan hệ với bảng cauhoi
+    public function cauhoi()
+    {
+        return $this->belongsTo(Cauhoi::class, 'cauhoi_id');
+    }
+
+    // Quan hệ với bảng loaicauhoi
+    public function loai()
+    {
+        return $this->belongsTo(Loaicauhoi::class, 'loai_id');
     }
 }

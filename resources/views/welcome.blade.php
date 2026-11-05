@@ -295,7 +295,7 @@
         <div class="hero-cta">
             @auth
                 <a href="{{ route('practice.index') }}" class="btn btn-primary" style="padding: 13px 32px; font-size: 16px;">
-                    Bắt đầu luyện tập ngay →
+                    Bắt đầu luyện tập ngay 
                 </a>
                 <a href="{{ url('/mock-test') }}" class="btn btn-outline" style="padding: 13px 26px; font-size: 15px;">
                     Vào phòng Thi thử (Mock Test)
@@ -452,13 +452,13 @@
             <h3>Sẵn sàng chinh phục mục tiêu điểm DET của bạn?</h3>
             <p>Hãy chọn dạng bài luyện tập hoặc làm bài thi thử để đánh giá năng lực ngay hôm nay.</p>
             <a href="{{ route('practice.index') }}" class="btn btn-primary" style="padding: 12px 30px; font-size: 15px;">
-                Vào khu vực Luyện tập →
+                Vào khu vực Luyện tập 
             </a>
         @else
             <h3>Bắt đầu lộ trình luyện thi Duolingo English Test ngay hôm nay</h3>
             <p>Tạo tài khoản miễn phí chỉ trong 30 giây để mở khóa toàn bộ tính năng Luyện tập, Mock Test, AI chấm bài và Chứng chỉ thi thử.</p>
             <a href="{{ route('register') }}" class="btn btn-primary" style="padding: 12px 32px; font-size: 15px;">
-                Bắt đầu ngay →
+                Bắt đầu ngay 
             </a>
         @endauth
     </section>

@@ -1,17 +1,20 @@
 @extends('layouts.app')
 
-@section('title', 'Lịch sử luyện tập - DET Practice')
+@section('title', 'Lịch sử luyện tập theo kỹ năng & dạng bài - DET Practice')
 
 @section('content')
 <div style="margin-bottom: 24px;">
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
         <div>
-            <h1 style="font-size: 26px; font-weight: 800; color: #1e293b;">⏱️ Lịch sử luyện tập cá nhân</h1>
+            <h1 style="font-size: 26px; font-weight: 800; color: #1e293b;">⏱️ Lịch sử luyện tập các dạng bài kỹ năng</h1>
             <p style="color: #64748b; font-size: 14px; margin-top: 4px;">
-                Theo dõi tiến độ, tỷ lệ chính xác và xem lại các bài làm trong quá trình ôn luyện Duolingo English Test.
+                Lưu lại chi tiết quá trình làm bài theo từng kỹ năng và dạng bài (Reading, Listening, Writing, Speaking) trong Duolingo English Test.
             </p>
         </div>
-        <a href="{{ route('practice.index') }}" class="btn btn-primary btn-sm">Luyện tập thêm</a>
+        <div style="display: flex; gap: 10px;">
+            <a href="{{ route('practice.index') }}" class="btn btn-primary btn-sm">Luyện tập thêm dạng bài mới</a>
+            <a href="{{ route('practice.bookmarks') }}" class="btn btn-outline btn-sm">⭐ Câu hỏi đã lưu</a>
+        </div>
     </div>
 </div>
 
@@ -35,11 +38,26 @@
     </div>
 </div>
 
-<!-- BỘ LỌC VÀ TÌM KIẾM CHI TIẾT (KẾT QUẢ, TỪ KHÓA, NGÀY, THÁNG) -->
+<!-- BỘ LỌC VÀ TÌM KIẾM CHI TIẾT (KỸ NĂNG, KẾT QUẢ, TỪ KHÓA, NGÀY, THÁNG) -->
 <div class="card" style="padding: 20px 24px; margin-bottom: 24px;">
     <form method="GET" action="{{ route('practice.history') }}">
-        <div class="history-filter-grid">
-            <!-- 1. Kết quả bài làm -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 16px;">
+            
+            <!-- 1. Kỹ năng -->
+            <div>
+                <label style="font-size: 13px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">
+                    Kỹ năng
+                </label>
+                <select name="skill" class="form-control" style="font-size: 13px;">
+                    <option value="">-- Tất cả kỹ năng --</option>
+                    <option value="reading" {{ ($skill ?? '') === 'reading' ? 'selected' : '' }}>📖 Reading (Đọc)</option>
+                    <option value="listening" {{ ($skill ?? '') === 'listening' ? 'selected' : '' }}>🎧 Listening (Nghe)</option>
+                    <option value="writing" {{ ($skill ?? '') === 'writing' ? 'selected' : '' }}>✍️ Writing (Viết)</option>
+                    <option value="speaking" {{ ($skill ?? '') === 'speaking' ? 'selected' : '' }}>🎙️ Speaking (Nói)</option>
+                </select>
+            </div>
+
+            <!-- 2. Kết quả bài làm -->
             <div>
                 <label style="font-size: 13px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">
                     Kết quả bài làm
@@ -51,7 +69,7 @@
                 </select>
             </div>
 
-            <!-- 2. Mốc thời gian nhanh -->
+            <!-- 3. Mốc thời gian nhanh -->
             <div>
                 <label style="font-size: 13px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">
                     Mốc thời gian
@@ -67,7 +85,7 @@
                 </select>
             </div>
 
-            <!-- 3. Lọc theo Tháng (tháng/năm) -->
+            <!-- 4. Lọc theo Tháng (tháng/năm) -->
             <div>
                 <label style="font-size: 13px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">
                     Lọc theo Tháng
@@ -75,7 +93,7 @@
                 <input type="month" name="month" id="month-input" value="{{ $month ?? '' }}" class="form-control" style="font-size: 13px;">
             </div>
 
-            <!-- 4. Từ ngày -->
+            <!-- 5. Từ ngày -->
             <div>
                 <label style="font-size: 13px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">
                     Từ ngày
@@ -83,7 +101,7 @@
                 <input type="date" name="from_date" id="from-date-input" value="{{ $fromDate ?? '' }}" class="form-control" style="font-size: 13px;">
             </div>
 
-            <!-- 5. Đến ngày -->
+            <!-- 6. Đến ngày -->
             <div>
                 <label style="font-size: 13px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">
                     Đến ngày
@@ -95,126 +113,98 @@
         <!-- Hàng 2: Từ khóa tìm kiếm + Các nút hành động -->
         <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 14px;">
             <div style="flex: 1; min-width: 240px;">
-                <input type="text" name="q" value="{{ $keyword ?? '' }}" placeholder="🔍 Tìm theo nội dung câu trả lời hoặc từ khóa..." class="form-control" style="font-size: 13px;">
+                <input type="text" name="q" value="{{ $keyword ?? '' }}" placeholder="Tìm theo nội dung câu trả lời hoặc dạng bài..." class="form-control" style="font-size: 13px;">
             </div>
 
             <div style="display: flex; gap: 8px;">
                 <button type="submit" class="btn btn-primary" style="height: 40px; padding: 0 20px; font-weight: 700;">
-                    🔍 Lọc dữ liệu
+                    Lọc dữ liệu
                 </button>
                 <a href="{{ route('practice.history') }}" class="btn btn-outline" style="height: 40px; padding: 0 16px;">
-                    🔄 Đặt lại
+                    Đặt lại
                 </a>
             </div>
         </div>
-
-        <!-- Hiển thị các tiêu chí lọc đang được kích hoạt -->
-        @php
-            $hasActiveFilter = !empty($status) || !empty($keyword) || !empty($period) || !empty($month) || !empty($fromDate) || !empty($toDate);
-        @endphp
-
-        @if($hasActiveFilter)
-            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 14px; font-size: 12px; padding-top: 12px; border-top: 1px dashed #e2e8f0;">
-                <span style="color: #64748b; font-weight: 700;">Đang lọc theo:</span>
-                @if($status === 'dung')
-                    <span class="badge badge-speaking">✓ Câu đúng</span>
-                @elseif($status === 'sai')
-                    <span class="badge badge-listening">✗ Câu chưa đúng</span>
-                @endif
-
-                @if(!empty($period))
-                    @php
-                        $periodLabels = [
-                            'today' => 'Hôm nay',
-                            'yesterday' => 'Hôm qua',
-                            '7_days' => '7 ngày qua',
-                            '30_days' => '30 ngày qua',
-                            'this_month' => 'Tháng này',
-                            'last_month' => 'Tháng trước',
-                        ];
-                    @endphp
-                    <span class="badge badge-reading">⏱️ Mốc: {{ $periodLabels[$period] ?? $period }}</span>
-                @endif
-
-                @if(!empty($month))
-                    <span class="badge badge-writing">🗓️ Tháng: {{ $month }}</span>
-                @endif
-
-                @if(!empty($fromDate) || !empty($toDate))
-                    <span class="badge badge-admin">
-                        📅 {{ !empty($fromDate) ? 'Từ ' . \Carbon\Carbon::parse($fromDate)->format('d/m/Y') : '' }} 
-                        {{ !empty($toDate) ? 'đến ' . \Carbon\Carbon::parse($toDate)->format('d/m/Y') : '' }}
-                    </span>
-                @endif
-
-                @if(!empty($keyword))
-                    <span class="badge badge-user">Từ khóa: "{{ $keyword }}"</span>
-                @endif
-
-                <a href="{{ route('practice.history') }}" style="color: #ef4444; text-decoration: underline; margin-left: 6px; font-weight: 600;">
-                    Xóa tất cả bộ lọc ✕
-                </a>
-            </div>
-        @endif
     </form>
 </div>
 
-<!-- BẢNG LỊCH SỬ CHI TIẾT -->
+<!-- BẢNG LỊCH SỬ CHI TIẾT CÁC DẠNG BÀI ĐÃ LÀM -->
 @if($attempts->isEmpty())
     <div class="card" style="text-align: center; padding: 48px 20px;">
         <div style="font-size: 40px; margin-bottom: 12px;">📋</div>
-        <h3 style="font-size: 18px; color: #1e293b; margin-bottom: 6px;">Không tìm thấy lịch sử làm bài phù hợp</h3>
-        <p style="color: #64748b; font-size: 14px; margin-bottom: 18px;">Thử thay đổi mốc thời gian hoặc xóa bớt tiêu chí lọc để xem các kết quả khác.</p>
-        <a href="{{ route('practice.history') }}" class="btn btn-outline" style="margin-right: 8px;">Xem tất cả lịch sử</a>
+        <h3 style="font-size: 18px; color: #1e293b; margin-bottom: 6px;">Chưa tìm thấy lịch sử luyện tập</h3>
+        <p style="color: #64748b; font-size: 14px; margin-bottom: 18px;">Hãy thử điều chỉnh lại bộ lọc hoặc bắt đầu một bài luyện tập mới.</p>
+        <a href="{{ route('practice.history') }}" class="btn btn-outline" style="margin-right: 8px;">Xem tất cả</a>
         <a href="{{ route('practice.index') }}" class="btn btn-primary">Luyện tập ngay</a>
     </div>
 @else
-    <div class="card" style="padding: 0; overflow: hidden;">
+    <div class="card" style="padding: 0; overflow: hidden; border-radius: 14px; border: 1px solid #e2e8f0;">
         <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
             <thead>
-                <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; color: #475569; font-weight: 600;">
-                    <th style="padding: 14px 20px;">Lần thi #</th>
-                    <th style="padding: 14px 20px;">Mã câu</th>
-                    <th style="padding: 14px 20px;">Nội dung trả lời</th>
-                    <th style="padding: 14px 20px;">Kết quả</th>
-                    <th style="padding: 14px 20px;">Điểm</th>
-                    <th style="padding: 14px 20px;">Thời gian</th>
-                    <th style="padding: 14px 20px;">Ngày làm</th>
-                    <th style="padding: 14px 20px; text-align: right;">Chi tiết</th>
+                <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; color: #475569; font-weight: 700;">
+                    <th style="padding: 14px 18px;">Lần thi #</th>
+                    <th style="padding: 14px 18px;">Kỹ năng & Dạng bài</th>
+                    <th style="padding: 14px 18px;">Nội dung câu hỏi</th>
+                    <th style="padding: 14px 18px;">Câu trả lời</th>
+                    <th style="padding: 14px 18px;">Kết quả</th>
+                    <th style="padding: 14px 18px;">Điểm</th>
+                    <th style="padding: 14px 18px;">Ngày làm</th>
+                    <th style="padding: 14px 18px; text-align: right;">Hành động</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($attempts as $att)
-                    <tr style="border-bottom: 1px solid #f1f5f9;">
-                        <td style="padding: 14px 20px; font-weight: 700; color: #64748b;">
+                    <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.15s ease;">
+                        <td style="padding: 14px 18px; font-weight: 700; color: #64748b;">
                             #{{ $att->id }}
                         </td>
-                        <td style="padding: 14px 20px; font-weight: 600; color: #00b86b;">
-                            Câu {{ $att->cauhoi_id }}
+
+                        <td style="padding: 14px 18px;">
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span class="badge {{ !empty($att->loai_kynang) ? 'badge-' . $att->loai_kynang : 'badge-user' }}" style="font-size: 11px; text-transform: uppercase;">
+                                        {{ $att->loai_kynang ?? 'DET' }}
+                                    </span>
+                                    <strong style="color: #1e293b; font-size: 13px;">
+                                        {{ $att->loai_ten ?? 'Câu hỏi DET' }}
+                                    </strong>
+                                </div>
+                                <span style="font-size: 11px; color: #64748b;">
+                                    Độ khó: {{ $att->cauhoi_dokho ?? 5 }}/10
+                                </span>
+                            </div>
                         </td>
-                        <td style="padding: 14px 20px; color: #1e293b; max-width: 250px;">
-                            {{ Str::limit($att->noidung ?? ($att->luachon_id ? ('Lựa chọn #' . $att->luachon_id) : '-'), 60) }}
+
+                        <td style="padding: 14px 18px; color: #1e293b; max-width: 240px;">
+                            {{ Str::limit($att->cauhoi_noidung ?? ('Câu hỏi #' . $att->cauhoi_id), 60) }}
                         </td>
-                        <td style="padding: 14px 20px;">
-                            @if($att->ladung)
-                                <span class="badge badge-speaking">✓ Đúng</span>
+
+                        <td style="padding: 14px 18px; color: #475569; max-width: 180px;">
+                            {{ Str::limit($att->noidung ?? ($att->luachon_id ? ('Lựa chọn #' . $att->luachon_id) : '-'), 40) }}
+                        </td>
+
+                        <td style="padding: 14px 18px;">
+                            @if($att->ladung === 1)
+                                <span class="badge badge-speaking" style="font-weight: 700;">✓ Đúng</span>
                             @elseif($att->trangthai_ai === 'pending')
                                 <span class="badge badge-listening">⏳ Chờ AI</span>
+                            @elseif($att->ladung === 0)
+                                <span class="badge badge-writing" style="background:#fee2e2;color:#991b1b; font-weight: 700;">✗ Sai</span>
                             @else
-                                <span class="badge badge-writing" style="background:#fee2e2;color:#991b1b;">✗ Sai</span>
+                                <span class="badge" style="background: #f1f5f9; color: #64748b;">— Chưa chấm</span>
                             @endif
                         </td>
-                        <td style="padding: 14px 20px; font-weight: 700;">
+
+                        <td style="padding: 14px 18px; font-weight: 800; color: #1e293b;">
                             {{ $att->diem ?? 0 }}
                         </td>
-                        <td style="padding: 14px 20px; color: #64748b; font-size: 13px;">
-                            {{ $att->thoigianlam ?? 0 }}s
-                        </td>
-                        <td style="padding: 14px 20px; color: #64748b; font-size: 13px;">
+
+                        <td style="padding: 14px 18px; color: #64748b; font-size: 13px;">
                             {{ date('d/m/Y H:i', strtotime($att->ngaylam)) }}
                         </td>
-                        <td style="padding: 14px 20px; text-align: right;">
-                            <a href="{{ route('practice.result', $att->id) }}" class="btn btn-outline btn-sm">
+
+                        <td style="padding: 14px 18px; text-align: right;">
+                            <a href="{{ route('practice.result', $att->id) }}" class="btn btn-outline btn-sm" style="font-size: 12px; font-weight: 600;">
                                 Xem lại
                             </a>
                         </td>
@@ -224,8 +214,10 @@
         </table>
     </div>
 
-    <div style="margin-top: 20px;">
-        {{ $attempts->links() }}
-    </div>
+    @if(method_exists($attempts, 'links'))
+        <div style="margin-top: 24px;">
+            {{ $attempts->links('partials.pagination') }}
+        </div>
+    @endif
 @endif
 @endsection
