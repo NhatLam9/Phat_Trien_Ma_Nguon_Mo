@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AiLogController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ExamController;
 use App\Http\Controllers\Admin\QuestionBankController;
 use App\Http\Controllers\Admin\QuestionImportController;
 use App\Http\Controllers\Admin\QuestionTypeController;
@@ -65,6 +66,13 @@ Route::middleware('admin')
             ->name('categories.update');
         Route::delete('categories/{danhmuc}', [CategoryController::class, 'destroy'])
             ->name('categories.destroy');
+
+        // AD07 - Đề thi: xem danh sách và chi tiết đề đã tạo.
+        Route::get('exams', [ExamController::class, 'index'])
+            ->name('exams.index');
+        Route::get('exams/{exam}', [ExamController::class, 'show'])
+            ->whereNumber('exam')
+            ->name('exams.show');
 
         // AD04 - Người dùng: khóa/mở khóa và đổi vai trò.
         Route::get('users', [UserController::class, 'index'])
