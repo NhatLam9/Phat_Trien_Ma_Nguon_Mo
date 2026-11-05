@@ -47,6 +47,7 @@ class AdminCatalogSeeder extends Seeder
             'Science & Technology' => 'Khoa học và công nghệ',
             'Work & Business' => 'Công việc và kinh doanh',
             'Travel' => 'Du lịch và di chuyển',
+            'Vocabulary' => 'Từ vựng và ngữ nghĩa',
         ];
 
         $ketQua = [];

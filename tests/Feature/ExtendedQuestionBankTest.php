@@ -49,8 +49,8 @@ class ExtendedQuestionBankTest extends TestCase
 
         $this->assertSame([], $prepared['errors']);
         $this->assertSame([], $prepared['warnings']);
-        $this->assertCount(229, $prepared['questions']);
-        $this->assertSame(40, $prepared['summary']['reading_children'] + $prepared['summary']['listening_children']);
+        $this->assertCount(742, $prepared['questions']);
+        $this->assertSame(86, $prepared['summary']['reading_children'] + $prepared['summary']['listening_children']);
     }
 
     public function test_seed_them_cau_hoi_va_chay_lai_khong_tao_trung(): void
@@ -63,23 +63,28 @@ class ExtendedQuestionBankTest extends TestCase
 
         $this->seed(ExtendedQuestionBankSeeder::class);
 
-        $this->assertSame($truoc + 229, Cauhoi::count());
+        $this->assertSame($truoc + 742, Cauhoi::count());
         $this->assertDatabaseHas('cauhoi', ['ma' => 'ext-ras-001', 'trangthai' => 'published']);
         $this->assertDatabaseHas('cauhoi', ['ma' => 'ext2-ras-080']);
+        $this->assertDatabaseHas('cauhoi', ['ma' => 'ext3-ras-220']);
         $this->assertDatabaseHas('cauhoi', ['ma' => 'ext-rts-002']);
 
         $doc = Cauhoi::query()->where('ma', 'ext-ir-001')->firstOrFail();
         $nghe = Cauhoi::query()->where('ma', 'ext-il-001')->firstOrFail();
         $doc2 = Cauhoi::query()->where('ma', 'ext2-ir-006')->firstOrFail();
         $nghe2 = Cauhoi::query()->where('ma', 'ext2-il-006')->firstOrFail();
+        $doc3 = Cauhoi::query()->where('ma', 'ext3-ir-010')->firstOrFail();
+        $nghe3 = Cauhoi::query()->where('ma', 'ext3-il-008')->firstOrFail();
 
         $this->assertSame(3, $doc->cauhoiDoc()->count());
         $this->assertSame(2, $nghe->cauhoiNghe()->count());
         $this->assertSame(3, $doc2->cauhoiDoc()->count());
         $this->assertSame(2, $nghe2->cauhoiNghe()->count());
+        $this->assertSame(3, $doc3->cauhoiDoc()->count());
+        $this->assertSame(2, $nghe3->cauhoiNghe()->count());
 
         $this->seed(ExtendedQuestionBankSeeder::class);
 
-        $this->assertSame($truoc + 229, Cauhoi::count());
+        $this->assertSame($truoc + 742, Cauhoi::count());
     }
 }
