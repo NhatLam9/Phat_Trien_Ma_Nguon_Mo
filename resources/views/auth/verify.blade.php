@@ -28,7 +28,7 @@
         <div class="auth-links">
             <form method="POST" action="{{ route('logout') }}" style="display: inline;">
                 @csrf
-                <button type="submit" style="background: none; border: none; color: #00b86b; font-weight: 700; cursor: pointer; text-decoration: none; padding: 0;">Đăng xuất</button>
+                <button type="submit" style="background: none; border: none; color: var(--bento-orange); font-weight: 700; cursor: pointer; text-decoration: none; padding: 0;">Đăng xuất</button>
             </form>
             • <a href="/">Trở về trang chủ</a>
         </div>

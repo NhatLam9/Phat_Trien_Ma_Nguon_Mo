@@ -5,13 +5,13 @@
 @section('content')
 <div style="max-width: 860px; margin: 0 auto;">
     <div style="margin-bottom: 20px;">
-        <a href="{{ route('practice.select') }}" style="color: #64748b; text-decoration: none; font-size: 14px;">
+        <a href="{{ route('practice.select') }}" style="color: var(--bento-muted); text-decoration: none; font-size: 14px;">
             ← Quay lại danh sách câu hỏi
         </a>
     </div>
 
     <!-- THẺ KẾT QUẢ CHÍNH (LT05) -->
-    <div class="card" style="text-align: center; padding: 36px 24px; border-top: 6px solid {{ $attempt->ladung ? '#00b86b' : '#ef4444' }};">
+    <div class="card" style="text-align: center; padding: 36px 24px; border-top: 6px solid {{ $attempt->ladung ? 'var(--bento-orange)' : '#ef4444' }};">
         <div style="font-size: 52px; margin-bottom: 8px;">
             @if($attempt->ladung)
                 🎉
@@ -22,9 +22,9 @@
             @endif
         </div>
 
-        <h1 style="font-size: 26px; font-weight: 800; color: #1e293b; margin-bottom: 6px;">
+        <h1 style="font-size: 26px; font-weight: 800; color: var(--bento-heading); margin-bottom: 6px;">
             @if($attempt->ladung)
-                <span style="color: #00b86b;">Chính xác! Làm rất tốt!</span>
+                <span style="color: var(--bento-orange);">Chính xác! Làm rất tốt!</span>
             @elseif($attempt->trangthai_ai === 'pending')
                 <span style="color: #f59e0b;">Đang chờ AI chấm điểm...</span>
             @else
@@ -32,21 +32,21 @@
             @endif
         </h1>
 
-        <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">
+        <p style="color: var(--bento-muted); font-size: 14px; margin-bottom: 20px;">
             Lần làm bài lúc {{ date('H:i d/m/Y', strtotime($attempt->ngaylam)) }} • Thời gian làm: {{ $attempt->thoigianlam ?? 0 }} giây
         </p>
 
-        <div style="display: inline-flex; gap: 24px; background: #f8fafc; padding: 14px 28px; border-radius: 12px; margin-bottom: 24px; border: 1px solid #e2e8f0;">
+        <div style="display: inline-flex; gap: 24px; background: var(--bento-subtle); padding: 14px 28px; border-radius: 12px; margin-bottom: 24px; border: 1px solid var(--bento-line);">
             <div>
-                <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600;">Điểm số</div>
-                <div style="font-size: 24px; font-weight: 800; color: {{ $attempt->diem > 0 ? '#00b86b' : '#64748b' }};">
+                <div style="font-size: 12px; color: var(--bento-muted); text-transform: uppercase; font-weight: 600;">Điểm số</div>
+                <div style="font-size: 24px; font-weight: 800; color: {{ $attempt->diem > 0 ? 'var(--bento-orange)' : 'var(--bento-muted)' }};">
                     {{ $attempt->diem ?? 0 }} / {{ $cauhoi->diem ?? 1.0 }}
                 </div>
             </div>
-            <div style="border-left: 1px solid #cbd5e1;"></div>
+            <div style="border-left: 1px solid var(--bento-line);"></div>
             <div>
-                <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600;">Trạng thái</div>
-                <div style="font-size: 16px; font-weight: 700; margin-top: 4px; color: {{ $attempt->ladung ? '#00b86b' : '#ef4444' }};">
+                <div style="font-size: 12px; color: var(--bento-muted); text-transform: uppercase; font-weight: 600;">Trạng thái</div>
+                <div style="font-size: 16px; font-weight: 700; margin-top: 4px; color: {{ $attempt->ladung ? 'var(--bento-orange)' : '#ef4444' }};">
                     {{ $attempt->ladung ? 'Đạt' : ($attempt->trangthai_ai === 'pending' ? 'Chờ AI' : 'Chưa đạt') }}
                 </div>
             </div>
@@ -67,22 +67,22 @@
 
     <!-- CHI TIẾT ĐỀ BÀI VÀ ĐÁP ÁN -->
     <div class="card">
-        <h2 style="font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+        <h2 style="font-size: 18px; font-weight: 700; color: var(--bento-heading); margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
              Chi tiết câu hỏi và bài làm của bạn
         </h2>
 
         <!-- Đề bài -->
         <div style="margin-bottom: 20px;">
-            <div style="font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 4px;">ĐỀ BÀI:</div>
-            <div style="font-size: 16px; color: #1e293b; line-height: 1.6; font-weight: 600;">
+            <div style="font-size: 13px; font-weight: 700; color: var(--bento-muted); margin-bottom: 4px;">ĐỀ BÀI:</div>
+            <div style="font-size: 16px; color: var(--bento-heading); line-height: 1.6; font-weight: 600;">
                 {{ $cauhoi->noidung ?? 'Nội dung câu hỏi' }}
             </div>
         </div>
 
         <!-- Bài làm của người dùng -->
-        <div style="margin-bottom: 20px; background: #f8fafc; padding: 14px 18px; border-radius: 8px; border-left: 4px solid {{ $attempt->ladung ? '#00b86b' : '#ef4444' }};">
+        <div style="margin-bottom: 20px; background: var(--bento-subtle); padding: 14px 18px; border-radius: 8px; border-left: 4px solid {{ $attempt->ladung ? 'var(--bento-orange)' : '#ef4444' }};">
             <div style="font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 4px;">CÂU TRẢ LỜI CỦA BẠN:</div>
-            <div style="font-size: 15px; color: #1e293b;">
+            <div style="font-size: 15px; color: var(--bento-heading);">
                 @if(!empty($attempt->luachon_id) && isset($cauhoi->luachon))
                     @php
                         $userChoice = collect($cauhoi->luachon)->firstWhere('id', $attempt->luachon_id);

@@ -7,7 +7,7 @@
 
     {{-- THANH ĐIỀU HƯỚNG --}}
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <a href="{{ route('practice.select') }}" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 600;">
+        <a href="{{ route('practice.select') }}" style="color: var(--bento-muted); text-decoration: none; font-size: 14px; font-weight: 600;">
             ← Quay lại danh sách mã đề
         </a>
 
@@ -22,7 +22,7 @@
     </div>
 
     {{-- 1. THẺ BẢNG ĐIỂM TỔNG QUAN --}}
-    <div class="card" style="text-align: center; padding: 36px 24px; border-top: 6px solid {{ $result['percentage'] >= 70 ? '#00b86b' : ($result['percentage'] >= 50 ? '#f59e0b' : '#ef4444') }}; border-radius: 16px; margin-bottom: 28px;">
+    <div class="card" style="text-align: center; padding: 36px 24px; border-top: 6px solid {{ $result['percentage'] >= 70 ? 'var(--bento-orange)' : ($result['percentage'] >= 50 ? '#f59e0b' : '#ef4444') }}; border-radius: 16px; margin-bottom: 28px;">
         <div style="font-size: 48px; margin-bottom: 6px;">
             @if($result['percentage'] >= 70)
                 🎉
@@ -33,9 +33,9 @@
             @endif
         </div>
 
-        <h1 style="font-size: 26px; font-weight: 800; color: #1e293b; margin-bottom: 4px;">
+        <h1 style="font-size: 26px; font-weight: 800; color: var(--bento-heading); margin-bottom: 4px;">
             @if($result['percentage'] >= 70)
-                <span style="color: #00b86b;">Hoàn thành xuất sắc bài thi!</span>
+                <span style="color: var(--bento-orange);">Hoàn thành xuất sắc bài thi!</span>
             @elseif($result['percentage'] >= 50)
                 <span style="color: #d97706;">Hoàn thành bài thi - Kết quả Khá!</span>
             @else
@@ -43,7 +43,7 @@
             @endif
         </h1>
 
-        <p style="color: #64748b; font-size: 14px; margin-bottom: 12px;">
+        <p style="color: var(--bento-muted); font-size: 14px; margin-bottom: 12px;">
             {{ $result['set_title'] }} • Nộp bài lúc {{ $result['created_at'] }}
         </p>
 
@@ -54,28 +54,28 @@
         @endif
 
         {{-- BẢNG THỐNG KÊ ĐIỂM SỐ CHÍNH --}}
-        <div style="display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; background: #f8fafc; padding: 18px 24px; border-radius: 14px; border: 1px solid #e2e8f0; margin: 10px auto 24px; max-width: 680px;">
+        <div style="display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; background: var(--bento-subtle); padding: 18px 24px; border-radius: 14px; border: 1px solid var(--bento-line); margin: 10px auto 24px; max-width: 680px;">
             <div style="min-width: 120px;">
-                <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 700;">Điểm số đạt được</div>
-                <div style="font-size: 28px; font-weight: 800; color: #00b86b; margin-top: 4px;">
-                    {{ $result['total_score'] }} <span style="font-size: 16px; color: #64748b; font-weight: 600;">/ {{ $result['max_score'] }}</span>
+                <div style="font-size: 12px; color: var(--bento-muted); text-transform: uppercase; font-weight: 700;">Điểm số đạt được</div>
+                <div style="font-size: 28px; font-weight: 800; color: var(--bento-orange); margin-top: 4px;">
+                    {{ $result['total_score'] }} <span style="font-size: 16px; color: var(--bento-muted); font-weight: 600;">/ {{ $result['max_score'] }}</span>
                 </div>
             </div>
 
-            <div style="border-left: 1px solid #cbd5e1;"></div>
+            <div style="border-left: 1px solid var(--bento-line);"></div>
 
             <div style="min-width: 120px;">
-                <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 700;">Tỷ lệ chính xác</div>
-                <div style="font-size: 28px; font-weight: 800; color: {{ $result['percentage'] >= 70 ? '#00b86b' : ($result['percentage'] >= 50 ? '#d97706' : '#ef4444') }}; margin-top: 4px;">
+                <div style="font-size: 12px; color: var(--bento-muted); text-transform: uppercase; font-weight: 700;">Tỷ lệ chính xác</div>
+                <div style="font-size: 28px; font-weight: 800; color: {{ $result['percentage'] >= 70 ? 'var(--bento-orange)' : ($result['percentage'] >= 50 ? '#d97706' : '#ef4444') }}; margin-top: 4px;">
                     {{ $result['percentage'] }}%
                 </div>
             </div>
 
-            <div style="border-left: 1px solid #cbd5e1;"></div>
+            <div style="border-left: 1px solid var(--bento-line);"></div>
 
             <div style="min-width: 120px;">
-                <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 700;">Thời gian hoàn thành</div>
-                <div style="font-size: 20px; font-weight: 800; color: #1e293b; margin-top: 8px;">
+                <div style="font-size: 12px; color: var(--bento-muted); text-transform: uppercase; font-weight: 700;">Thời gian hoàn thành</div>
+                <div style="font-size: 20px; font-weight: 800; color: var(--bento-heading); margin-top: 8px;">
                     {{ intdiv($result['time_spent'], 60) }}m {{ $result['time_spent'] % 60 }}s
                 </div>
             </div>
@@ -99,7 +99,7 @@
 
     {{-- 2. CHI TIẾT TỪNG CÂU HỎI VÀ ĐÁP ÁN GIẢI THÍCH --}}
     <div class="card" style="border-radius: 16px; padding: 26px;">
-        <h2 style="font-size: 19px; font-weight: 800; color: #1e293b; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+        <h2 style="font-size: 19px; font-weight: 800; color: var(--bento-heading); margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
              Chi tiết bài làm và giải thích đáp án
         </h2>
 
@@ -114,13 +114,13 @@
                 <div style="border: 1px solid {{ $isCorrect ? '#86efac' : ($hasAnswered ? '#fca5a5' : '#fde68a') }}; border-radius: 12px; padding: 18px 20px; background: {{ $isCorrect ? '#f0fdf4' : ($hasAnswered ? '#fff1f2' : '#fffbeb') }};">
                     {{-- Header từng câu: Số câu + Trạng thái Đúng/Sai/Chưa làm --}}
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="font-weight: 800; font-size: 14px; color: #1e293b;">
+                        <span style="font-weight: 800; font-size: 14px; color: var(--bento-heading);">
                             Câu {{ $loop->iteration }}/{{ count($result['evaluations']) }}
                         </span>
 
                         <div>
                             @if($isCorrect)
-                                <span style="background: #00b86b; color: #ffffff; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;">
+                                <span style="background: var(--bento-orange); color: #ffffff; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;">
                                     ✓ Chính xác (+{{ $eval['diem_dat'] }}đ)
                                 </span>
                             @elseif($hasAnswered)
@@ -136,15 +136,15 @@
                     </div>
 
                     {{-- Đề bài --}}
-                    <div style="font-size: 16px; font-weight: 700; color: #1e293b; line-height: 1.5; margin-bottom: 14px;">
+                    <div style="font-size: 16px; font-weight: 700; color: var(--bento-heading); line-height: 1.5; margin-bottom: 14px;">
                         {{ $q->noidung }}
                     </div>
 
                     {{-- Câu trả lời của học viên --}}
-                    <div style="background: #ffffff; padding: 12px 16px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #e2e8f0; font-size: 14px;">
+                    <div style="background: #ffffff; padding: 12px 16px; border-radius: 8px; margin-bottom: 10px; border: 1px solid var(--bento-line); font-size: 14px;">
                         <span style="font-weight: 700; color: #475569;">Câu trả lời của bạn:</span>
                         @if($hasAnswered)
-                            <strong style="color: {{ $isCorrect ? '#00b86b' : '#ef4444' }}; margin-left: 6px;">
+                            <strong style="color: {{ $isCorrect ? 'var(--bento-orange)' : '#ef4444' }}; margin-left: 6px;">
                                 {{ $eval['user_answer_text'] }}
                             </strong>
                         @else
@@ -166,7 +166,7 @@
 
                     {{-- Lời giải thích --}}
                     @if(!empty($eval['giaithich']))
-                        <div style="font-size: 13px; color: #334155; line-height: 1.6; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(0,0,0,0.1);">
+                        <div style="font-size: 13px; color: var(--bento-ink); line-height: 1.6; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(0,0,0,0.1);">
                             💡 <strong>Giải thích chi tiết:</strong> {{ $eval['giaithich'] }}
                         </div>
                     @endif

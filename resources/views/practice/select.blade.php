@@ -4,7 +4,7 @@
 
 @section('content')
 <div style="margin-bottom: 24px;">
-    <a href="{{ route('practice.index') }}" style="color: #64748b; text-decoration: none; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;">
+    <a href="{{ route('practice.index') }}" style="color: var(--bento-muted); text-decoration: none; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;">
         ← Quay lại danh mục 4 kỹ năng
     </a>
 
@@ -16,19 +16,19 @@
                         {{ $skillMeta[$selectedType->kynang]['name'] ?? ucfirst($selectedType->kynang) }}
                     </span>
                     <span style="color: #94a3b8;">/</span>
-                    <span style="font-size: 14px; font-weight: 700; color: #00b86b;">Dạng bài chuyên sâu</span>
+                    <span style="font-size: 14px; font-weight: 700; color: var(--bento-orange);">Dạng bài chuyên sâu</span>
                 </div>
-                <h1 style="font-size: 28px; font-weight: 800; color: #1e293b; margin: 0;">
+                <h1 style="font-size: 28px; font-weight: 800; color: var(--bento-heading); margin: 0;">
                     🎯 {{ $selectedType->ten }}
                 </h1>
-                <p style="color: #64748b; font-size: 14px; margin-top: 6px;">
+                <p style="color: var(--bento-muted); font-size: 14px; margin-top: 6px;">
                     {{ $selectedType->mota ?? 'Rèn luyện các câu hỏi chuẩn định dạng Duolingo English Test có sẵn trong cơ sở dữ liệu.' }}
                 </p>
             @else
-                <h1 style="font-size: 26px; font-weight: 800; color: #1e293b; margin-bottom: 4px;">
+                <h1 style="font-size: 26px; font-weight: 800; color: var(--bento-heading); margin-bottom: 4px;">
                     🎯 Chọn câu hỏi luyện tập theo kỹ năng & độ khó (1 - 10)
                 </h1>
-                <p style="color: #64748b; font-size: 14px; margin-top: 4px;">
+                <p style="color: var(--bento-muted); font-size: 14px; margin-top: 4px;">
                     Chọn câu hỏi luyện tập theo từng kỹ năng và mức độ để rèn luyện liên tiếp và nộp bài bất cứ lúc nào.
                 </p>
             @endif
@@ -73,11 +73,11 @@
 
 @if($selectedType)
     <!-- GIAO DIỆN CHỌN CẤP ĐỘ ĐỘ KHÓ CHO DẠNG BÀI ĐÃ CHỌN (VD: INTERACTIVE READING) -->
-    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+    <div style="background: #ffffff; border: 1px solid var(--bento-line); border-radius: 16px; padding: 24px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 16px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
             <div>
-                <h2 style="font-size: 18px; font-weight: 700; color: #1e293b; margin: 0 0 4px 0;">
-                    Chọn cấp độ luyện tập cho <span style="color: #00b86b;">{{ $selectedType->ten }}</span>
+                <h2 style="font-size: 18px; font-weight: 700; color: var(--bento-heading); margin: 0 0 4px 0;">
+                    Chọn cấp độ luyện tập cho <span style="color: var(--bento-orange);">{{ $selectedType->ten }}</span>
                 </h2>
             </div>
 
@@ -94,8 +94,8 @@
         </div>
 
         @if($typeDifficulties->isEmpty())
-            <div style="text-align: center; padding: 36px 20px; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">
-                <p style="color: #64748b; font-size: 14px; margin-bottom: 14px;">
+            <div style="text-align: center; padding: 36px 20px; background: var(--bento-subtle); border-radius: 12px; border: 1px dashed var(--bento-line);">
+                <p style="color: var(--bento-muted); font-size: 14px; margin-bottom: 14px;">
                     Hiện chưa có câu hỏi nào được gán cấp độ cho dạng bài này trong CSDL.
                 </p>
                 <a href="{{ route('practice.session', ['loai_id' => $selectedType->id]) }}" class="btn btn-outline btn-sm">
@@ -105,19 +105,19 @@
         @else
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
                 @foreach($typeDifficulties as $diff)
-                    <div class="card" style="margin-bottom: 0; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s ease;">
+                    <div class="card" style="margin-bottom: 0; border: 1.5px solid var(--bento-line); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s ease;">
                         <div>
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                                 <span style="font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 20px;
                                     {{ $diff->dokho <= 3 ? 'background: #dcfce7; color: #166534;' : ($diff->dokho <= 7 ? 'background: #fef9c3; color: #854d0e;' : 'background: #fee2e2; color: #991b1b;') }}">
                                     Cấp độ {{ $diff->dokho }}/10 • {{ $diff->mucdo }}
                                 </span>
-                                <span style="font-size: 13px; font-weight: 700; color: #00b86b; background: #e6f9f0; padding: 2px 8px; border-radius: 6px;">
+                                <span style="font-size: 13px; font-weight: 700; color: var(--bento-orange); background: #e6f9f0; padding: 2px 8px; border-radius: 6px;">
                                     {{ $diff->count }} câu có sẵn
                                 </span>
                             </div>
 
-                            <h3 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">
+                            <h3 style="font-size: 16px; font-weight: 700; color: var(--bento-heading); margin-bottom: 6px;">
                                 {{ $selectedType->ten }} (Cấp độ {{ $diff->dokho }})
                             </h3>
                         </div>
@@ -125,7 +125,7 @@
                         <div style="border-top: 1px solid #f1f5f9; padding-top: 12px;">
                             <a href="{{ route('practice.session', ['loai_id' => $selectedType->id, 'dokho' => $diff->dokho]) }}" 
                                class="btn btn-outline" 
-                               style="width: 100%; justify-content: center; font-weight: 700; color: #00b86b; border-color: #00b86b;">
+                               style="width: 100%; justify-content: center; font-weight: 700; color: var(--bento-orange); border-color: var(--bento-orange);">
                                 Bắt đầu cấp độ {{ $diff->dokho }} 
                             </a>
                         </div>
@@ -183,14 +183,14 @@
 
 <!-- DANH SÁCH DẠNG BÀI THEO TIÊU ĐỀ KỸ NĂNG -->
 <div style="margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center;">
-    <h2 style="font-size: 20px; font-weight: 800; color: #1e293b; margin: 0;">
+    <h2 style="font-size: 20px; font-weight: 800; color: var(--bento-heading); margin: 0;">
         Danh sách dạng bài luyện tập theo kỹ năng:
     </h2>
 </div>
 
 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; margin-bottom: 36px;">
     @foreach($typeCards as $card)
-        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 0; border: 1.5px solid #e2e8f0; border-radius: 14px; transition: transform 0.2s, box-shadow 0.2s;">
+        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 0; border: 1.5px solid var(--bento-line); border-radius: 14px; transition: transform 0.2s, box-shadow 0.2s;">
             <div>
                 <!-- Header Card: Badge Kỹ năng + Nút lưu dạng bài -->
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -203,24 +203,24 @@
                             id="btn-save-type-{{ $card->id }}" 
                             onclick="toggleTypeBookmark({{ $card->id }})"
                             title="{{ $isTypeSaved ? 'Bỏ lưu dạng bài này' : 'Lưu dạng bài này vào danh sách quan tâm' }}"
-                            style="padding: 3px 9px; font-size: 12px; font-weight: 700; border-radius: 6px; {{ $isTypeSaved ? 'background: #fef3c7; color: #b45309; border: 1px solid #fcd34d;' : 'background: #f8fafc; color: #64748b; border: 1px solid #cbd5e1;' }}">
+                            style="padding: 3px 9px; font-size: 12px; font-weight: 700; border-radius: 6px; {{ $isTypeSaved ? 'background: #fef3c7; color: #b45309; border: 1px solid #fcd34d;' : 'background: var(--bento-subtle); color: var(--bento-muted); border: 1px solid var(--bento-line);' }}">
                         <span id="star-type-{{ $card->id }}">{{ $isTypeSaved ? '⭐' : '☆' }}</span>
                         <span id="label-type-{{ $card->id }}" style="font-size: 11px;">{{ $isTypeSaved ? 'Đã lưu' : 'Lưu dạng' }}</span>
                     </button>
                 </div>
 
-                <h3 style="font-size: 18px; font-weight: 800; color: #1e293b; margin-bottom: 6px;">
+                <h3 style="font-size: 18px; font-weight: 800; color: var(--bento-heading); margin-bottom: 6px;">
                     {{ $card->ten }}
                 </h3>
 
-                <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin-bottom: 16px;">
+                <p style="color: var(--bento-muted); font-size: 13px; line-height: 1.5; margin-bottom: 16px;">
                     {{ $card->mota ?: 'Rèn luyện phản xạ và kỹ năng theo đúng cấu trúc đề thi Duolingo English Test.' }}
                 </p>
 
                 <!-- Các cấp độ có sẵn trong CSDL -->
                 @if($card->difficulties->isNotEmpty())
-                    <div style="background: #f8fafc; border: 1px solid #f1f5f9; padding: 10px 12px; border-radius: 8px; margin-bottom: 16px;">
-                        <span style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 6px;">
+                    <div style="background: var(--bento-subtle); border: 1px solid #f1f5f9; padding: 10px 12px; border-radius: 8px; margin-bottom: 16px;">
+                        <span style="font-size: 11px; font-weight: 700; color: var(--bento-muted); text-transform: uppercase; display: block; margin-bottom: 6px;">
                             Các cấp độ có câu hỏi:
                         </span>
                         <div style="display: flex; gap: 6px; flex-wrap: wrap;">
@@ -248,7 +248,7 @@
     @endforeach
 </div>
 
-<div id="type-toast" style="position: fixed; bottom: 24px; right: 24px; background: #1e293b; color: #ffffff; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 9999; display: none;"></div>
+<div id="type-toast" style="position: fixed; bottom: 24px; right: 24px; background: var(--bento-heading); color: #ffffff; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 9999; display: none;"></div>
 
 @push('scripts')
 <script>

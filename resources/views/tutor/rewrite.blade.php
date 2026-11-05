@@ -6,10 +6,10 @@
 <div class="tutor-tool-container" style="max-width: 900px; margin: 2rem auto; padding: 0 1rem;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.5rem;">
         <div>
-            <a href="{{ route('tutor.index') }}" style="color: #6b7280; text-decoration: none; font-size: 0.95rem;">&larr; Quay lại AI Tutor</a>
-            <h1 style="font-size: 1.8rem; color: #111827; margin-top: 0.25rem;">Viết lại câu & Nâng cấp từ vựng DET</h1>
+            <a href="{{ route('tutor.index') }}" style="color: var(--bento-muted); text-decoration: none; font-size: 0.95rem;">&larr; Quay lại AI Tutor</a>
+            <h1 style="font-size: 1.8rem; color: var(--bento-heading); margin-top: 0.25rem;">Viết lại câu & Nâng cấp từ vựng DET</h1>
         </div>
-        <a href="{{ route('tutor.history', ['loai' => 'rewrite']) }}" style="font-size: 0.9rem; color: #16a34a; text-decoration: none;">Xem lịch sử viết lại &rarr;</a>
+        <a href="{{ route('tutor.history', ['loai' => 'rewrite']) }}" style="font-size: 0.9rem; color: var(--bento-orange-dark); text-decoration: none;">Xem lịch sử viết lại &rarr;</a>
     </div>
 
     @if ($errors->has('ai_limit'))
@@ -28,7 +28,7 @@
         </div>
     @endif
 
-    <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.75rem; box-shadow: 0 2px 4px rgba(0,0,0,0.04); margin-bottom: 2rem;">
+    <div style="background: #ffffff; border: 1px solid var(--bento-line); border-radius: 12px; padding: 1.75rem; box-shadow: 0 2px 4px rgba(0,0,0,0.04); margin-bottom: 2rem;">
         <form method="POST" action="{{ route('tutor.rewrite.process') }}">
             @csrf
             <div style="margin-bottom: 1.25rem;">
@@ -70,8 +70,8 @@
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                <span style="font-size: 0.85rem; color: #6b7280;">Mỗi lần viết lại tiêu tốn 1 lượt sử dụng AI hàng ngày.</span>
-                <button type="submit" style="background: #16a34a; color: #ffffff; font-weight: 700; padding: 0.75rem 1.75rem; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem;">
+                <span style="font-size: 0.85rem; color: var(--bento-muted);">Mỗi lần viết lại tiêu tốn 1 lượt sử dụng AI hàng ngày.</span>
+                <button type="submit" style="background: var(--bento-orange-dark); color: #ffffff; font-weight: 700; padding: 0.75rem 1.75rem; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem;">
                     Nâng cấp văn phong
                 </button>
             </div>
@@ -80,13 +80,13 @@
 
     @if (session('ai_result'))
         @php $result = session('ai_result'); @endphp
-        <div style="background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 12px; padding: 1.75rem; margin-top: 2rem;">
-            <div style="margin-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.75rem;">
+        <div style="background: var(--bento-subtle); border: 2px solid var(--bento-line); border-radius: 12px; padding: 1.75rem; margin-top: 2rem;">
+            <div style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--bento-line); padding-bottom: 0.75rem;">
                 <h2 style="font-size: 1.4rem; color: #0f172a; margin: 0;">Bản viết lại tối ưu từ AI Mentor</h2>
             </div>
 
             <div style="margin-bottom: 1.5rem;">
-                <strong style="display: block; color: #334155; margin-bottom: 0.5rem; font-size: 1rem;">Câu văn mới được đề xuất:</strong>
+                <strong style="display: block; color: var(--bento-ink); margin-bottom: 0.5rem; font-size: 1rem;">Câu văn mới được đề xuất:</strong>
                 <div style="background: #ffffff; border: 1px solid #94a3b8; border-radius: 8px; padding: 1.25rem; color: #0f172a; font-size: 1.1rem; line-height: 1.6; font-weight: 600;">
                     {{ $result['rewritten'] ?? 'Không có nội dung viết lại.' }}
                 </div>
@@ -94,12 +94,12 @@
 
             @if (!empty($result['improvements']) && is_array($result['improvements']))
                 <div style="margin-bottom: 1.5rem;">
-                    <strong style="display: block; color: #334155; margin-bottom: 0.5rem; font-size: 1rem;">Các điểm cải thiện then chốt:</strong>
+                    <strong style="display: block; color: var(--bento-ink); margin-bottom: 0.5rem; font-size: 1rem;">Các điểm cải thiện then chốt:</strong>
                     <div style="display: flex; flex-direction: column; gap: 0.65rem;">
                         @foreach ($result['improvements'] as $imp)
-                            <div style="background: #ffffff; border-left: 4px solid #16a34a; padding: 0.75rem 1rem; border-radius: 4px;">
+                            <div style="background: #ffffff; border-left: 4px solid var(--bento-orange-dark); padding: 0.75rem 1rem; border-radius: 4px;">
                                 <strong style="color: #15803d; font-size: 1rem;">{{ $imp['aspect'] ?? 'Điểm cộng' }}:</strong>
-                                <span style="color: #334155;">{{ $imp['detail'] ?? '' }}</span>
+                                <span style="color: var(--bento-ink);">{{ $imp['detail'] ?? '' }}</span>
                             </div>
                         @endforeach
                     </div>
@@ -109,7 +109,7 @@
             @if (!empty($result['explanation']))
                 <div style="background: #ffffff; border-left: 4px solid #3b82f6; padding: 1rem; border-radius: 4px;">
                     <strong style="color: #1e3a8a; display: block; margin-bottom: 0.25rem;">Vì sao câu này ghi điểm cao hơn trong DET?</strong>
-                    <p style="color: #334155; margin: 0; font-size: 0.95rem; line-height: 1.5;">{{ $result['explanation'] }}</p>
+                    <p style="color: var(--bento-ink); margin: 0; font-size: 0.95rem; line-height: 1.5;">{{ $result['explanation'] }}</p>
                 </div>
             @endif
         </div>

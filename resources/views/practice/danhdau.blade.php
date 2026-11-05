@@ -16,17 +16,17 @@
         padding: 10px 18px;
         font-weight: 700;
         font-size: 14px;
-        color: #64748b;
+        color: var(--bento-muted);
         text-decoration: none;
         border-bottom: 2.5px solid transparent;
         transition: all 0.2s ease;
     }
     .skill-tab-item:hover {
-        color: #00b86b;
+        color: var(--bento-orange);
     }
     .skill-tab-item.active {
-        color: #00b86b;
-        border-bottom-color: #00b86b;
+        color: var(--bento-orange);
+        border-bottom-color: var(--bento-orange);
         background: #f0fdf4;
         border-radius: 8px 8px 0 0;
     }
@@ -34,12 +34,12 @@
         font-size: 11px;
         padding: 2px 7px;
         border-radius: 10px;
-        background: #e2e8f0;
+        background: var(--bento-line);
         color: #475569;
         font-weight: 800;
     }
     .skill-tab-item.active .stat-badge-chip {
-        background: #00b86b;
+        background: var(--bento-orange);
         color: #ffffff;
     }
     .view-mode-tab {
@@ -49,7 +49,7 @@
         font-size: 14px;
         text-decoration: none;
         color: #475569;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--bento-line);
         background: #ffffff;
         display: inline-flex;
         align-items: center;
@@ -57,26 +57,26 @@
         transition: all 0.2s;
     }
     .view-mode-tab:hover {
-        border-color: #00b86b;
-        color: #00b86b;
+        border-color: var(--bento-orange);
+        color: var(--bento-orange);
     }
     .view-mode-tab.active {
-        background: #00b86b;
+        background: var(--bento-orange);
         color: #ffffff;
-        border-color: #00b86b;
+        border-color: var(--bento-orange);
         box-shadow: 0 2px 6px rgba(0, 184, 107, 0.25);
     }
     .bm-row {
         transition: background-color 0.2s ease;
     }
     .bm-row:hover {
-        background-color: #f8fafc;
+        background-color: var(--bento-subtle);
     }
     .toast-msg {
         position: fixed;
         bottom: 24px;
         right: 24px;
-        background: #1e293b;
+        background: var(--bento-heading);
         color: #ffffff;
         padding: 12px 20px;
         border-radius: 10px;
@@ -102,11 +102,11 @@
         <div>
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                 <span style="font-size: 26px;">⭐</span>
-                <h1 style="font-size: 26px; font-weight: 800; color: #1e293b; margin: 0;">
+                <h1 style="font-size: 26px; font-weight: 800; color: var(--bento-heading); margin: 0;">
                     Câu hỏi đã lưu & Dạng bài quan tâm
                 </h1>
             </div>
-            <p style="color: #64748b; font-size: 14px; margin: 0;">
+            <p style="color: var(--bento-muted); font-size: 14px; margin: 0;">
                 Tập hợp các câu hỏi bạn đánh dấu xem lại và các dạng bài cần ưu tiên luyện tập để nâng cao band điểm Duolingo English Test (DET).
             </p>
         </div>
@@ -135,14 +135,14 @@
                             <span style="font-size: 12px; font-weight: 700; color: {{ $sMeta['color'] }}; text-transform: uppercase; display: block;">
                                 {{ $sMeta['short'] }}
                             </span>
-                            <span style="font-size: 13px; font-weight: 700; color: #1e293b;">
+                            <span style="font-size: 13px; font-weight: 700; color: var(--bento-heading);">
                                 {{ ucfirst($sKey) }}
                             </span>
                         </div>
                     </div>
                     <div style="font-size: 24px; font-weight: 800; color: {{ $sMeta['color'] }};">
                         {{ $count }}
-                        <span style="font-size: 12px; font-weight: 600; color: #64748b;">câu</span>
+                        <span style="font-size: 12px; font-weight: 600; color: var(--bento-muted);">câu</span>
                     </div>
                 </div>
             </div>
@@ -169,7 +169,7 @@
     @if($activeTab === 'questions')
 
         {{-- BỘ LỌC KỸ NĂNG THEO TAB --}}
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px 12px 0 0; border-bottom: none; display: flex; overflow-x: auto; padding: 6px 12px 0;">
+        <div style="background: #ffffff; border: 1px solid var(--bento-line); border-radius: 12px 12px 0 0; border-bottom: none; display: flex; overflow-x: auto; padding: 6px 12px 0;">
             <a href="{{ route('practice.bookmarks', array_merge(request()->except(['page']), ['skill' => 'all'])) }}" 
                class="skill-tab-item {{ $selectedSkill === 'all' ? 'active' : '' }}">
                 <span>✨ Tất cả</span>
@@ -253,14 +253,14 @@
         @if($bookmarks->isEmpty())
             <div class="card" style="text-align: center; padding: 50px 20px; border-radius: 14px;">
                 <div style="font-size: 48px; margin-bottom: 12px;">🌟</div>
-                <h3 style="font-size: 18px; color: #1e293b; margin-bottom: 6px;">
+                <h3 style="font-size: 18px; color: var(--bento-heading); margin-bottom: 6px;">
                     @if($selectedSkill !== 'all' || $selectedLoai || $selectedDokho || $keyword)
                         Không tìm thấy câu hỏi đã lưu phù hợp với bộ lọc
                     @else
                         Bạn chưa lưu câu hỏi nào
                     @endif
                 </h3>
-                <p style="color: #64748b; font-size: 14px; margin-bottom: 20px; max-width: 500px; margin-left: auto; margin-right: auto;">
+                <p style="color: var(--bento-muted); font-size: 14px; margin-bottom: 20px; max-width: 500px; margin-left: auto; margin-right: auto;">
                     Khi đang làm bài luyện tập hoặc xem kết quả, bạn có thể nhấn vào nút <strong>"☆ Lưu câu hỏi"</strong> để lưu lại các câu cần ôn luyện.
                 </p>
                 <div style="display: flex; justify-content: center; gap: 10px;">
@@ -276,11 +276,11 @@
                 </div>
             </div>
         @else
-            <div class="card" style="padding: 0; overflow: hidden; border-radius: 14px; border: 1px solid #e2e8f0; margin-bottom: 24px;">
+            <div class="card" style="padding: 0; overflow: hidden; border-radius: 14px; border: 1px solid var(--bento-line); margin-bottom: 24px;">
                 <div style="overflow-x: auto;">
                     <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
                         <thead>
-                            <tr style="background: #f8fafc; border-bottom: 1.5px solid #e2e8f0; color: #475569; font-weight: 700; font-size: 13px; text-transform: uppercase;">
+                            <tr style="background: var(--bento-subtle); border-bottom: 1.5px solid var(--bento-line); color: #475569; font-weight: 700; font-size: 13px; text-transform: uppercase;">
                                 <th style="padding: 14px 18px;">Mã & Độ khó</th>
                                 <th style="padding: 14px 18px;">Kỹ năng & Dạng bài</th>
                                 <th style="padding: 14px 18px;">Nội dung câu hỏi</th>
@@ -316,17 +316,17 @@
                                             <span>{{ $sm['icon'] }}</span>
                                             <span>{{ $sm['short'] }}</span>
                                         </span>
-                                        <div style="font-size: 13px; font-weight: 700; color: #1e293b; margin-top: 2px;">
+                                        <div style="font-size: 13px; font-weight: 700; color: var(--bento-heading); margin-top: 2px;">
                                             {{ $bm->loai_ten ?? 'Tổng hợp' }}
                                         </div>
                                     </td>
 
                                     {{-- Cột 3: Nội dung câu hỏi --}}
-                                    <td style="padding: 14px 18px; color: #334155; max-width: 380px;">
-                                        <div style="line-height: 1.5; font-size: 14px; font-weight: 600; color: #1e293b; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                    <td style="padding: 14px 18px; color: var(--bento-ink); max-width: 380px;">
+                                        <div style="line-height: 1.5; font-size: 14px; font-weight: 600; color: var(--bento-heading); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                                             {{ $bm->cauhoi->noidung ?? ('Câu hỏi ID #' . $bm->cauhoi_id) }}
                                         </div>
-                                        <div style="margin-top: 4px; display: flex; gap: 8px; align-items: center; font-size: 12px; color: #64748b;">
+                                        <div style="margin-top: 4px; display: flex; gap: 8px; align-items: center; font-size: 12px; color: var(--bento-muted);">
                                             @if(!empty($bm->cauhoi->audio))
                                                 <span style="color: #7c3aed; font-weight: 700;">🎧 Kèm âm thanh</span>
                                             @endif
@@ -338,7 +338,7 @@
                                     </td>
 
                                     {{-- Cột 4: Ngày lưu --}}
-                                    <td style="padding: 14px 18px; color: #64748b; font-size: 13px; white-space: nowrap;">
+                                    <td style="padding: 14px 18px; color: var(--bento-muted); font-size: 13px; white-space: nowrap;">
                                         {{ date('d/m/Y H:i', strtotime($bm->ngaytao)) }}
                                     </td>
 
@@ -385,7 +385,7 @@
     {{-- TAB 2: DẠNG BÀI ĐÃ LƯU --}}
     @else
         <div style="margin-bottom: 20px;">
-            <p style="color: #64748b; font-size: 14px;">
+            <p style="color: var(--bento-muted); font-size: 14px;">
                 Danh sách các dạng bài luyện tập Duolingo English Test bạn đã đánh dấu để tập trung rèn luyện:
             </p>
         </div>
@@ -393,10 +393,10 @@
         @if($savedTypes->isEmpty())
             <div class="card" style="text-align: center; padding: 50px 20px; border-radius: 14px;">
                 <div style="font-size: 48px; margin-bottom: 12px;">📌</div>
-                <h3 style="font-size: 18px; color: #1e293b; margin-bottom: 6px;">
+                <h3 style="font-size: 18px; color: var(--bento-heading); margin-bottom: 6px;">
                     Bạn chưa lưu dạng bài nào
                 </h3>
-                <p style="color: #64748b; font-size: 14px; margin-bottom: 20px; max-width: 500px; margin-left: auto; margin-right: auto;">
+                <p style="color: var(--bento-muted); font-size: 14px; margin-bottom: 20px; max-width: 500px; margin-left: auto; margin-right: auto;">
                     Tại trang chọn dạng bài luyện tập, bạn có thể nhấn nút <strong>"⭐ Lưu dạng bài"</strong> trên mỗi thẻ để lưu các dạng bài trọng tâm vào đây.
                 </p>
                 <a href="{{ route('practice.select') }}" class="btn btn-primary">
@@ -409,7 +409,7 @@
                     @php
                         $stMeta = $skillMeta[$st->kynang] ?? $skillMeta['reading'];
                     @endphp
-                    <div class="card" id="saved-type-card-{{ $st->id }}" style="border-radius: 14px; border: 1.5px solid #e2e8f0; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s;">
+                    <div class="card" id="saved-type-card-{{ $st->id }}" style="border-radius: 14px; border: 1.5px solid var(--bento-line); padding: 22px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s;">
                         <div>
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                                 <span class="badge {{ $stMeta['badge'] }}" style="font-size: 11px; font-weight: 700; text-transform: uppercase;">
@@ -424,17 +424,17 @@
                                 </button>
                             </div>
 
-                            <h3 style="font-size: 18px; font-weight: 800; color: #1e293b; margin: 0 0 8px 0;">
+                            <h3 style="font-size: 18px; font-weight: 800; color: var(--bento-heading); margin: 0 0 8px 0;">
                                 {{ $st->ten }}
                             </h3>
 
-                            <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin: 0 0 16px 0;">
+                            <p style="color: var(--bento-muted); font-size: 13px; line-height: 1.5; margin: 0 0 16px 0;">
                                 {{ $st->mota ?: 'Rèn luyện các câu hỏi chuẩn định dạng Duolingo English Test.' }}
                             </p>
                         </div>
 
                         <div style="border-top: 1px solid #f1f5f9; padding-top: 14px; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 13px; color: #64748b; font-weight: 600;">
+                            <span style="font-size: 13px; color: var(--bento-muted); font-weight: 600;">
                                 📚 {{ $st->question_count }} câu trong ngân hàng
                             </span>
 

@@ -34,7 +34,7 @@
 
         .history-table-wrap {
             overflow-x: auto;
-            border: 1px solid #e5e7eb;
+            border: 1px solid var(--bento-line);
             border-radius: 14px;
             background: #fff;
         }
@@ -56,7 +56,7 @@
         .history-table th {
             color: #475467;
             font-size: .85rem;
-            background: #f9fafb;
+            background: var(--bento-subtle);
         }
 
         .history-table tr:last-child td {

@@ -20,7 +20,7 @@
             padding: 14px 20px;
             background: #ffffff;
             border-radius: 14px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--bento-line);
             margin-bottom: 20px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
             flex-wrap: wrap;
@@ -29,7 +29,7 @@
         .session-title-box h1 {
             font-size: 20px;
             font-weight: 800;
-            color: #1e293b;
+            color: var(--bento-heading);
             margin: 0 0 2px 0;
             display: flex;
             align-items: center;
@@ -40,7 +40,7 @@
             align-items: center;
             gap: 14px;
             padding: 14px 18px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid var(--bento-line);
             border-radius: 12px;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -49,8 +49,8 @@
             position: relative;
         }
         .instant-option-card:hover:not(.locked) {
-            border-color: #00b86b;
-            background: #f8fafc;
+            border-color: var(--bento-orange);
+            background: var(--bento-subtle);
             transform: translateY(-1px);
         }
         .instant-option-card.is-correct {
@@ -81,7 +81,7 @@
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: #e2e8f0;
+            background: var(--bento-line);
             font-weight: 800;
             font-size: 14px;
             color: #475569;
@@ -113,11 +113,11 @@
             width: 38px;
             height: 38px;
             border-radius: 8px;
-            border: 1px solid #cbd5e1;
+            border: 1px solid var(--bento-line);
             background: #ffffff;
             font-weight: 700;
             font-size: 13px;
-            color: #334155;
+            color: var(--bento-ink);
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -165,10 +165,10 @@
         <div style="display: flex; align-items: center; gap: 14px;">
             <a href="{{ route('practice.select', ['loai_id' => $type->id]) }}" 
                onclick="return confirmExit()" 
-               style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+               style="color: var(--bento-muted); text-decoration: none; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
                 ← Thoát luyện tập
             </a>
-            <div style="height: 20px; width: 1px; background: #e2e8f0;"></div>
+            <div style="height: 20px; width: 1px; background: var(--bento-line);"></div>
             <div class="session-title-box">
                 <h1>
                     <span>{{ $skillMeta[$type->kynang]['icon'] ?? '🎯' }}</span>
@@ -200,12 +200,12 @@
 
                 @foreach($questions as $qIndex => $q)
                     <div class="question-container" id="q-container-{{ $qIndex }}" style="{{ $qIndex === 0 ? '' : 'display: none;' }}">
-                        <div class="card" style="padding: 28px; border-radius: 16px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
+                        <div class="card" style="padding: 28px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--bento-line);">
                             
                             {{-- Header câu hỏi: Số thứ tự, độ khó, điểm --}}
                             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 16px; margin-bottom: 20px;">
                                 <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span style="font-weight: 800; color: #00b86b; background: #e6f9f0; padding: 4px 12px; border-radius: 8px; font-size: 14px;">
+                                    <span style="font-weight: 800; color: var(--bento-orange); background: #e6f9f0; padding: 4px 12px; border-radius: 8px; font-size: 14px;">
                                         CÂU {{ $qIndex + 1 }} / {{ count($questions) }}
                                     </span>
                                     <span style="font-size: 13px; font-weight: 700; color: {{ ($q->dokho ?? 5) <= 3 ? '#166534' : (($q->dokho ?? 5) <= 7 ? '#854d0e' : '#991b1b') }};">
@@ -214,8 +214,8 @@
                                 </div>
 
                                 <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                                    <div style="font-size: 13px; color: #64748b; font-weight: 600;">
-                                        Điểm câu: <strong style="color: #1e293b;">{{ $q->diem ?? 1 }}</strong> điểm
+                                    <div style="font-size: 13px; color: var(--bento-muted); font-weight: 600;">
+                                        Điểm câu: <strong style="color: var(--bento-heading);">{{ $q->diem ?? 1 }}</strong> điểm
                                     </div>
 
                                     @php $isBm = in_array((int)$q->id, $bookmarkedIds ?? []); @endphp
@@ -224,7 +224,7 @@
                                             id="btn-bookmark-{{ $q->id }}" 
                                             onclick="toggleSessionBookmark({{ $q->id }}, {{ $qIndex }})"
                                             title="Lưu câu hỏi này để xem lại sau"
-                                            style="padding: 5px 12px; font-size: 12px; font-weight: 700; border-radius: 8px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px; {{ $isBm ? 'background: #fef3c7; color: #b45309; border: 1.5px solid #fcd34d;' : 'background: #ffffff; color: #64748b; border: 1.5px solid #cbd5e1;' }}">
+                                            style="padding: 5px 12px; font-size: 12px; font-weight: 700; border-radius: 8px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px; {{ $isBm ? 'background: #fef3c7; color: #b45309; border: 1.5px solid #fcd34d;' : 'background: #ffffff; color: var(--bento-muted); border: 1.5px solid var(--bento-line);' }}">
                                         <span id="bm-icon-{{ $q->id }}">{{ $isBm ? '⭐' : '☆' }}</span>
                                         <span id="bm-text-{{ $q->id }}">{{ $isBm ? 'Đã lưu câu này' : 'Lưu câu hỏi' }}</span>
                                     </button>
@@ -233,21 +233,21 @@
 
                             {{-- ĐOẠN VĂN ĐỌC HIỂU (Nếu là dạng Interactive Reading) --}}
                             @if($type->kynang === 'reading' && (isset($q->cauhoi_doc) && $q->cauhoi_doc->isNotEmpty() || strlen($q->noidung) > 150))
-                                <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 20px 22px; margin-bottom: 24px;">
+                                <div style="background: var(--bento-subtle); border: 1.5px solid var(--bento-line); border-radius: 12px; padding: 20px 22px; margin-bottom: 24px;">
                                     <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: #0284c7; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px;">
                                         📖 ĐOẠN VĂN ĐỌC HIỂU TƯƠNG TÁC:
                                     </div>
-                                    <div style="font-size: 16px; color: #1e293b; line-height: 1.7; font-weight: 500;">
+                                    <div style="font-size: 16px; color: var(--bento-heading); line-height: 1.7; font-weight: 500;">
                                         {!! nl2br(e($q->noidung)) !!}
                                     </div>
                                 </div>
                             @else
                                 {{-- NỘI DUNG CÂU HỎI THÔNG THƯỜNG --}}
                                 <div style="margin-bottom: 22px;">
-                                    <div style="font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">
+                                    <div style="font-size: 12px; font-weight: 800; color: var(--bento-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">
                                         NỘI DUNG CÂU HỎI:
                                     </div>
-                                    <div style="font-size: 18px; font-weight: 700; color: #1e293b; line-height: 1.6; background: #f8fafc; padding: 18px 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                                    <div style="font-size: 18px; font-weight: 700; color: var(--bento-heading); line-height: 1.6; background: var(--bento-subtle); padding: 18px 20px; border-radius: 12px; border: 1px solid var(--bento-line);">
                                         {!! nl2br(e($q->noidung)) !!}
                                     </div>
                                 </div>
@@ -260,7 +260,7 @@
                                     $imgUrl = file_exists(public_path($cleanImg)) ? asset($cleanImg) : (file_exists(public_path('images/questions/' . basename($cleanImg))) ? asset('images/questions/' . basename($cleanImg)) : asset($cleanImg));
                                 @endphp
                                 <div style="text-align: center; margin: 20px 0;">
-                                    <img src="{{ $imgUrl }}" alt="Question" style="max-width: 100%; max-height: 340px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                                    <img src="{{ $imgUrl }}" alt="Question" style="max-width: 100%; max-height: 340px; border-radius: 10px; border: 1px solid var(--bento-line);">
                                 </div>
                             @endif
 
@@ -272,8 +272,8 @@
                                     $ext = strtolower(pathinfo(parse_url($audUrl, PHP_URL_PATH), PATHINFO_EXTENSION));
                                     $mime = $ext === 'wav' ? 'audio/wav' : ($ext === 'ogg' ? 'audio/ogg' : 'audio/mpeg');
                                 @endphp
-                                <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 12px; margin: 18px 0; text-align: center;">
-                                    <div style="font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 8px;">
+                                <div style="background: var(--bento-subtle); border: 1px solid var(--bento-line); padding: 16px; border-radius: 12px; margin: 18px 0; text-align: center;">
+                                    <div style="font-size: 13px; font-weight: 700; color: var(--bento-ink); margin-bottom: 8px;">
                                         🎧 Nghe đoạn âm thanh câu hỏi:
                                     </div>
                                     <audio controls preload="auto" style="width: 100%; max-width: 480px;">
@@ -304,7 +304,7 @@
                                                     {{ chr(65 + $optIdx) }}
                                                 </div>
 
-                                                <div style="flex: 1; font-size: 15px; color: #1e293b; font-weight: 600; line-height: 1.4;">
+                                                <div style="flex: 1; font-size: 15px; color: var(--bento-heading); font-weight: 600; line-height: 1.4;">
                                                     {{ $opt->noidung }}
                                                 </div>
 
@@ -319,7 +319,7 @@
                                             <span class="fb-icon"></span>
                                             <span class="fb-text"></span>
                                         </div>
-                                        <div class="feedback-desc" style="font-size: 14px; line-height: 1.6; background: #ffffff; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0; color: #334155;">
+                                        <div class="feedback-desc" style="font-size: 14px; line-height: 1.6; background: #ffffff; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--bento-line); color: var(--bento-ink);">
                                             <strong> Giải thích chi tiết:</strong>
                                             <div style="margin-top: 4px;">
                                                 {{ $q->giaithich ?: 'Đáp án đã được hệ thống xác nhận chính xác theo quy chuẩn đề thi Duolingo English Test.' }}
@@ -336,8 +336,8 @@
                                     </div>
 
                                     @foreach($q->cauhoi_doc as $subIdx => $subQ)
-                                        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 18px;">
-                                            <div style="font-weight: 700; color: #1e293b; font-size: 15px; margin-bottom: 12px;">
+                                        <div style="background: #ffffff; border: 1px solid var(--bento-line); border-radius: 12px; padding: 18px; margin-bottom: 18px;">
+                                            <div style="font-weight: 700; color: var(--bento-heading); font-size: 15px; margin-bottom: 12px;">
                                                 Câu hỏi {{ $subIdx + 1 }}: {{ $subQ->noidung }}
                                             </div>
 
@@ -357,7 +357,7 @@
                                                                 {{ chr(65 + $optIdx) }}
                                                             </div>
 
-                                                            <div style="flex: 1; font-size: 15px; color: #1e293b; font-weight: 600;">
+                                                            <div style="flex: 1; font-size: 15px; color: var(--bento-heading); font-weight: 600;">
                                                                 {{ $opt->noidung }}
                                                             </div>
 
@@ -371,7 +371,7 @@
                                                         <span class="fb-icon"></span>
                                                         <span class="fb-text"></span>
                                                     </div>
-                                                    <div class="feedback-desc" style="font-size: 14px; line-height: 1.6; background: #ffffff; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0; color: #334155;">
+                                                    <div class="feedback-desc" style="font-size: 14px; line-height: 1.6; background: #ffffff; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--bento-line); color: var(--bento-ink);">
                                                         <strong>Giải thích chi tiết:</strong>
                                                         <div style="margin-top: 4px;">
                                                             {{ $subQ->giaithich ?: ($q->giaithich ?: 'Hãy đối chiếu câu trong đoạn văn để xác nhận thông tin chính xác.') }}
@@ -388,7 +388,7 @@
                                                                class="form-control" 
                                                                placeholder="Nhập câu trả lời của bạn..." 
                                                                data-correct-answer="{{ $subQ->dapandung ?? '' }}"
-                                                               style="flex: 1; min-width: 220px; font-size: 15px; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 8px;">
+                                                               style="flex: 1; min-width: 220px; font-size: 15px; padding: 10px 14px; border: 1.5px solid var(--bento-line); border-radius: 8px;">
                                                         <button type="button" 
                                                                 class="btn btn-primary" 
                                                                 onclick="checkSubTextInput({{ $qIndex }}, {{ $q->id }}, {{ $subQ->id }}, '{{ addslashes($subQ->dapandung ?? '') }}')" 
@@ -403,7 +403,7 @@
                                                             <span class="fb-icon"></span>
                                                             <span class="fb-text"></span>
                                                         </div>
-                                                        <div class="feedback-desc" style="font-size: 14px; line-height: 1.6; background: #ffffff; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0; color: #334155;">
+                                                        <div class="feedback-desc" style="font-size: 14px; line-height: 1.6; background: #ffffff; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--bento-line); color: var(--bento-ink);">
                                                             @if(!empty($subQ->dapandung))
                                                                 <div style="margin-bottom: 6px; color: #166534; font-weight: 700;">
                                                                     Đáp án đúng: <span class="correct-val-display" style="background: #eefcf5; padding: 2px 8px; border-radius: 4px; border: 1px solid #86efac;">{{ $subQ->dapandung }}</span>
@@ -426,7 +426,7 @@
                                 <div style="margin-top: 24px;">
 
 
-                                    <div class="voice-recording-studio" style="background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 26px 20px; text-align: center; margin-bottom: 18px;">
+                                    <div class="voice-recording-studio" style="background: var(--bento-subtle); border: 2px dashed var(--bento-line); border-radius: 16px; padding: 26px 20px; text-align: center; margin-bottom: 18px;">
                                         
                                         <div id="voice-controls-{{ $q->id }}">
               
@@ -436,11 +436,11 @@
                                                     class="btn-voice-record" 
                                                     id="btn-voice-{{ $q->id }}" 
                                                     onclick="toggleVoiceRecording({{ $qIndex }}, {{ $q->id }})"
-                                                    style="width: 82px; height: 82px; border-radius: 50%; background: #009e5b; color: #ffffff; border: none; font-size: 34px; cursor: pointer; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4); transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center;">
+                                                    style="width: 82px; height: 82px; border-radius: 50%; background: var(--bento-orange-dark); color: #ffffff; border: none; font-size: 34px; cursor: pointer; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4); transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center;">
                                                 🎙️
                                             </button>
 
-                                            <div id="voice-status-text-{{ $q->id }}" style="font-size: 14px; font-weight: 700; color: #1e293b; margin-top: 14px;">
+                                            <div id="voice-status-text-{{ $q->id }}" style="font-size: 14px; font-weight: 700; color: var(--bento-heading); margin-top: 14px;">
                                                 Nhấn vào nút Micro để bắt đầu ghi âm bài nói
                                             </div>
 
@@ -453,8 +453,8 @@
                                         </div>
 
                                         <!-- Trình phát nghe lại và nút gửi AI -->
-                                        <div id="voice-playback-box-{{ $q->id }}" style="display: none; margin-top: 18px; padding-top: 18px; border-top: 1px solid #e2e8f0;">
-                                            <p style="font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 8px;">
+                                        <div id="voice-playback-box-{{ $q->id }}" style="display: none; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--bento-line);">
+                                            <p style="font-size: 13px; font-weight: 700; color: var(--bento-ink); margin-bottom: 8px;">
                                                 🎧 Nghe lại bài nói vừa ghi âm:
                                             </p>
                                             <audio id="voice-audio-{{ $q->id }}" controls style="width: 100%; max-width: 460px; margin-bottom: 16px;"></audio>
@@ -463,7 +463,7 @@
                                                 <button type="button" class="btn btn-outline btn-sm" onclick="resetVoiceRecording({{ $qIndex }}, {{ $q->id }})" style="font-weight: 700;">
                                                     Ghi âm lại
                                                 </button>
-                                                <button type="button" class="btn btn-primary btn-sm" id="btn-ai-check-{{ $q->id }}" onclick="sendVoiceToAI({{ $qIndex }}, {{ $q->id }})" style="font-weight: 800; background: #00b86b; border-color: #00b86b; padding: 8px 20px;">
+                                                <button type="button" class="btn btn-primary btn-sm" id="btn-ai-check-{{ $q->id }}" onclick="sendVoiceToAI({{ $qIndex }}, {{ $q->id }})" style="font-weight: 800; background: var(--bento-orange); border-color: var(--bento-orange); padding: 8px 20px;">
                                                     Nhấn để AI kiểm tra bài nói ngay
                                                 </button>
                                             </div>
@@ -494,19 +494,19 @@
                                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 14px;">
                                             <div style="background: #ffffff; padding: 12px 14px; border-radius: 8px; border: 1px solid #bbf7d0;">
                                                 <span style="font-size: 12px; font-weight: 700; color: #166534; display: block; margin-bottom: 2px;">🗣️ Phát âm (Pronunciation):</span>
-                                                <span id="ai-pronun-{{ $q->id }}" style="font-size: 13px; color: #334155;">--</span>
+                                                <span id="ai-pronun-{{ $q->id }}" style="font-size: 13px; color: var(--bento-ink);">--</span>
                                             </div>
                                             <div style="background: #ffffff; padding: 12px 14px; border-radius: 8px; border: 1px solid #bbf7d0;">
                                                 <span style="font-size: 12px; font-weight: 700; color: #166534; display: block; margin-bottom: 2px;">⚡ Độ lưu loát (Fluency):</span>
-                                                <span id="ai-fluency-{{ $q->id }}" style="font-size: 13px; color: #334155;">--</span>
+                                                <span id="ai-fluency-{{ $q->id }}" style="font-size: 13px; color: var(--bento-ink);">--</span>
                                             </div>
                                             <div style="background: #ffffff; padding: 12px 14px; border-radius: 8px; border: 1px solid #bbf7d0;">
                                                 <span style="font-size: 12px; font-weight: 700; color: #166534; display: block; margin-bottom: 2px;">🎯 Ước lượng DET:</span>
-                                                <span id="ai-det-{{ $q->id }}" style="font-size: 14px; font-weight: 800; color: #00b86b;">--</span>
+                                                <span id="ai-det-{{ $q->id }}" style="font-size: 14px; font-weight: 800; color: var(--bento-orange);">--</span>
                                             </div>
                                         </div>
 
-                                        <div style="background: #ffffff; padding: 12px 16px; border-radius: 8px; border: 1px solid #bbf7d0; font-size: 13px; line-height: 1.6; color: #1e293b;">
+                                        <div style="background: #ffffff; padding: 12px 16px; border-radius: 8px; border: 1px solid #bbf7d0; font-size: 13px; line-height: 1.6; color: var(--bento-heading);">
                                             <strong>💡 Nhận xét chi tiết & Lời khuyên:</strong>
                                             <p id="ai-tips-{{ $q->id }}" style="margin: 4px 0 0 0; color: #475569;">--</p>
                                         </div>
@@ -516,7 +516,7 @@
                             {{-- TRƯỜNG HỢP 4: DẠNG ĐIỀN TỪ / GÕ VĂN BẢN / LUẬN --}}
                             @else
                                 <div style="margin-top: 20px;">
-                                    <label for="text-ans-{{ $q->id }}" style="font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 8px; display: block;">
+                                    <label for="text-ans-{{ $q->id }}" style="font-size: 13px; font-weight: 700; color: var(--bento-ink); margin-bottom: 8px; display: block;">
                                         NHẬP CÂU TRẢ LỜI CỦA BẠN:
                                     </label>
                                     <textarea name="answers[{{ $q->id }}]" 
@@ -533,7 +533,7 @@
                                     </div>
 
                                     <div class="feedback-box" id="feedback-box-{{ $q->id }}" style="display: none; margin-top: 14px;">
-                                        <div class="feedback-desc" style="font-size: 14px; line-height: 1.6; background: #ffffff; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0; color: #334155;">
+                                        <div class="feedback-desc" style="font-size: 14px; line-height: 1.6; background: #ffffff; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--bento-line); color: var(--bento-ink);">
                                             <strong>💡 Hướng dẫn & Giải thích:</strong>
                                             <div style="margin-top: 4px;">
                                                 {{ $q->giaithich ?: 'Hãy kiểm tra lại ngữ pháp, từ vựng và cấu trúc câu cho chuẩn format bài thi DET.' }}
@@ -572,17 +572,17 @@
 
         {{-- CỘT PHẢI: BẢNG TIẾN ĐỘ & PHIẾU CÂU HỎI  --}}
         <aside>
-            <div class="card" style="padding: 22px; border-radius: 16px; border: 1px solid #e2e8f0; position: sticky; top: 20px;">
+            <div class="card" style="padding: 22px; border-radius: 16px; border: 1px solid var(--bento-line); position: sticky; top: 20px;">
                 
-                <h3 style="font-size: 16px; font-weight: 800; color: #1e293b; margin: 0 0 14px 0; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 16px; font-weight: 800; color: var(--bento-heading); margin: 0 0 14px 0; display: flex; justify-content: space-between; align-items: center;">
                     <span>PHIẾU CÂU HỎI</span>
-                    <span id="counter-answered" style="font-size: 13px; font-weight: 700; color: #00b86b; background: #e6f9f0; padding: 2px 8px; border-radius: 12px;">
+                    <span id="counter-answered" style="font-size: 13px; font-weight: 700; color: var(--bento-orange); background: #e6f9f0; padding: 2px 8px; border-radius: 12px;">
                         0 / {{ count($questions) }}
                     </span>
                 </h3>
 
                 <!-- THỐNG KÊ KẾT QUẢ TỨC THÌ -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #f1f5f9;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; background: var(--bento-subtle); padding: 12px; border-radius: 10px; border: 1px solid #f1f5f9;">
                     <div style="font-size: 13px; color: #166534; font-weight: 700; display: flex; align-items: center; gap: 6px;">
                         <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #16a34a;"></span>
                         Đúng: <span id="stat-correct">0</span>
@@ -609,7 +609,7 @@
                 </div>
 
                 <!-- CHÚ THÍCH MÀU SẮC PHIẾU CÂU HỎI -->
-                <div style="font-size: 12px; color: #64748b; line-height: 1.8; border-top: 1px solid #f1f5f9; padding-top: 14px; margin-bottom: 20px;">
+                <div style="font-size: 12px; color: var(--bento-muted); line-height: 1.8; border-top: 1px solid #f1f5f9; padding-top: 14px; margin-bottom: 20px;">
                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
                         <span style="width: 12px; height: 12px; border-radius: 3px; background: #16a34a; display: inline-block;"></span>
                         <span>Đã làm đúng (+ điểm)</span>
@@ -619,7 +619,7 @@
                         <span>Đã làm sai (có giải thích)</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                        <span style="width: 12px; height: 12px; border-radius: 3px; background: #ffffff; border: 1px solid #cbd5e1; display: inline-block;"></span>
+                        <span style="width: 12px; height: 12px; border-radius: 3px; background: #ffffff; border: 1px solid var(--bento-line); display: inline-block;"></span>
                         <span>Chưa trả lời</span>
                     </div>
                 </div>
@@ -628,7 +628,7 @@
                 <button type="button" 
                         onclick="submitPracticeNow()" 
                         class="btn btn-primary" 
-                        style="width: 100%; justify-content: center; font-weight: 800; padding: 12px; background: #00b86b; border-color: #00b86b; box-shadow: 0 4px 12px rgba(0, 184, 107, 0.2);">
+                        style="width: 100%; justify-content: center; font-weight: 800; padding: 12px; background: var(--bento-orange); border-color: var(--bento-orange); box-shadow: 0 4px 12px rgba(0, 184, 107, 0.2);">
                     Nộp bài làm & Xem tổng kết 
                 </button>
 

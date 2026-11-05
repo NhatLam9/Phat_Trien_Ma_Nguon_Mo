@@ -100,7 +100,7 @@
             </p>
 
             <div class="pc-card-footer" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 14px; margin-top: 14px;">
-                <span style="font-size: 13px; color: #64748b;">
+                <span style="font-size: 13px; color: var(--bento-muted);">
                     {{ ($type->cachcham ?? 'auto') === 'ai' ? 'Chấm bằng AI' : 'Chấm tự động' }}
                 </span>
 
@@ -112,8 +112,6 @@
             </div>
         </article>
     @endforeach
-</div>
-                    @endforeach
                 </div>
             </section>
         @endif
