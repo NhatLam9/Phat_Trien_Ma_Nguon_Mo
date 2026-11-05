@@ -23,6 +23,11 @@
             </p>
         </div>
 
+        @auth
+            <a class="btn btn-dark" href="{{ route('mock-test.history') }}">Lịch sử thi →</a>
+            <a class="btn btn-dark" href="{{ route('learning.dashboard') }}">Thống kê học tập →</a>
+        @endauth
+
         <!-- Thong bao loi -->
         @if ($errors->any())
             <div class="alert" role="alert">
