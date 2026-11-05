@@ -12,7 +12,7 @@ use Illuminate\View\View;
 /**
  * AD06 - Nhật ký AI (TV3 - Phi Phong).
  *
- * Chỉ đọc: xem ai gọi AI, loại yêu cầu, model, token và trích đoạn đầu vào/đầu ra.
+ * Chỉ đọc: xem ai gọi AI, loại yêu cầu, model, token, trạng thái và trích đoạn đầu vào/đầu ra.
  * Giúp kiểm tra lỗi chấm Writing/Speaking mà không cần mở database.
  */
 class AiLogController extends Controller
@@ -22,11 +22,24 @@ class AiLogController extends Controller
      */
     public const LOAI = ['speaking', 'writing', 'grammar', 'translate', 'rewrite', 'chat'];
 
+    /**
+     * @var array<string, string>
+     */
+    public const LOAI_NHAN = [
+        'speaking' => 'Speaking',
+        'writing' => 'Writing',
+        'grammar' => 'Ngữ pháp',
+        'translate' => 'Dịch',
+        'rewrite' => 'Viết lại',
+        'chat' => 'Chat',
+    ];
+
     public function index(Request $request): View
     {
         $boLoc = [
             'q' => trim((string) $request->query('q', '')),
             'loai' => (string) $request->query('loai', ''),
+            'trangthai' => (string) $request->query('trangthai', ''),
             'tu_ngay' => (string) $request->query('tu_ngay', ''),
             'den_ngay' => (string) $request->query('den_ngay', ''),
         ];
@@ -35,11 +48,13 @@ class AiLogController extends Controller
             'tu_ngay' => ['nullable', 'date'],
             'den_ngay' => ['nullable', 'date', 'after_or_equal:tu_ngay'],
             'loai' => ['nullable', Rule::in(self::LOAI)],
+            'trangthai' => ['nullable', Rule::in(['success', 'failed'])],
         ], [
             'tu_ngay.date' => 'Từ ngày không hợp lệ.',
             'den_ngay.date' => 'Đến ngày không hợp lệ.',
             'den_ngay.after_or_equal' => 'Đến ngày phải sau hoặc bằng từ ngày.',
             'loai.in' => 'Loại yêu cầu không hợp lệ.',
+            'trangthai.in' => 'Trạng thái không hợp lệ.',
         ]);
 
         $ailogs = Ailog::query()
@@ -53,6 +68,7 @@ class AiLogController extends Controller
                 });
             })
             ->when($boLoc['loai'] !== '', fn (Builder $query) => $query->where('loai', $boLoc['loai']))
+            ->when($boLoc['trangthai'] !== '', fn (Builder $query) => $query->where('trangthai', $boLoc['trangthai']))
             ->when($duLieu['tu_ngay'] ?? null, fn (Builder $query, $ngay) => $query->whereDate('ngaytao', '>=', $ngay))
             ->when($duLieu['den_ngay'] ?? null, fn (Builder $query, $ngay) => $query->whereDate('ngaytao', '<=', $ngay))
             ->orderByDesc('id')
@@ -62,15 +78,25 @@ class AiLogController extends Controller
         return view('admin.ai-logs.index', [
             'ailogs' => $ailogs,
             'boLoc' => $boLoc,
-            'loaiNhan' => [
-                'speaking' => 'Speaking',
-                'writing' => 'Writing',
-                'grammar' => 'Ngữ pháp',
-                'translate' => 'Dịch',
-                'rewrite' => 'Viết lại',
-                'chat' => 'Chat',
+            'loaiNhan' => self::LOAI_NHAN,
+            'trangThaiNhan' => [
+                'success' => 'Thành công',
+                'failed' => 'Thất bại',
             ],
             'coBoLoc' => collect($boLoc)->filter(fn ($giaTri) => $giaTri !== '')->isNotEmpty(),
+        ]);
+    }
+
+    /**
+     * Xem chi tiết một lượt gọi AI (đầu vào, đầu ra, trạng thái, mã HTTP).
+     */
+    public function show(int $id): View
+    {
+        $log = Ailog::with('nguoidung')->findOrFail($id);
+
+        return view('admin.ai-logs.show', [
+            'log' => $log,
+            'loaiNhan' => self::LOAI_NHAN,
         ]);
     }
 }

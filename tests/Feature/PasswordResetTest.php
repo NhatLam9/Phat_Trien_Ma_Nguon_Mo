@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use App\Models\Nguoidung;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Password;
+use Tests\TestCase;
 
 class PasswordResetTest extends TestCase
 {
@@ -63,15 +63,15 @@ class PasswordResetTest extends TestCase
         $response = $this->post(route('password.update'), [
             'token' => $token,
             'email' => 'reset@example.com',
-            'matkhau' => 'newpassword123',
-            'matkhau_confirmation' => 'newpassword123',
+            'matkhau' => 'Newpassword123!',
+            'matkhau_confirmation' => 'Newpassword123!',
         ]);
 
         $response->assertRedirect(route('login'));
         $response->assertSessionHas('status');
 
         $user->refresh();
-        $this->assertTrue(Hash::check('newpassword123', $user->matkhau));
+        $this->assertTrue(Hash::check('Newpassword123!', $user->matkhau));
     }
 
     public function test_password_cannot_be_reset_with_invalid_token(): void
@@ -87,8 +87,8 @@ class PasswordResetTest extends TestCase
         $response = $this->post(route('password.update'), [
             'token' => 'invalid-token',
             'email' => 'reset@example.com',
-            'matkhau' => 'newpassword123',
-            'matkhau_confirmation' => 'newpassword123',
+            'matkhau' => 'Newpassword123!',
+            'matkhau_confirmation' => 'Newpassword123!',
         ]);
 
         $response->assertSessionHasErrors('email');

@@ -111,14 +111,23 @@ Các seeder liên quan:
 
 - `AdminCatalogSeeder`: bộ danh mục + câu hỏi mẫu ban đầu (đã publish).
 - `OperationalQuestionBankSeeder`: 120 câu cha, 60 câu con, 5 đề full.
+- `ExtendedQuestionBankSeeder`: 742 câu mở rộng thuộc đủ 8 dạng, 86 câu con, lấy từ
+  các file `database/seeders/data/extended_questions*.json` (mã ổn định `ext-*` / `ext2-*` / `ext3-*`).
+  Trong đó `extended_questions.json` có 23 câu, `extended_questions_batch2.json` có 206 câu
+  và `extended_questions_batch3.json` có 513 câu.
 - `FullMockTestSeeder`: đề Full 01 với 20 câu cha + 9 câu con.
 
 Chạy lại seeder:
 
 ```bash
 php artisan db:seed --class=OperationalQuestionBankSeeder
+php artisan db:seed --class=ExtendedQuestionBankSeeder
 php artisan db:seed --class=FullMockTestSeeder
 ```
+
+File `extended_questions*.json` dùng đúng định dạng import JSON, nên có thể nạp lại
+thủ công qua `/admin/questions/import` nếu không muốn chạy seeder. Seeder chạy lại
+nhiều lần không tạo trùng vì mỗi câu có `ma` riêng.
 
 ## Kiểm thử
 

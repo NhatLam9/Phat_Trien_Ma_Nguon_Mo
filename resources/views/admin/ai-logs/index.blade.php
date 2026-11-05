@@ -32,6 +32,16 @@
             </div>
 
             <div class="admin-filter__field">
+                <label for="trangthai">Trạng thái</label>
+                <select id="trangthai" name="trangthai">
+                    <option value="">Tất cả</option>
+                    @foreach ($trangThaiNhan as $ma => $nhan)
+                        <option value="{{ $ma }}" @selected($boLoc['trangthai'] === $ma)>{{ $nhan }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="admin-filter__field">
                 <label for="tu_ngay">Từ ngày</label>
                 <input type="date" id="tu_ngay" name="tu_ngay" value="{{ $boLoc['tu_ngay'] }}">
             </div>
@@ -74,6 +84,7 @@
                             <th>Thời gian</th>
                             <th>Người dùng</th>
                             <th>Loại</th>
+                            <th>Trạng thái</th>
                             <th>Model</th>
                             <th>Token</th>
                             <th>Nội dung</th>
@@ -95,6 +106,16 @@
                                         {{ $loaiNhan[$ailog->loai] ?? $ailog->loai }}
                                     </span>
                                 </td>
+                                <td>
+                                    @if ($ailog->trangthai === 'failed')
+                                        <span class="admin-badge admin-badge--danger">Thất bại</span>
+                                    @else
+                                        <span class="admin-badge admin-badge--published">Thành công</span>
+                                    @endif
+                                    @if ($ailog->http_code)
+                                        <div class="admin-muted">HTTP {{ $ailog->http_code }}</div>
+                                    @endif
+                                </td>
                                 <td>{{ $ailog->model ?? '—' }}</td>
                                 <td class="admin-muted">
                                     {{ $ailog->token_vao ?? 0 }} / {{ $ailog->token_ra ?? 0 }}
@@ -109,6 +130,11 @@
                                             <pre class="admin-code">{{ $ailog->dauvao ?? '—' }}</pre>
                                             <h3>Đầu ra</h3>
                                             <pre class="admin-code">{{ $ailog->daura ?? '—' }}</pre>
+                                            <p>
+                                                <a href="{{ route('admin.ai-logs.show', $ailog->id) }}">
+                                                    Xem chi tiết đầy đủ &rarr;
+                                                </a>
+                                            </p>
                                         </div>
                                     </details>
                                 </td>

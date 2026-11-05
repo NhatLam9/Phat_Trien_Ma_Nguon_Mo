@@ -998,6 +998,11 @@ body.admin-body {
     color: #71717a;
 }
 
+.admin-badge--danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
 .admin-empty {
     padding: 36px 20px;
     text-align: center;

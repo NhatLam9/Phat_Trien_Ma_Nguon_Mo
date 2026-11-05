@@ -1,0 +1,5835 @@
+{
+    "questions": [
+        {
+            "ma": "ext2-ras-001",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "My sister ___ coffee every morning.",
+            "giaithich": "Chủ ngữ “My sister” số ít nên động từ thêm -s.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "drink",
+                    "ladung": false
+                },
+                {
+                    "noidung": "drinks",
+                    "ladung": true
+                },
+                {
+                    "noidung": "drinking",
+                    "ladung": false
+                },
+                {
+                    "noidung": "drank",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-002",
+            "loai": "read_and_select",
+            "danhmuc": "Science & Technology",
+            "noidung": "The sun ___ in the east.",
+            "giaithich": "Sự thật hiển nhiên dùng thì hiện tại đơn; chủ ngữ số ít thêm -s.",
+            "dokho": 1,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "rose",
+                    "ladung": false
+                },
+                {
+                    "noidung": "rising",
+                    "ladung": false
+                },
+                {
+                    "noidung": "rise",
+                    "ladung": false
+                },
+                {
+                    "noidung": "rises",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-003",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "They usually ___ dinner at seven.",
+            "giaithich": "Chủ ngữ số nhiều “They” dùng động từ nguyên mẫu.",
+            "dokho": 1,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "having",
+                    "ladung": false
+                },
+                {
+                    "noidung": "has",
+                    "ladung": false
+                },
+                {
+                    "noidung": "have",
+                    "ladung": true
+                },
+                {
+                    "noidung": "had",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-004",
+            "loai": "read_and_select",
+            "danhmuc": "Work & Business",
+            "noidung": "The shop ___ at nine on weekdays.",
+            "giaithich": "Lịch trình cố định dùng hiện tại đơn.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "opens",
+                    "ladung": true
+                },
+                {
+                    "noidung": "open",
+                    "ladung": false
+                },
+                {
+                    "noidung": "opening",
+                    "ladung": false
+                },
+                {
+                    "noidung": "opened",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-005",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "He ___ his teeth twice a day.",
+            "giaithich": "Thói quen hằng ngày dùng hiện tại đơn; “He” số ít.",
+            "dokho": 1,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "brushed",
+                    "ladung": false
+                },
+                {
+                    "noidung": "brushes",
+                    "ladung": true
+                },
+                {
+                    "noidung": "brush",
+                    "ladung": false
+                },
+                {
+                    "noidung": "brushing",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-006",
+            "loai": "read_and_select",
+            "danhmuc": "Science & Technology",
+            "noidung": "Water ___ at 100 degrees Celsius.",
+            "giaithich": "Sự thật khoa học dùng hiện tại đơn.",
+            "dokho": 1,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "boiling",
+                    "ladung": false
+                },
+                {
+                    "noidung": "boil",
+                    "ladung": false
+                },
+                {
+                    "noidung": "boils",
+                    "ladung": true
+                },
+                {
+                    "noidung": "boiled",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-007",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "My parents ___ in a small village.",
+            "giaithich": "“My parents” số nhiều nên động từ nguyên mẫu.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "live",
+                    "ladung": true
+                },
+                {
+                    "noidung": "living",
+                    "ladung": false
+                },
+                {
+                    "noidung": "lived",
+                    "ladung": false
+                },
+                {
+                    "noidung": "lives",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-008",
+            "loai": "read_and_select",
+            "danhmuc": "Travel",
+            "noidung": "The train ___ at 6:30 every morning.",
+            "giaithich": "Thời gian biểu cố định dùng hiện tại đơn.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "left",
+                    "ladung": false
+                },
+                {
+                    "noidung": "leave",
+                    "ladung": false
+                },
+                {
+                    "noidung": "leaves",
+                    "ladung": true
+                },
+                {
+                    "noidung": "leaving",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-009",
+            "loai": "read_and_select",
+            "danhmuc": "Education",
+            "noidung": "She ___ English at a local school.",
+            "giaithich": "Chủ ngữ số ít, động từ tận cùng -ch thêm -es.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "taught",
+                    "ladung": false
+                },
+                {
+                    "noidung": "teaching",
+                    "ladung": false
+                },
+                {
+                    "noidung": "teaches",
+                    "ladung": true
+                },
+                {
+                    "noidung": "teach",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-010",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "We ___ football every Sunday.",
+            "giaithich": "Chủ ngữ “We” dùng động từ nguyên mẫu.",
+            "dokho": 1,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "plays",
+                    "ladung": false
+                },
+                {
+                    "noidung": "played",
+                    "ladung": false
+                },
+                {
+                    "noidung": "playing",
+                    "ladung": false
+                },
+                {
+                    "noidung": "play",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-011",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "I ___ my keys yesterday.",
+            "giaithich": "Có “yesterday” nên dùng quá khứ đơn.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "lose",
+                    "ladung": false
+                },
+                {
+                    "noidung": "loses",
+                    "ladung": false
+                },
+                {
+                    "noidung": "lost",
+                    "ladung": true
+                },
+                {
+                    "noidung": "losing",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-012",
+            "loai": "read_and_select",
+            "danhmuc": "Travel",
+            "noidung": "They ___ to Da Nang last summer.",
+            "giaithich": "Có “last summer” nên dùng quá khứ đơn.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "travels",
+                    "ladung": false
+                },
+                {
+                    "noidung": "travelling",
+                    "ladung": false
+                },
+                {
+                    "noidung": "travel",
+                    "ladung": false
+                },
+                {
+                    "noidung": "travelled",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-013",
+            "loai": "read_and_select",
+            "danhmuc": "Work & Business",
+            "noidung": "She ___ the report two days ago.",
+            "giaithich": "Có “two days ago” nên dùng quá khứ đơn.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "finishing",
+                    "ladung": false
+                },
+                {
+                    "noidung": "finish",
+                    "ladung": false
+                },
+                {
+                    "noidung": "finished",
+                    "ladung": true
+                },
+                {
+                    "noidung": "finishes",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-014",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "We ___ dinner at a nice restaurant last night.",
+            "giaithich": "Có “last night” nên dùng quá khứ đơn.",
+            "dokho": 1,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "has",
+                    "ladung": false
+                },
+                {
+                    "noidung": "had",
+                    "ladung": true
+                },
+                {
+                    "noidung": "having",
+                    "ladung": false
+                },
+                {
+                    "noidung": "have",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-015",
+            "loai": "read_and_select",
+            "danhmuc": "Work & Business",
+            "noidung": "He ___ his first job in 2020.",
+            "giaithich": "Mốc thời gian trong quá khứ dùng quá khứ đơn.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "started",
+                    "ladung": true
+                },
+                {
+                    "noidung": "start",
+                    "ladung": false
+                },
+                {
+                    "noidung": "starts",
+                    "ladung": false
+                },
+                {
+                    "noidung": "starting",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-016",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "The children ___ in the garden all afternoon.",
+            "giaithich": "Hành động đã kết thúc trong quá khứ.",
+            "dokho": 1,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "playing",
+                    "ladung": false
+                },
+                {
+                    "noidung": "played",
+                    "ladung": true
+                },
+                {
+                    "noidung": "plays",
+                    "ladung": false
+                },
+                {
+                    "noidung": "play",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-017",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "I ___ the film last week.",
+            "giaithich": "Có “last week” nên dùng quá khứ đơn.",
+            "dokho": 1,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "watching",
+                    "ladung": false
+                },
+                {
+                    "noidung": "watch",
+                    "ladung": false
+                },
+                {
+                    "noidung": "watched",
+                    "ladung": true
+                },
+                {
+                    "noidung": "watches",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-018",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "She ___ me a message this morning.",
+            "giaithich": "“This morning” đã qua nên dùng quá khứ đơn.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "sends",
+                    "ladung": false
+                },
+                {
+                    "noidung": "sending",
+                    "ladung": false
+                },
+                {
+                    "noidung": "send",
+                    "ladung": false
+                },
+                {
+                    "noidung": "sent",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-019",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "They ___ the match by two goals.",
+            "giaithich": "Kết quả trận đấu đã xảy ra dùng quá khứ đơn.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "win",
+                    "ladung": false
+                },
+                {
+                    "noidung": "won",
+                    "ladung": true
+                },
+                {
+                    "noidung": "winning",
+                    "ladung": false
+                },
+                {
+                    "noidung": "wins",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-020",
+            "loai": "read_and_select",
+            "danhmuc": "Travel",
+            "noidung": "We ___ up early and caught the first bus.",
+            "giaithich": "Hai hành động nối tiếp trong quá khứ.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "get",
+                    "ladung": false
+                },
+                {
+                    "noidung": "gets",
+                    "ladung": false
+                },
+                {
+                    "noidung": "getting",
+                    "ladung": false
+                },
+                {
+                    "noidung": "got",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-021",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "She ___ in Hanoi since 2018.",
+            "giaithich": "“Since + mốc thời gian” dùng hiện tại hoàn thành.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "is living",
+                    "ladung": false
+                },
+                {
+                    "noidung": "lives",
+                    "ladung": false
+                },
+                {
+                    "noidung": "has lived",
+                    "ladung": true
+                },
+                {
+                    "noidung": "lived",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-022",
+            "loai": "read_and_select",
+            "danhmuc": "Travel",
+            "noidung": "I ___ never seen such a beautiful beach.",
+            "giaithich": "Chủ ngữ “I” dùng trợ động từ “have”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "has",
+                    "ladung": false
+                },
+                {
+                    "noidung": "having",
+                    "ladung": false
+                },
+                {
+                    "noidung": "had",
+                    "ladung": false
+                },
+                {
+                    "noidung": "have",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-023",
+            "loai": "read_and_select",
+            "danhmuc": "Education",
+            "noidung": "They ___ just finished their homework.",
+            "giaithich": "“Just” thường đi với hiện tại hoàn thành; “They” dùng “have”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "having",
+                    "ladung": false
+                },
+                {
+                    "noidung": "had",
+                    "ladung": false
+                },
+                {
+                    "noidung": "has",
+                    "ladung": false
+                },
+                {
+                    "noidung": "have",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-024",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "He ___ already eaten lunch.",
+            "giaithich": "“Already” đi với hiện tại hoàn thành; “He” dùng “has”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "has",
+                    "ladung": true
+                },
+                {
+                    "noidung": "having",
+                    "ladung": false
+                },
+                {
+                    "noidung": "had",
+                    "ladung": false
+                },
+                {
+                    "noidung": "have",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-025",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "We ___ known each other for ten years.",
+            "giaithich": "“For + khoảng thời gian” dùng hiện tại hoàn thành.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "having",
+                    "ladung": false
+                },
+                {
+                    "noidung": "have",
+                    "ladung": true
+                },
+                {
+                    "noidung": "has",
+                    "ladung": false
+                },
+                {
+                    "noidung": "had",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-026",
+            "loai": "read_and_select",
+            "danhmuc": "Work & Business",
+            "noidung": "The company ___ grown rapidly over the past five years.",
+            "giaithich": "Chủ ngữ số ít “The company” dùng “has”.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "having",
+                    "ladung": false
+                },
+                {
+                    "noidung": "had",
+                    "ladung": false
+                },
+                {
+                    "noidung": "has",
+                    "ladung": true
+                },
+                {
+                    "noidung": "have",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-027",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "I ___ lost my wallet, so I cannot pay.",
+            "giaithich": "Kết quả hiện tại của hành động quá khứ dùng hiện tại hoàn thành.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "having",
+                    "ladung": false
+                },
+                {
+                    "noidung": "have",
+                    "ladung": true
+                },
+                {
+                    "noidung": "has",
+                    "ladung": false
+                },
+                {
+                    "noidung": "had",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-028",
+            "loai": "read_and_select",
+            "danhmuc": "Work & Business",
+            "noidung": "She ___ worked here since she graduated.",
+            "giaithich": "“Since” dùng hiện tại hoàn thành.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "having",
+                    "ladung": false
+                },
+                {
+                    "noidung": "have",
+                    "ladung": false
+                },
+                {
+                    "noidung": "had",
+                    "ladung": false
+                },
+                {
+                    "noidung": "has",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-029",
+            "loai": "read_and_select",
+            "danhmuc": "Travel",
+            "noidung": "They ___ visited three countries this year.",
+            "giaithich": "Trải nghiệm tính đến hiện tại dùng hiện tại hoàn thành.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "having",
+                    "ladung": false
+                },
+                {
+                    "noidung": "had",
+                    "ladung": false
+                },
+                {
+                    "noidung": "have",
+                    "ladung": true
+                },
+                {
+                    "noidung": "has",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-030",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "My brother ___ just bought a new laptop.",
+            "giaithich": "“Just” dùng hiện tại hoàn thành; chủ ngữ số ít dùng “has”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "had",
+                    "ladung": false
+                },
+                {
+                    "noidung": "having",
+                    "ladung": false
+                },
+                {
+                    "noidung": "has",
+                    "ladung": true
+                },
+                {
+                    "noidung": "have",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-031",
+            "loai": "read_and_select",
+            "danhmuc": "Travel",
+            "noidung": "The bridge ___ in 1990.",
+            "giaithich": "Câu bị động quá khứ: was/were + V3.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "builds",
+                    "ladung": false
+                },
+                {
+                    "noidung": "built",
+                    "ladung": false
+                },
+                {
+                    "noidung": "was built",
+                    "ladung": true
+                },
+                {
+                    "noidung": "is building",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-032",
+            "loai": "read_and_select",
+            "danhmuc": "Education",
+            "noidung": "English ___ in many countries.",
+            "giaithich": "Câu bị động hiện tại: is/are + V3.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "speaks",
+                    "ladung": false
+                },
+                {
+                    "noidung": "spoken",
+                    "ladung": false
+                },
+                {
+                    "noidung": "is spoken",
+                    "ladung": true
+                },
+                {
+                    "noidung": "speaking",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-033",
+            "loai": "read_and_select",
+            "danhmuc": "Science & Technology",
+            "noidung": "The results ___ tomorrow.",
+            "giaithich": "Câu bị động tương lai: will be + V3.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "announce",
+                    "ladung": false
+                },
+                {
+                    "noidung": "announced",
+                    "ladung": false
+                },
+                {
+                    "noidung": "announcing",
+                    "ladung": false
+                },
+                {
+                    "noidung": "will be announced",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-034",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "This room ___ every day.",
+            "giaithich": "Phòng được lau dọn hằng ngày: bị động hiện tại.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "cleaned",
+                    "ladung": false
+                },
+                {
+                    "noidung": "cleaning",
+                    "ladung": false
+                },
+                {
+                    "noidung": "cleans",
+                    "ladung": false
+                },
+                {
+                    "noidung": "is cleaned",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-035",
+            "loai": "read_and_select",
+            "danhmuc": "Work & Business",
+            "noidung": "The documents ___ by the manager yesterday.",
+            "giaithich": "Câu bị động quá khứ số nhiều: were + V3.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "signed",
+                    "ladung": false
+                },
+                {
+                    "noidung": "sign",
+                    "ladung": false
+                },
+                {
+                    "noidung": "were signed",
+                    "ladung": true
+                },
+                {
+                    "noidung": "signing",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-036",
+            "loai": "read_and_select",
+            "danhmuc": "Science & Technology",
+            "noidung": "A new hospital ___ next year.",
+            "giaithich": "Câu bị động tương lai: will be + V3.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "will be opened",
+                    "ladung": true
+                },
+                {
+                    "noidung": "opens",
+                    "ladung": false
+                },
+                {
+                    "noidung": "opened",
+                    "ladung": false
+                },
+                {
+                    "noidung": "opening",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-037",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "The cake ___ by my grandmother.",
+            "giaithich": "Bánh được làm bởi bà: bị động quá khứ.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "making",
+                    "ladung": false
+                },
+                {
+                    "noidung": "was made",
+                    "ladung": true
+                },
+                {
+                    "noidung": "makes",
+                    "ladung": false
+                },
+                {
+                    "noidung": "made",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-038",
+            "loai": "read_and_select",
+            "danhmuc": "Work & Business",
+            "noidung": "The letters ___ at the moment.",
+            "giaithich": "Bị động tiếp diễn: are being + V3.",
+            "dokho": 5,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "type",
+                    "ladung": false
+                },
+                {
+                    "noidung": "typed",
+                    "ladung": false
+                },
+                {
+                    "noidung": "typing",
+                    "ladung": false
+                },
+                {
+                    "noidung": "are being typed",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-039",
+            "loai": "read_and_select",
+            "danhmuc": "Science & Technology",
+            "noidung": "The problem ___ by the team last week.",
+            "giaithich": "Bị động quá khứ: was + V3.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "solves",
+                    "ladung": false
+                },
+                {
+                    "noidung": "was solved",
+                    "ladung": true
+                },
+                {
+                    "noidung": "solved",
+                    "ladung": false
+                },
+                {
+                    "noidung": "solving",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-040",
+            "loai": "read_and_select",
+            "danhmuc": "Travel",
+            "noidung": "The tickets ___ online.",
+            "giaithich": "Bị động với động từ khuyết thiếu: can be + V3.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "book",
+                    "ladung": false
+                },
+                {
+                    "noidung": "booking",
+                    "ladung": false
+                },
+                {
+                    "noidung": "can be booked",
+                    "ladung": true
+                },
+                {
+                    "noidung": "booked",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-041",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "If it rains, we ___ at home.",
+            "giaithich": "Câu điều kiện loại 1: If + hiện tại đơn, will + V.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "will stay",
+                    "ladung": true
+                },
+                {
+                    "noidung": "stayed",
+                    "ladung": false
+                },
+                {
+                    "noidung": "would stay",
+                    "ladung": false
+                },
+                {
+                    "noidung": "staying",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-042",
+            "loai": "read_and_select",
+            "danhmuc": "Education",
+            "noidung": "If I had more time, I ___ more books.",
+            "giaithich": "Câu điều kiện loại 2: If + quá khứ đơn, would + V.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "read",
+                    "ladung": false
+                },
+                {
+                    "noidung": "will read",
+                    "ladung": false
+                },
+                {
+                    "noidung": "reading",
+                    "ladung": false
+                },
+                {
+                    "noidung": "would read",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-043",
+            "loai": "read_and_select",
+            "danhmuc": "Education",
+            "noidung": "If she ___ harder, she would have passed.",
+            "giaithich": "Câu điều kiện loại 3: If + quá khứ hoàn thành.",
+            "dokho": 4,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "studied",
+                    "ladung": false
+                },
+                {
+                    "noidung": "studying",
+                    "ladung": false
+                },
+                {
+                    "noidung": "studies",
+                    "ladung": false
+                },
+                {
+                    "noidung": "had studied",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-044",
+            "loai": "read_and_select",
+            "danhmuc": "Science & Technology",
+            "noidung": "If you heat ice, it ___.",
+            "giaithich": "Câu điều kiện loại 0 diễn tả sự thật.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "melting",
+                    "ladung": false
+                },
+                {
+                    "noidung": "melt",
+                    "ladung": false
+                },
+                {
+                    "noidung": "melted",
+                    "ladung": false
+                },
+                {
+                    "noidung": "melts",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-045",
+            "loai": "read_and_select",
+            "danhmuc": "Travel",
+            "noidung": "I would travel more if I ___ rich.",
+            "giaithich": "Điều kiện loại 2 dùng “were” cho mọi chủ ngữ.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "is",
+                    "ladung": false
+                },
+                {
+                    "noidung": "am",
+                    "ladung": false
+                },
+                {
+                    "noidung": "be",
+                    "ladung": false
+                },
+                {
+                    "noidung": "were",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-046",
+            "loai": "read_and_select",
+            "danhmuc": "Travel",
+            "noidung": "If they ___ earlier, they would not have missed the train.",
+            "giaithich": "Điều kiện loại 3: If + quá khứ hoàn thành.",
+            "dokho": 4,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "leaving",
+                    "ladung": false
+                },
+                {
+                    "noidung": "leave",
+                    "ladung": false
+                },
+                {
+                    "noidung": "had left",
+                    "ladung": true
+                },
+                {
+                    "noidung": "left",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-047",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "We will go out unless it ___.",
+            "giaithich": "Sau “unless” dùng hiện tại đơn.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "rains",
+                    "ladung": true
+                },
+                {
+                    "noidung": "raining",
+                    "ladung": false
+                },
+                {
+                    "noidung": "rain",
+                    "ladung": false
+                },
+                {
+                    "noidung": "rained",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-048",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "If I ___ you, I would apologise.",
+            "giaithich": "Cấu trúc “If I were you” dùng để khuyên.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "be",
+                    "ladung": false
+                },
+                {
+                    "noidung": "were",
+                    "ladung": true
+                },
+                {
+                    "noidung": "is",
+                    "ladung": false
+                },
+                {
+                    "noidung": "am",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-049",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "She would have come if you ___ her.",
+            "giaithich": "Điều kiện loại 3: mệnh đề if dùng quá khứ hoàn thành.",
+            "dokho": 4,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "inviting",
+                    "ladung": false
+                },
+                {
+                    "noidung": "invited",
+                    "ladung": false
+                },
+                {
+                    "noidung": "invite",
+                    "ladung": false
+                },
+                {
+                    "noidung": "had invited",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-050",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "If he ___ the truth, he would tell us.",
+            "giaithich": "Điều kiện loại 2: If + quá khứ đơn.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "known",
+                    "ladung": false
+                },
+                {
+                    "noidung": "know",
+                    "ladung": false
+                },
+                {
+                    "noidung": "knew",
+                    "ladung": true
+                },
+                {
+                    "noidung": "knows",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-051",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "The man ___ lives next door is a doctor.",
+            "giaithich": "“Who” thay cho người làm chủ ngữ.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "whose",
+                    "ladung": false
+                },
+                {
+                    "noidung": "whom",
+                    "ladung": false
+                },
+                {
+                    "noidung": "which",
+                    "ladung": false
+                },
+                {
+                    "noidung": "who",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-052",
+            "loai": "read_and_select",
+            "danhmuc": "Education",
+            "noidung": "This is the book ___ I told you about.",
+            "giaithich": "“Which” thay cho vật.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "who",
+                    "ladung": false
+                },
+                {
+                    "noidung": "which",
+                    "ladung": true
+                },
+                {
+                    "noidung": "where",
+                    "ladung": false
+                },
+                {
+                    "noidung": "whose",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-053",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "The girl ___ bag was stolen called the police.",
+            "giaithich": "“Whose” chỉ sở hữu.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "whom",
+                    "ladung": false
+                },
+                {
+                    "noidung": "who",
+                    "ladung": false
+                },
+                {
+                    "noidung": "which",
+                    "ladung": false
+                },
+                {
+                    "noidung": "whose",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-054",
+            "loai": "read_and_select",
+            "danhmuc": "Travel",
+            "noidung": "The town ___ I grew up has changed a lot.",
+            "giaithich": "“Where” thay cho cụm chỉ nơi chốn.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "where",
+                    "ladung": true
+                },
+                {
+                    "noidung": "who",
+                    "ladung": false
+                },
+                {
+                    "noidung": "when",
+                    "ladung": false
+                },
+                {
+                    "noidung": "which",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-055",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "I met a woman ___ speaks five languages.",
+            "giaithich": "“Who” thay cho người làm chủ ngữ.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "whom",
+                    "ladung": false
+                },
+                {
+                    "noidung": "which",
+                    "ladung": false
+                },
+                {
+                    "noidung": "who",
+                    "ladung": true
+                },
+                {
+                    "noidung": "whose",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-056",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "The day ___ we met was rainy.",
+            "giaithich": "“When” thay cho cụm chỉ thời gian.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "who",
+                    "ladung": false
+                },
+                {
+                    "noidung": "which",
+                    "ladung": false
+                },
+                {
+                    "noidung": "when",
+                    "ladung": true
+                },
+                {
+                    "noidung": "where",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-057",
+            "loai": "read_and_select",
+            "danhmuc": "Education",
+            "noidung": "She is good ___ playing the piano.",
+            "giaithich": "Cấu trúc “be good at + V-ing”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "on",
+                    "ladung": false
+                },
+                {
+                    "noidung": "in",
+                    "ladung": false
+                },
+                {
+                    "noidung": "for",
+                    "ladung": false
+                },
+                {
+                    "noidung": "at",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-058",
+            "loai": "read_and_select",
+            "danhmuc": "Education",
+            "noidung": "I am interested ___ learning Japanese.",
+            "giaithich": "Cấu trúc “be interested in”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "on",
+                    "ladung": false
+                },
+                {
+                    "noidung": "at",
+                    "ladung": false
+                },
+                {
+                    "noidung": "for",
+                    "ladung": false
+                },
+                {
+                    "noidung": "in",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-059",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "He has lived here ___ 2015.",
+            "giaithich": "“Since” đứng trước mốc thời gian.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "from",
+                    "ladung": false
+                },
+                {
+                    "noidung": "for",
+                    "ladung": false
+                },
+                {
+                    "noidung": "during",
+                    "ladung": false
+                },
+                {
+                    "noidung": "since",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-060",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "We have been waiting ___ two hours.",
+            "giaithich": "“For” đứng trước khoảng thời gian.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "for",
+                    "ladung": true
+                },
+                {
+                    "noidung": "since",
+                    "ladung": false
+                },
+                {
+                    "noidung": "during",
+                    "ladung": false
+                },
+                {
+                    "noidung": "from",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-061",
+            "loai": "read_and_select",
+            "danhmuc": "Work & Business",
+            "noidung": "The meeting is ___ Monday morning.",
+            "giaithich": "Trước thứ trong tuần dùng “on”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "in",
+                    "ladung": false
+                },
+                {
+                    "noidung": "on",
+                    "ladung": true
+                },
+                {
+                    "noidung": "at",
+                    "ladung": false
+                },
+                {
+                    "noidung": "for",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-062",
+            "loai": "read_and_select",
+            "danhmuc": "Travel",
+            "noidung": "She arrived ___ the airport at noon.",
+            "giaithich": "“Arrive at” dùng cho địa điểm cụ thể.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "on",
+                    "ladung": false
+                },
+                {
+                    "noidung": "to",
+                    "ladung": false
+                },
+                {
+                    "noidung": "at",
+                    "ladung": true
+                },
+                {
+                    "noidung": "in",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-063",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "I am looking forward ___ seeing you.",
+            "giaithich": "Cấu trúc “look forward to + V-ing”.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "to",
+                    "ladung": true
+                },
+                {
+                    "noidung": "at",
+                    "ladung": false
+                },
+                {
+                    "noidung": "for",
+                    "ladung": false
+                },
+                {
+                    "noidung": "with",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-064",
+            "loai": "read_and_select",
+            "danhmuc": "Education",
+            "noidung": "The book was written ___ Nguyen Du.",
+            "giaithich": "Tác giả trong câu bị động dùng “by”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "from",
+                    "ladung": false
+                },
+                {
+                    "noidung": "of",
+                    "ladung": false
+                },
+                {
+                    "noidung": "by",
+                    "ladung": true
+                },
+                {
+                    "noidung": "with",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-065",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "This is the ___ film I have ever seen.",
+            "giaithich": "So sánh nhất của “good” là “best”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "good",
+                    "ladung": false
+                },
+                {
+                    "noidung": "best",
+                    "ladung": true
+                },
+                {
+                    "noidung": "better",
+                    "ladung": false
+                },
+                {
+                    "noidung": "most good",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-066",
+            "loai": "read_and_select",
+            "danhmuc": "Science & Technology",
+            "noidung": "My new phone is ___ than my old one.",
+            "giaithich": "So sánh hơn của tính từ ngắn: faster.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "faster",
+                    "ladung": true
+                },
+                {
+                    "noidung": "fast",
+                    "ladung": false
+                },
+                {
+                    "noidung": "more fast",
+                    "ladung": false
+                },
+                {
+                    "noidung": "fastest",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-067",
+            "loai": "read_and_select",
+            "danhmuc": "Education",
+            "noidung": "She speaks English ___ than her brother.",
+            "giaithich": "Trạng từ dài dùng “more” ở so sánh hơn.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "more fluently",
+                    "ladung": true
+                },
+                {
+                    "noidung": "most fluently",
+                    "ladung": false
+                },
+                {
+                    "noidung": "fluent",
+                    "ladung": false
+                },
+                {
+                    "noidung": "fluently",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-068",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "Today is ___ day of the year.",
+            "giaithich": "So sánh nhất cần mạo từ “the”: the hottest.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "hotter",
+                    "ladung": false
+                },
+                {
+                    "noidung": "the hottest",
+                    "ladung": true
+                },
+                {
+                    "noidung": "hottest",
+                    "ladung": false
+                },
+                {
+                    "noidung": "hot",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-069",
+            "loai": "read_and_select",
+            "danhmuc": "Education",
+            "noidung": "This exercise is ___ than the previous one.",
+            "giaithich": "So sánh hơn của “easy” là “easier”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "easiest",
+                    "ladung": false
+                },
+                {
+                    "noidung": "more easy",
+                    "ladung": false
+                },
+                {
+                    "noidung": "easy",
+                    "ladung": false
+                },
+                {
+                    "noidung": "easier",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-070",
+            "loai": "read_and_select",
+            "danhmuc": "Education",
+            "noidung": "He is the ___ student in the class.",
+            "giaithich": "So sánh nhất của tính từ ngắn: tallest.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "taller",
+                    "ladung": false
+                },
+                {
+                    "noidung": "tallest",
+                    "ladung": true
+                },
+                {
+                    "noidung": "most tall",
+                    "ladung": false
+                },
+                {
+                    "noidung": "tall",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-071",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "Could you ___ me a favour?",
+            "giaithich": "Cụm cố định “do somebody a favour”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "take",
+                    "ladung": false
+                },
+                {
+                    "noidung": "do",
+                    "ladung": true
+                },
+                {
+                    "noidung": "give",
+                    "ladung": false
+                },
+                {
+                    "noidung": "make",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-072",
+            "loai": "read_and_select",
+            "danhmuc": "Work & Business",
+            "noidung": "We need to ___ a decision quickly.",
+            "giaithich": "Cụm cố định “make a decision”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "make",
+                    "ladung": true
+                },
+                {
+                    "noidung": "do",
+                    "ladung": false
+                },
+                {
+                    "noidung": "give",
+                    "ladung": false
+                },
+                {
+                    "noidung": "take",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-073",
+            "loai": "read_and_select",
+            "danhmuc": "Work & Business",
+            "noidung": "She ___ her best to finish on time.",
+            "giaithich": "Cụm cố định “do one’s best”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "made",
+                    "ladung": false
+                },
+                {
+                    "noidung": "gave",
+                    "ladung": false
+                },
+                {
+                    "noidung": "took",
+                    "ladung": false
+                },
+                {
+                    "noidung": "did",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-074",
+            "loai": "read_and_select",
+            "danhmuc": "Education",
+            "noidung": "Please ___ attention to the instructions.",
+            "giaithich": "Cụm cố định “pay attention to”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "make",
+                    "ladung": false
+                },
+                {
+                    "noidung": "do",
+                    "ladung": false
+                },
+                {
+                    "noidung": "pay",
+                    "ladung": true
+                },
+                {
+                    "noidung": "give",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-075",
+            "loai": "read_and_select",
+            "danhmuc": "Work & Business",
+            "noidung": "He ___ a mistake in the report.",
+            "giaithich": "Cụm cố định “make a mistake”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "did",
+                    "ladung": false
+                },
+                {
+                    "noidung": "took",
+                    "ladung": false
+                },
+                {
+                    "noidung": "gave",
+                    "ladung": false
+                },
+                {
+                    "noidung": "made",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-076",
+            "loai": "read_and_select",
+            "danhmuc": "Education",
+            "noidung": "They ___ a lot of progress this term.",
+            "giaithich": "Cụm cố định “make progress”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "did",
+                    "ladung": false
+                },
+                {
+                    "noidung": "made",
+                    "ladung": true
+                },
+                {
+                    "noidung": "took",
+                    "ladung": false
+                },
+                {
+                    "noidung": "gave",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-077",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "I need to ___ an appointment with the dentist.",
+            "giaithich": "Cụm cố định “make an appointment”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "take",
+                    "ladung": false
+                },
+                {
+                    "noidung": "give",
+                    "ladung": false
+                },
+                {
+                    "noidung": "make",
+                    "ladung": true
+                },
+                {
+                    "noidung": "do",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-078",
+            "loai": "read_and_select",
+            "danhmuc": "Daily Life",
+            "noidung": "She ___ part in the competition.",
+            "giaithich": "Cụm cố định “take part in”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "gave",
+                    "ladung": false
+                },
+                {
+                    "noidung": "did",
+                    "ladung": false
+                },
+                {
+                    "noidung": "made",
+                    "ladung": false
+                },
+                {
+                    "noidung": "took",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-079",
+            "loai": "read_and_select",
+            "danhmuc": "Work & Business",
+            "noidung": "We should ___ advantage of this opportunity.",
+            "giaithich": "Cụm cố định “take advantage of”.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "give",
+                    "ladung": false
+                },
+                {
+                    "noidung": "take",
+                    "ladung": true
+                },
+                {
+                    "noidung": "make",
+                    "ladung": false
+                },
+                {
+                    "noidung": "do",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ras-080",
+            "loai": "read_and_select",
+            "danhmuc": "Education",
+            "noidung": "The teacher ___ us some advice.",
+            "giaithich": "Cụm cố định “give somebody advice”.",
+            "dokho": 2,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "did",
+                    "ladung": false
+                },
+                {
+                    "noidung": "gave",
+                    "ladung": true
+                },
+                {
+                    "noidung": "made",
+                    "ladung": false
+                },
+                {
+                    "noidung": "took",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-001",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Daily Life",
+            "noidung": "Remember to ___ off the lights before leaving.",
+            "giaithich": "“Turn off” là tắt thiết bị.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "turn",
+                    "ladung": true
+                },
+                {
+                    "noidung": "put",
+                    "ladung": false
+                },
+                {
+                    "noidung": "take",
+                    "ladung": false
+                },
+                {
+                    "noidung": "set",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-002",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Daily Life",
+            "noidung": "I need to ___ some money from the bank.",
+            "giaithich": "“Withdraw money” là rút tiền.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "pull",
+                    "ladung": false
+                },
+                {
+                    "noidung": "collect",
+                    "ladung": false
+                },
+                {
+                    "noidung": "withdraw",
+                    "ladung": true
+                },
+                {
+                    "noidung": "remove",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-003",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Daily Life",
+            "noidung": "She ___ the dishes after dinner.",
+            "giaithich": "“Wash the dishes” là rửa bát đĩa.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "washed",
+                    "ladung": true
+                },
+                {
+                    "noidung": "brushed",
+                    "ladung": false
+                },
+                {
+                    "noidung": "swept",
+                    "ladung": false
+                },
+                {
+                    "noidung": "cleaned",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-004",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Daily Life",
+            "noidung": "We ran out of milk, so I went to the ___.",
+            "giaithich": "Nơi mua thực phẩm là siêu thị.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "supermarket",
+                    "ladung": true
+                },
+                {
+                    "noidung": "garage",
+                    "ladung": false
+                },
+                {
+                    "noidung": "library",
+                    "ladung": false
+                },
+                {
+                    "noidung": "pharmacy",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-005",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Daily Life",
+            "noidung": "He ___ the rubbish every Tuesday.",
+            "giaithich": "“Take out the rubbish” là đổ rác.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "takes off",
+                    "ladung": false
+                },
+                {
+                    "noidung": "takes up",
+                    "ladung": false
+                },
+                {
+                    "noidung": "takes out",
+                    "ladung": true
+                },
+                {
+                    "noidung": "takes after",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-006",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Daily Life",
+            "noidung": "Could you ___ the table for dinner?",
+            "giaithich": "“Set the table” là bày bàn ăn.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "make",
+                    "ladung": false
+                },
+                {
+                    "noidung": "set",
+                    "ladung": true
+                },
+                {
+                    "noidung": "place",
+                    "ladung": false
+                },
+                {
+                    "noidung": "put",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-007",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Daily Life",
+            "noidung": "The kettle is ___; would you like some tea?",
+            "giaithich": "Ấm nước sôi dùng “boiling”.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "boiling",
+                    "ladung": true
+                },
+                {
+                    "noidung": "roasting",
+                    "ladung": false
+                },
+                {
+                    "noidung": "baking",
+                    "ladung": false
+                },
+                {
+                    "noidung": "frying",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-008",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Daily Life",
+            "noidung": "Please ___ your shoes before entering.",
+            "giaithich": "Vào nhà thường cởi giày: remove.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "take out",
+                    "ladung": false
+                },
+                {
+                    "noidung": "remove",
+                    "ladung": true
+                },
+                {
+                    "noidung": "put on",
+                    "ladung": false
+                },
+                {
+                    "noidung": "put off",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-009",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Daily Life",
+            "noidung": "He ___ his room every weekend.",
+            "giaithich": "Chủ ngữ số ít dùng “tidies”.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "tidies",
+                    "ladung": true
+                },
+                {
+                    "noidung": "tidying",
+                    "ladung": false
+                },
+                {
+                    "noidung": "tidied",
+                    "ladung": false
+                },
+                {
+                    "noidung": "tidy",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-010",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Daily Life",
+            "noidung": "I ___ the door and went inside.",
+            "giaithich": "Hành động trong quá khứ dùng “unlocked”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "unlocks",
+                    "ladung": false
+                },
+                {
+                    "noidung": "unlocked",
+                    "ladung": true
+                },
+                {
+                    "noidung": "unlock",
+                    "ladung": false
+                },
+                {
+                    "noidung": "unlocking",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-011",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Education",
+            "noidung": "The teacher gave us a detailed ___ of the topic.",
+            "giaithich": "Sau tính từ cần danh từ “explanation”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "explain",
+                    "ladung": false
+                },
+                {
+                    "noidung": "explanation",
+                    "ladung": true
+                },
+                {
+                    "noidung": "explained",
+                    "ladung": false
+                },
+                {
+                    "noidung": "explaining",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-012",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Education",
+            "noidung": "Her ___ in mathematics impressed the professor.",
+            "giaithich": "Sau “Her” cần danh từ “ability”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "able",
+                    "ladung": false
+                },
+                {
+                    "noidung": "ably",
+                    "ladung": false
+                },
+                {
+                    "noidung": "ability",
+                    "ladung": true
+                },
+                {
+                    "noidung": "enable",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-013",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Education",
+            "noidung": "Students should develop critical ___ skills.",
+            "giaithich": "Cụm “critical thinking skills”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "thinking",
+                    "ladung": true
+                },
+                {
+                    "noidung": "thought",
+                    "ladung": false
+                },
+                {
+                    "noidung": "thinker",
+                    "ladung": false
+                },
+                {
+                    "noidung": "think",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-014",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Education",
+            "noidung": "The course requires a high level of ___.",
+            "giaithich": "Sau “level of” cần danh từ “commitment”.",
+            "dokho": 4,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "committed",
+                    "ladung": false
+                },
+                {
+                    "noidung": "commitment",
+                    "ladung": true
+                },
+                {
+                    "noidung": "commit",
+                    "ladung": false
+                },
+                {
+                    "noidung": "committing",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-015",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Education",
+            "noidung": "He received a scholarship for his academic ___.",
+            "giaithich": "Sau “academic” cần danh từ “achievement”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "achieved",
+                    "ladung": false
+                },
+                {
+                    "noidung": "achieving",
+                    "ladung": false
+                },
+                {
+                    "noidung": "achieve",
+                    "ladung": false
+                },
+                {
+                    "noidung": "achievement",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-016",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Education",
+            "noidung": "The library provides free ___ to online journals.",
+            "giaithich": "“Access to” là quyền truy cập.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "accessible",
+                    "ladung": false
+                },
+                {
+                    "noidung": "accessed",
+                    "ladung": false
+                },
+                {
+                    "noidung": "access",
+                    "ladung": true
+                },
+                {
+                    "noidung": "accessing",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-017",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Education",
+            "noidung": "We need more ___ about the new programme.",
+            "giaithich": "“Information” là danh từ không đếm được.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "information",
+                    "ladung": true
+                },
+                {
+                    "noidung": "inform",
+                    "ladung": false
+                },
+                {
+                    "noidung": "informed",
+                    "ladung": false
+                },
+                {
+                    "noidung": "informative",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-018",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Education",
+            "noidung": "The exam was surprisingly ___.",
+            "giaithich": "Sau “was” cần tính từ “difficult”.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "difficult",
+                    "ladung": true
+                },
+                {
+                    "noidung": "difficultly",
+                    "ladung": false
+                },
+                {
+                    "noidung": "difficulties",
+                    "ladung": false
+                },
+                {
+                    "noidung": "difficulty",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-019",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Education",
+            "noidung": "She has a strong ___ for languages.",
+            "giaithich": "“A strong talent for” là có năng khiếu.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "talent",
+                    "ladung": true
+                },
+                {
+                    "noidung": "talented",
+                    "ladung": false
+                },
+                {
+                    "noidung": "talents",
+                    "ladung": false
+                },
+                {
+                    "noidung": "talentless",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-020",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Education",
+            "noidung": "The school encourages ___ among students.",
+            "giaithich": "Sau động từ cần danh từ “cooperation”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "cooperate",
+                    "ladung": false
+                },
+                {
+                    "noidung": "cooperation",
+                    "ladung": true
+                },
+                {
+                    "noidung": "cooperative",
+                    "ladung": false
+                },
+                {
+                    "noidung": "cooperatively",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-021",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Education",
+            "noidung": "His ___ was praised by the committee.",
+            "giaithich": "Sau “His” cần danh từ “performance”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "perform",
+                    "ladung": false
+                },
+                {
+                    "noidung": "performance",
+                    "ladung": true
+                },
+                {
+                    "noidung": "performing",
+                    "ladung": false
+                },
+                {
+                    "noidung": "performed",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-022",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Education",
+            "noidung": "The lecture was both informative and ___.",
+            "giaithich": "Song song với “informative” cần tính từ “inspiring”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "inspiring",
+                    "ladung": true
+                },
+                {
+                    "noidung": "inspired",
+                    "ladung": false
+                },
+                {
+                    "noidung": "inspire",
+                    "ladung": false
+                },
+                {
+                    "noidung": "inspiration",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-023",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Education",
+            "noidung": "Students must ___ their assignments by Friday.",
+            "giaithich": "Sau “must” cần động từ nguyên mẫu.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "submitting",
+                    "ladung": false
+                },
+                {
+                    "noidung": "submit",
+                    "ladung": true
+                },
+                {
+                    "noidung": "submission",
+                    "ladung": false
+                },
+                {
+                    "noidung": "submitted",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-024",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Education",
+            "noidung": "The university offers a wide ___ of courses.",
+            "giaithich": "“A wide range of” là nhiều loại.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "range",
+                    "ladung": true
+                },
+                {
+                    "noidung": "ranging",
+                    "ladung": false
+                },
+                {
+                    "noidung": "arrangement",
+                    "ladung": false
+                },
+                {
+                    "noidung": "arrange",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-025",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Education",
+            "noidung": "Reading regularly improves your ___.",
+            "giaithich": "“Vocabulary” là từ vựng.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "vocabulary",
+                    "ladung": true
+                },
+                {
+                    "noidung": "vocalist",
+                    "ladung": false
+                },
+                {
+                    "noidung": "vocal",
+                    "ladung": false
+                },
+                {
+                    "noidung": "vocally",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-026",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Work & Business",
+            "noidung": "The company plans to ___ a new product next month.",
+            "giaithich": "Sau “to” cần động từ nguyên mẫu “launch”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "launching",
+                    "ladung": false
+                },
+                {
+                    "noidung": "lunch",
+                    "ladung": false
+                },
+                {
+                    "noidung": "launch",
+                    "ladung": true
+                },
+                {
+                    "noidung": "launched",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-027",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Work & Business",
+            "noidung": "We need to ___ the budget before the meeting.",
+            "giaithich": "Sau “to” cần động từ “review”.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "reviewer",
+                    "ladung": false
+                },
+                {
+                    "noidung": "revision",
+                    "ladung": false
+                },
+                {
+                    "noidung": "review",
+                    "ladung": true
+                },
+                {
+                    "noidung": "revising",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-028",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Work & Business",
+            "noidung": "The manager will ___ the new employees tomorrow.",
+            "giaithich": "Sau “will” cần động từ nguyên mẫu.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "trained",
+                    "ladung": false
+                },
+                {
+                    "noidung": "train",
+                    "ladung": true
+                },
+                {
+                    "noidung": "trainer",
+                    "ladung": false
+                },
+                {
+                    "noidung": "training",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-029",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Work & Business",
+            "noidung": "Customer ___ is important for every business.",
+            "giaithich": "Sau “Customer” cần danh từ “satisfaction”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "satisfaction",
+                    "ladung": true
+                },
+                {
+                    "noidung": "satisfy",
+                    "ladung": false
+                },
+                {
+                    "noidung": "satisfied",
+                    "ladung": false
+                },
+                {
+                    "noidung": "satisfying",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-030",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Work & Business",
+            "noidung": "The team reached an ___ after a long discussion.",
+            "giaithich": "Sau “an” cần danh từ “agreement”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "agreeing",
+                    "ladung": false
+                },
+                {
+                    "noidung": "agreeable",
+                    "ladung": false
+                },
+                {
+                    "noidung": "agreement",
+                    "ladung": true
+                },
+                {
+                    "noidung": "agree",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-031",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Work & Business",
+            "noidung": "She was promoted to a ___ position.",
+            "giaithich": "Trước danh từ cần tính từ “senior”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "sensibly",
+                    "ladung": false
+                },
+                {
+                    "noidung": "seniority",
+                    "ladung": false
+                },
+                {
+                    "noidung": "senior",
+                    "ladung": true
+                },
+                {
+                    "noidung": "sense",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-032",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Work & Business",
+            "noidung": "The report provides a clear ___ of the situation.",
+            "giaithich": "Sau “a clear” cần danh từ “analysis”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "analysis",
+                    "ladung": true
+                },
+                {
+                    "noidung": "analytical",
+                    "ladung": false
+                },
+                {
+                    "noidung": "analysed",
+                    "ladung": false
+                },
+                {
+                    "noidung": "analyse",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-033",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Work & Business",
+            "noidung": "We must ___ with the new regulations.",
+            "giaithich": "“Comply with” là tuân thủ.",
+            "dokho": 4,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "compile",
+                    "ladung": false
+                },
+                {
+                    "noidung": "comply",
+                    "ladung": true
+                },
+                {
+                    "noidung": "complete",
+                    "ladung": false
+                },
+                {
+                    "noidung": "complaint",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-034",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Work & Business",
+            "noidung": "The company’s ___ has increased this year.",
+            "giaithich": "“Revenue” là doanh thu.",
+            "dokho": 4,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "review",
+                    "ladung": false
+                },
+                {
+                    "noidung": "revision",
+                    "ladung": false
+                },
+                {
+                    "noidung": "revenue",
+                    "ladung": true
+                },
+                {
+                    "noidung": "revolve",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-035",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Work & Business",
+            "noidung": "He signed a two-year ___ with the firm.",
+            "giaithich": "“Sign a contract” là ký hợp đồng.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "contact",
+                    "ladung": false
+                },
+                {
+                    "noidung": "contest",
+                    "ladung": false
+                },
+                {
+                    "noidung": "contract",
+                    "ladung": true
+                },
+                {
+                    "noidung": "contrast",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-036",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Work & Business",
+            "noidung": "The meeting was ___ to next week.",
+            "giaithich": "Câu bị động dùng dạng V3 “postponed”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "postpone",
+                    "ladung": false
+                },
+                {
+                    "noidung": "postponement",
+                    "ladung": false
+                },
+                {
+                    "noidung": "postponing",
+                    "ladung": false
+                },
+                {
+                    "noidung": "postponed",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-037",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Work & Business",
+            "noidung": "Our department is responsible for product ___.",
+            "giaithich": "Sau “product” cần danh từ “development”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "developing",
+                    "ladung": false
+                },
+                {
+                    "noidung": "develop",
+                    "ladung": false
+                },
+                {
+                    "noidung": "development",
+                    "ladung": true
+                },
+                {
+                    "noidung": "developed",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-038",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Work & Business",
+            "noidung": "The CEO gave an ___ speech at the conference.",
+            "giaithich": "Trước danh từ cần tính từ “inspiring”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "inspire",
+                    "ladung": false
+                },
+                {
+                    "noidung": "inspiring",
+                    "ladung": true
+                },
+                {
+                    "noidung": "inspired",
+                    "ladung": false
+                },
+                {
+                    "noidung": "inspiration",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-039",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Work & Business",
+            "noidung": "We are looking for candidates with strong ___ skills.",
+            "giaithich": "Cụm “communication skills”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "communicative",
+                    "ladung": false
+                },
+                {
+                    "noidung": "communication",
+                    "ladung": true
+                },
+                {
+                    "noidung": "communicate",
+                    "ladung": false
+                },
+                {
+                    "noidung": "communicated",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-040",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Work & Business",
+            "noidung": "The new policy will ___ all employees.",
+            "giaithich": "Sau “will” cần động từ “affect”.",
+            "dokho": 4,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "affect",
+                    "ladung": true
+                },
+                {
+                    "noidung": "effect",
+                    "ladung": false
+                },
+                {
+                    "noidung": "affection",
+                    "ladung": false
+                },
+                {
+                    "noidung": "effective",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-041",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Travel",
+            "noidung": "We booked a ___ room with a sea view.",
+            "giaithich": "Trước danh từ cần tính từ “double”.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "doubled",
+                    "ladung": false
+                },
+                {
+                    "noidung": "doubly",
+                    "ladung": false
+                },
+                {
+                    "noidung": "double",
+                    "ladung": true
+                },
+                {
+                    "noidung": "doubling",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-042",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Travel",
+            "noidung": "The flight was ___ due to bad weather.",
+            "giaithich": "Câu bị động dùng V3 “cancelled”.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "cancel",
+                    "ladung": false
+                },
+                {
+                    "noidung": "cancelled",
+                    "ladung": true
+                },
+                {
+                    "noidung": "cancelling",
+                    "ladung": false
+                },
+                {
+                    "noidung": "cancellation",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-043",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Travel",
+            "noidung": "Please keep your passport in a safe ___.",
+            "giaithich": "Sau “a safe” cần danh từ “place”.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "placement",
+                    "ladung": false
+                },
+                {
+                    "noidung": "placed",
+                    "ladung": false
+                },
+                {
+                    "noidung": "placing",
+                    "ladung": false
+                },
+                {
+                    "noidung": "place",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-044",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Travel",
+            "noidung": "The tour guide gave us a detailed ___ of the route.",
+            "giaithich": "Sau “a detailed” cần danh từ “description”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "described",
+                    "ladung": false
+                },
+                {
+                    "noidung": "describe",
+                    "ladung": false
+                },
+                {
+                    "noidung": "descriptive",
+                    "ladung": false
+                },
+                {
+                    "noidung": "description",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-045",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Travel",
+            "noidung": "Travellers should buy travel ___ before the trip.",
+            "giaithich": "“Travel insurance” là bảo hiểm du lịch.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "insure",
+                    "ladung": false
+                },
+                {
+                    "noidung": "insured",
+                    "ladung": false
+                },
+                {
+                    "noidung": "insurance",
+                    "ladung": true
+                },
+                {
+                    "noidung": "insuring",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-046",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Travel",
+            "noidung": "The hotel offers a ___ breakfast.",
+            "giaithich": "“Complimentary breakfast” là bữa sáng miễn phí.",
+            "dokho": 4,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "compliment",
+                    "ladung": false
+                },
+                {
+                    "noidung": "complement",
+                    "ladung": false
+                },
+                {
+                    "noidung": "complimentary",
+                    "ladung": true
+                },
+                {
+                    "noidung": "completion",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-047",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Travel",
+            "noidung": "We had to ___ our plans because of the storm.",
+            "giaithich": "“Change plans” là thay đổi kế hoạch.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "charge",
+                    "ladung": false
+                },
+                {
+                    "noidung": "change",
+                    "ladung": true
+                },
+                {
+                    "noidung": "challenge",
+                    "ladung": false
+                },
+                {
+                    "noidung": "chance",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-048",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Travel",
+            "noidung": "The airport is about ten kilometres ___.",
+            "giaithich": "“Ten kilometres away” chỉ khoảng cách.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "along",
+                    "ladung": false
+                },
+                {
+                    "noidung": "far",
+                    "ladung": false
+                },
+                {
+                    "noidung": "near",
+                    "ladung": false
+                },
+                {
+                    "noidung": "away",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-049",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Travel",
+            "noidung": "The city is famous for its historical ___.",
+            "giaithich": "Sau “historical” cần danh từ “attractions”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "attractive",
+                    "ladung": false
+                },
+                {
+                    "noidung": "attract",
+                    "ladung": false
+                },
+                {
+                    "noidung": "attracting",
+                    "ladung": false
+                },
+                {
+                    "noidung": "attractions",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-050",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Travel",
+            "noidung": "You need to ___ your seat in advance.",
+            "giaithich": "Sau “to” cần động từ “reserve”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "reserving",
+                    "ladung": false
+                },
+                {
+                    "noidung": "reserved",
+                    "ladung": false
+                },
+                {
+                    "noidung": "reserve",
+                    "ladung": true
+                },
+                {
+                    "noidung": "reservation",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-051",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Travel",
+            "noidung": "The journey took ___ longer than expected.",
+            "giaithich": "“Much” bổ nghĩa cho so sánh hơn “longer”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "too",
+                    "ladung": false
+                },
+                {
+                    "noidung": "many",
+                    "ladung": false
+                },
+                {
+                    "noidung": "much",
+                    "ladung": true
+                },
+                {
+                    "noidung": "very",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-052",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Travel",
+            "noidung": "We arrived at the hotel at ___ after midnight.",
+            "giaithich": "“Around” nghĩa là khoảng chừng.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "along",
+                    "ladung": false
+                },
+                {
+                    "noidung": "around",
+                    "ladung": true
+                },
+                {
+                    "noidung": "among",
+                    "ladung": false
+                },
+                {
+                    "noidung": "across",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-053",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Travel",
+            "noidung": "The view from the mountain was absolutely ___.",
+            "giaithich": "Sau “absolutely” cần tính từ “breathtaking”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "breathtaking",
+                    "ladung": true
+                },
+                {
+                    "noidung": "breathe",
+                    "ladung": false
+                },
+                {
+                    "noidung": "breathed",
+                    "ladung": false
+                },
+                {
+                    "noidung": "breath",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-054",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Travel",
+            "noidung": "Local people were very ___ to visitors.",
+            "giaithich": "Sau “very” cần tính từ “friendly”.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "friend",
+                    "ladung": false
+                },
+                {
+                    "noidung": "friendship",
+                    "ladung": false
+                },
+                {
+                    "noidung": "friendly",
+                    "ladung": true
+                },
+                {
+                    "noidung": "friendliness",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-055",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Travel",
+            "noidung": "She prefers to travel by ___ rather than by plane.",
+            "giaithich": "Sau “by” cần danh từ phương tiện “train”.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "training",
+                    "ladung": false
+                },
+                {
+                    "noidung": "train",
+                    "ladung": true
+                },
+                {
+                    "noidung": "trained",
+                    "ladung": false
+                },
+                {
+                    "noidung": "trainer",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-fib-056",
+            "loai": "fill_in_the_blanks",
+            "danhmuc": "Travel",
+            "noidung": "The ancient temple is a popular tourist ___.",
+            "giaithich": "“Tourist destination” là điểm đến du lịch.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "destiny",
+                    "ladung": false
+                },
+                {
+                    "noidung": "destine",
+                    "ladung": false
+                },
+                {
+                    "noidung": "destined",
+                    "ladung": false
+                },
+                {
+                    "noidung": "destination",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-001",
+            "loai": "read_and_complete",
+            "danhmuc": "Education",
+            "noidung": "Many learners feel nervous before an exam. Taking a few deep breaths can help them ___.",
+            "giaithich": "Sau “help them” dùng động từ nguyên mẫu “stay calm”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "staying calm",
+                    "ladung": false
+                },
+                {
+                    "noidung": "stay calm",
+                    "ladung": true
+                },
+                {
+                    "noidung": "stays calm",
+                    "ladung": false
+                },
+                {
+                    "noidung": "stayed calm",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-002",
+            "loai": "read_and_complete",
+            "danhmuc": "Travel",
+            "noidung": "The museum is free on Sundays, so many families ___ there.",
+            "giaithich": "Chủ ngữ số nhiều dùng động từ nguyên mẫu.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "visit",
+                    "ladung": true
+                },
+                {
+                    "noidung": "visiting",
+                    "ladung": false
+                },
+                {
+                    "noidung": "visited",
+                    "ladung": false
+                },
+                {
+                    "noidung": "visits",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-003",
+            "loai": "read_and_complete",
+            "danhmuc": "Science & Technology",
+            "noidung": "The city has planted more trees because they ___ the air.",
+            "giaithich": "Sau “they” dùng động từ nguyên mẫu.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "cleans",
+                    "ladung": false
+                },
+                {
+                    "noidung": "cleaning",
+                    "ladung": false
+                },
+                {
+                    "noidung": "cleaned",
+                    "ladung": false
+                },
+                {
+                    "noidung": "clean",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-004",
+            "loai": "read_and_complete",
+            "danhmuc": "Travel",
+            "noidung": "She set an alarm ___ she would not miss the bus.",
+            "giaithich": "“So that” chỉ mục đích.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "despite",
+                    "ladung": false
+                },
+                {
+                    "noidung": "so that",
+                    "ladung": true
+                },
+                {
+                    "noidung": "because of",
+                    "ladung": false
+                },
+                {
+                    "noidung": "although",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-005",
+            "loai": "read_and_complete",
+            "danhmuc": "Daily Life",
+            "noidung": "The restaurant was full, ___ we decided to eat at home.",
+            "giaithich": "“So” chỉ kết quả.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "because",
+                    "ladung": false
+                },
+                {
+                    "noidung": "unless",
+                    "ladung": false
+                },
+                {
+                    "noidung": "although",
+                    "ladung": false
+                },
+                {
+                    "noidung": "so",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-006",
+            "loai": "read_and_complete",
+            "danhmuc": "Education",
+            "noidung": "He studied hard; ___, he passed the exam easily.",
+            "giaithich": "“Therefore” chỉ kết quả logic.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "although",
+                    "ladung": false
+                },
+                {
+                    "noidung": "however",
+                    "ladung": false
+                },
+                {
+                    "noidung": "therefore",
+                    "ladung": true
+                },
+                {
+                    "noidung": "otherwise",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-007",
+            "loai": "read_and_complete",
+            "danhmuc": "Daily Life",
+            "noidung": "The weather was terrible. ___, the match continued.",
+            "giaithich": "“However” chỉ sự tương phản.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "Therefore",
+                    "ladung": false
+                },
+                {
+                    "noidung": "However",
+                    "ladung": true
+                },
+                {
+                    "noidung": "Because",
+                    "ladung": false
+                },
+                {
+                    "noidung": "Moreover",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-008",
+            "loai": "read_and_complete",
+            "danhmuc": "Work & Business",
+            "noidung": "You should save money ___ you want to buy a house.",
+            "giaithich": "“If” chỉ điều kiện.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "despite",
+                    "ladung": false
+                },
+                {
+                    "noidung": "although",
+                    "ladung": false
+                },
+                {
+                    "noidung": "if",
+                    "ladung": true
+                },
+                {
+                    "noidung": "unless",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-009",
+            "loai": "read_and_complete",
+            "danhmuc": "Science & Technology",
+            "noidung": "The new smartphone is expensive; ___, it sells very well.",
+            "giaithich": "“Nevertheless” chỉ tương phản.",
+            "dokho": 4,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "unless",
+                    "ladung": false
+                },
+                {
+                    "noidung": "because",
+                    "ladung": false
+                },
+                {
+                    "noidung": "nevertheless",
+                    "ladung": true
+                },
+                {
+                    "noidung": "so that",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-010",
+            "loai": "read_and_complete",
+            "danhmuc": "Daily Life",
+            "noidung": "___ the rain, the festival took place as planned.",
+            "giaithich": "“Despite + danh từ/cụm danh từ”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "Although",
+                    "ladung": false
+                },
+                {
+                    "noidung": "Despite",
+                    "ladung": true
+                },
+                {
+                    "noidung": "Because",
+                    "ladung": false
+                },
+                {
+                    "noidung": "Unless",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-011",
+            "loai": "read_and_complete",
+            "danhmuc": "Work & Business",
+            "noidung": "The company hired more staff ___ the workload increased.",
+            "giaithich": "“Because” đứng trước mệnh đề chỉ nguyên nhân.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "unless",
+                    "ladung": false
+                },
+                {
+                    "noidung": "because",
+                    "ladung": true
+                },
+                {
+                    "noidung": "although",
+                    "ladung": false
+                },
+                {
+                    "noidung": "despite",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-012",
+            "loai": "read_and_complete",
+            "danhmuc": "Education",
+            "noidung": "She spoke slowly ___ everyone could understand her.",
+            "giaithich": "“So that” chỉ mục đích.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "despite",
+                    "ladung": false
+                },
+                {
+                    "noidung": "unless",
+                    "ladung": false
+                },
+                {
+                    "noidung": "although",
+                    "ladung": false
+                },
+                {
+                    "noidung": "so that",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-013",
+            "loai": "read_and_complete",
+            "danhmuc": "Travel",
+            "noidung": "I will call you ___ I arrive at the airport.",
+            "giaithich": "“As soon as” chỉ thời điểm ngay sau khi.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "as soon as",
+                    "ladung": true
+                },
+                {
+                    "noidung": "unless",
+                    "ladung": false
+                },
+                {
+                    "noidung": "although",
+                    "ladung": false
+                },
+                {
+                    "noidung": "despite",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-014",
+            "loai": "read_and_complete",
+            "danhmuc": "Education",
+            "noidung": "The library was quiet, ___ the students could concentrate.",
+            "giaithich": "“So” chỉ kết quả.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "unless",
+                    "ladung": false
+                },
+                {
+                    "noidung": "despite",
+                    "ladung": false
+                },
+                {
+                    "noidung": "so",
+                    "ladung": true
+                },
+                {
+                    "noidung": "although",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-015",
+            "loai": "read_and_complete",
+            "danhmuc": "Work & Business",
+            "noidung": "___ he was tired, he finished the report.",
+            "giaithich": "“Although” đứng trước mệnh đề tương phản.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "Unless",
+                    "ladung": false
+                },
+                {
+                    "noidung": "Despite",
+                    "ladung": false
+                },
+                {
+                    "noidung": "Although",
+                    "ladung": true
+                },
+                {
+                    "noidung": "Because of",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-016",
+            "loai": "read_and_complete",
+            "danhmuc": "Daily Life",
+            "noidung": "The road was closed ___ the accident.",
+            "giaithich": "“Because of + danh từ/cụm danh từ”.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "unless",
+                    "ladung": false
+                },
+                {
+                    "noidung": "so that",
+                    "ladung": false
+                },
+                {
+                    "noidung": "because of",
+                    "ladung": true
+                },
+                {
+                    "noidung": "although",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-017",
+            "loai": "read_and_complete",
+            "danhmuc": "Daily Life",
+            "noidung": "We kept the windows open ___ the room was hot.",
+            "giaithich": "“Because” chỉ nguyên nhân.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "although",
+                    "ladung": false
+                },
+                {
+                    "noidung": "so that",
+                    "ladung": false
+                },
+                {
+                    "noidung": "despite",
+                    "ladung": false
+                },
+                {
+                    "noidung": "because",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-018",
+            "loai": "read_and_complete",
+            "danhmuc": "Education",
+            "noidung": "The team practised every day ___ improve their performance.",
+            "giaithich": "“In order to + V” chỉ mục đích.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "despite",
+                    "ladung": false
+                },
+                {
+                    "noidung": "because",
+                    "ladung": false
+                },
+                {
+                    "noidung": "although",
+                    "ladung": false
+                },
+                {
+                    "noidung": "in order to",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-019",
+            "loai": "read_and_complete",
+            "danhmuc": "Work & Business",
+            "noidung": "The shop offers discounts ___ attract more customers.",
+            "giaithich": "“To + V” chỉ mục đích.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "because",
+                    "ladung": false
+                },
+                {
+                    "noidung": "although",
+                    "ladung": false
+                },
+                {
+                    "noidung": "despite",
+                    "ladung": false
+                },
+                {
+                    "noidung": "to",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-020",
+            "loai": "read_and_complete",
+            "danhmuc": "Science & Technology",
+            "noidung": "___ the high price, many people bought the new phone.",
+            "giaithich": "“Despite + danh từ/cụm danh từ”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "Despite",
+                    "ladung": true
+                },
+                {
+                    "noidung": "Because",
+                    "ladung": false
+                },
+                {
+                    "noidung": "Unless",
+                    "ladung": false
+                },
+                {
+                    "noidung": "Although",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-021",
+            "loai": "read_and_complete",
+            "danhmuc": "Travel",
+            "noidung": "The flight was delayed, ___ the passengers had to wait.",
+            "giaithich": "“So” chỉ kết quả.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "despite",
+                    "ladung": false
+                },
+                {
+                    "noidung": "unless",
+                    "ladung": false
+                },
+                {
+                    "noidung": "so",
+                    "ladung": true
+                },
+                {
+                    "noidung": "although",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-022",
+            "loai": "read_and_complete",
+            "danhmuc": "Daily Life",
+            "noidung": "He took an umbrella ___ it might rain.",
+            "giaithich": "“In case” chỉ phòng khi.",
+            "dokho": 4,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "unless",
+                    "ladung": false
+                },
+                {
+                    "noidung": "in case",
+                    "ladung": true
+                },
+                {
+                    "noidung": "although",
+                    "ladung": false
+                },
+                {
+                    "noidung": "despite",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-023",
+            "loai": "read_and_complete",
+            "danhmuc": "Education",
+            "noidung": "The teacher explained the lesson again ___ the students were confused.",
+            "giaithich": "“Because” chỉ nguyên nhân.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "despite",
+                    "ladung": false
+                },
+                {
+                    "noidung": "although",
+                    "ladung": false
+                },
+                {
+                    "noidung": "so that",
+                    "ladung": false
+                },
+                {
+                    "noidung": "because",
+                    "ladung": true
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-024",
+            "loai": "read_and_complete",
+            "danhmuc": "Travel",
+            "noidung": "You cannot enter ___ you show your ticket.",
+            "giaithich": "“Unless” nghĩa là nếu không.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "if",
+                    "ladung": false
+                },
+                {
+                    "noidung": "unless",
+                    "ladung": true
+                },
+                {
+                    "noidung": "because",
+                    "ladung": false
+                },
+                {
+                    "noidung": "although",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-025",
+            "loai": "read_and_complete",
+            "danhmuc": "Work & Business",
+            "noidung": "The café closes early ___ it is located in an office area.",
+            "giaithich": "“Because” chỉ nguyên nhân.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "because",
+                    "ladung": true
+                },
+                {
+                    "noidung": "although",
+                    "ladung": false
+                },
+                {
+                    "noidung": "despite",
+                    "ladung": false
+                },
+                {
+                    "noidung": "so that",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-026",
+            "loai": "read_and_complete",
+            "danhmuc": "Education",
+            "noidung": "She kept studying ___ she passed the final exam.",
+            "giaithich": "“Until” chỉ mốc thời gian kết thúc.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "until",
+                    "ladung": true
+                },
+                {
+                    "noidung": "despite",
+                    "ladung": false
+                },
+                {
+                    "noidung": "unless",
+                    "ladung": false
+                },
+                {
+                    "noidung": "although",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-027",
+            "loai": "read_and_complete",
+            "danhmuc": "Science & Technology",
+            "noidung": "The app is simple; ___, it is very useful.",
+            "giaithich": "“However” chỉ tương phản.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "however",
+                    "ladung": true
+                },
+                {
+                    "noidung": "because",
+                    "ladung": false
+                },
+                {
+                    "noidung": "therefore",
+                    "ladung": false
+                },
+                {
+                    "noidung": "unless",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-028",
+            "loai": "read_and_complete",
+            "danhmuc": "Travel",
+            "noidung": "The children were excited ___ the trip was cancelled.",
+            "giaithich": "“Although” chỉ tương phản.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "although",
+                    "ladung": true
+                },
+                {
+                    "noidung": "unless",
+                    "ladung": false
+                },
+                {
+                    "noidung": "because",
+                    "ladung": false
+                },
+                {
+                    "noidung": "so",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-029",
+            "loai": "read_and_complete",
+            "danhmuc": "Daily Life",
+            "noidung": "We left early ___ avoid the traffic.",
+            "giaithich": "“To + V” chỉ mục đích.",
+            "dokho": 2,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "although",
+                    "ladung": false
+                },
+                {
+                    "noidung": "despite",
+                    "ladung": false
+                },
+                {
+                    "noidung": "to",
+                    "ladung": true
+                },
+                {
+                    "noidung": "because",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-rac-030",
+            "loai": "read_and_complete",
+            "danhmuc": "Work & Business",
+            "noidung": "The manager praised the team ___ their excellent results.",
+            "giaithich": "“Because of + danh từ/cụm danh từ”.",
+            "dokho": 3,
+            "thoigian": 90,
+            "diem": 1,
+            "trangthai": "published",
+            "luachon": [
+                {
+                    "noidung": "unless",
+                    "ladung": false
+                },
+                {
+                    "noidung": "although",
+                    "ladung": false
+                },
+                {
+                    "noidung": "because of",
+                    "ladung": true
+                },
+                {
+                    "noidung": "so that",
+                    "ladung": false
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ir-001",
+            "loai": "interactive_reading",
+            "danhmuc": "Science & Technology",
+            "noidung": "Sleep is not simply a time when the brain switches off. During sleep, the brain organises the information it collected during the day and stores important memories. Students who sleep well before an exam usually remember more than those who stay up all night. However, sleeping too little over many weeks can weaken attention and slow down decision-making. Experts therefore recommend a regular bedtime, a dark room and no screens for at least an hour before sleep.",
+            "giaithich": "Bài đọc: Sleep and Learning",
+            "dokho": 4,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published",
+            "cauhoi_doc": [
+                {
+                    "loai": "identify_idea",
+                    "noidung": "What is the main idea of the passage?",
+                    "giaithich": "Đoạn văn nhấn mạnh vai trò của giấc ngủ với trí nhớ và học tập.",
+                    "luachon": [
+                        {
+                            "noidung": "Sleep helps the brain organise memories and supports learning.",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "Students should sleep only before exams.",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "Screens improve sleep quality.",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "Sleep is a waste of study time.",
+                            "ladung": false
+                        }
+                    ]
+                },
+                {
+                    "loai": "complete_sentence",
+                    "noidung": "According to the passage, sleeping too little for many weeks can ___.",
+                    "giaithich": "Cuối đoạn nêu thiếu ngủ kéo dài làm suy giảm chú ý và chậm ra quyết định.",
+                    "luachon": [
+                        {
+                            "noidung": "improve memory quickly",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "weaken attention and slow down decision-making",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "make screens brighter",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "replace the need for revision",
+                            "ladung": false
+                        }
+                    ]
+                },
+                {
+                    "loai": "title_passage",
+                    "noidung": "Choose the best title for the passage.",
+                    "giaithich": "Tiêu đề bao quát mối liên hệ giữa giấc ngủ và việc học.",
+                    "dapandung": "Why Sleep Matters for Learning"
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ir-002",
+            "loai": "interactive_reading",
+            "danhmuc": "Science & Technology",
+            "noidung": "Every year, millions of tonnes of plastic end up in the ocean. Some of it floats on the surface, but much of it sinks or breaks into tiny pieces called microplastics. Fish often mistake these pieces for food, and the plastic then enters the food chain. Scientists warn that cleaning the ocean alone cannot solve the problem. Reducing single-use plastic and improving waste collection on land are far more effective long-term solutions.",
+            "giaithich": "Bài đọc: Plastic Waste in the Ocean",
+            "dokho": 5,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published",
+            "cauhoi_doc": [
+                {
+                    "loai": "identify_idea",
+                    "noidung": "What does the passage mainly discuss?",
+                    "giaithich": "Đoạn văn nêu nguồn gốc, hậu quả và giải pháp cho rác thải nhựa đại dương.",
+                    "luachon": [
+                        {
+                            "noidung": "How to build stronger ships.",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "The causes and consequences of ocean plastic, and better solutions.",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "The history of plastic production.",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "Why fish are becoming larger.",
+                            "ladung": false
+                        }
+                    ]
+                },
+                {
+                    "loai": "complete_sentence",
+                    "noidung": "According to the passage, fish sometimes eat plastic because ___.",
+                    "giaithich": "Đoạn văn nói cá nhầm các mảnh nhựa là thức ăn.",
+                    "luachon": [
+                        {
+                            "noidung": "it tastes sweet",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "they mistake it for food",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "it is very large",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "scientists feed them",
+                            "ladung": false
+                        }
+                    ]
+                },
+                {
+                    "loai": "highlight_answer",
+                    "noidung": "What do scientists say is more effective in the long term?",
+                    "giaithich": "Đoạn cuối nêu giải pháp bền vững hơn là giảm nhựa dùng một lần và cải thiện thu gom rác.",
+                    "dapandung": "Reducing single-use plastic and improving waste collection on land."
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ir-003",
+            "loai": "interactive_reading",
+            "danhmuc": "Education",
+            "noidung": "Online courses have made education available to people who cannot attend a traditional school. Learners can study at their own pace and review difficult lessons as often as they need. On the other hand, online study requires strong self-discipline. Without a teacher nearby, some students delay their work or give up entirely. Successful online learners usually set a fixed schedule, join discussion groups and ask questions whenever something is unclear.",
+            "giaithich": "Bài đọc: Learning Online",
+            "dokho": 4,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published",
+            "cauhoi_doc": [
+                {
+                    "loai": "identify_idea",
+                    "noidung": "What is the passage mainly about?",
+                    "giaithich": "Đoạn văn nêu cả lợi ích và yêu cầu tự giác của học trực tuyến.",
+                    "luachon": [
+                        {
+                            "noidung": "The advantages of online learning and the discipline it requires.",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "Why traditional schools are always better.",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "The cost of internet connections.",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "How to design a website.",
+                            "ladung": false
+                        }
+                    ]
+                },
+                {
+                    "loai": "complete_sentence",
+                    "noidung": "According to the passage, successful online learners ___.",
+                    "giaithich": "Đoạn cuối liệt kê thói quen của người học trực tuyến thành công.",
+                    "luachon": [
+                        {
+                            "noidung": "never review lessons",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "study without any plan",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "set a fixed schedule and ask questions",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "avoid discussion groups",
+                            "ladung": false
+                        }
+                    ]
+                },
+                {
+                    "loai": "title_passage",
+                    "noidung": "Choose the best title for the passage.",
+                    "giaithich": "Tiêu đề thể hiện cả tự do và trách nhiệm của người học.",
+                    "dapandung": "Online Learning: Freedom and Responsibility"
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ir-004",
+            "loai": "interactive_reading",
+            "danhmuc": "Daily Life",
+            "noidung": "In many cities, people are turning unused roofs and small courtyards into gardens. These gardens provide fresh vegetables, reduce summer heat and give neighbours a chance to meet. Some local governments support the idea by offering seeds and training. However, urban gardeners face challenges such as limited space, polluted soil and a lack of time. Experts suggest starting with a few easy plants in containers before investing in a larger garden.",
+            "giaithich": "Bài đọc: Urban Gardening",
+            "dokho": 4,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published",
+            "cauhoi_doc": [
+                {
+                    "loai": "identify_idea",
+                    "noidung": "What is the main idea of the passage?",
+                    "giaithich": "Đoạn văn nêu lợi ích và khó khăn của làm vườn đô thị.",
+                    "luachon": [
+                        {
+                            "noidung": "Cities should ban all gardens.",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "Urban gardening brings benefits but also requires realistic planning.",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "Roofs are the only place to grow food.",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "Gardening is always cheap and easy.",
+                            "ladung": false
+                        }
+                    ]
+                },
+                {
+                    "loai": "complete_sentence",
+                    "noidung": "Experts advise beginners to ___.",
+                    "giaithich": "Cuối đoạn khuyên bắt đầu với ít cây dễ trồng trong chậu.",
+                    "luachon": [
+                        {
+                            "noidung": "buy a large farm immediately",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "start with a few easy plants in containers",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "avoid asking for training",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "plant only tropical trees",
+                            "ladung": false
+                        }
+                    ]
+                },
+                {
+                    "loai": "highlight_answer",
+                    "noidung": "Name one challenge mentioned for urban gardeners.",
+                    "giaithich": "Đoạn văn liệt kê không gian hạn chế, đất ô nhiễm và thiếu thời gian.",
+                    "dapandung": "Limited space, polluted soil or a lack of time."
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ir-005",
+            "loai": "interactive_reading",
+            "danhmuc": "Work & Business",
+            "noidung": "Volunteering is often seen as a way to help others, but it can also benefit the volunteer. People who spend a few hours a week helping in a community centre report higher levels of satisfaction and lower stress. They also develop practical skills such as teamwork and communication. For students, volunteering can make a university application stronger. The most important requirement is reliability: organisations need people who arrive on time and keep their promises.",
+            "giaithich": "Bài đọc: The Value of Volunteering",
+            "dokho": 4,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published",
+            "cauhoi_doc": [
+                {
+                    "loai": "identify_idea",
+                    "noidung": "What does the passage mainly discuss?",
+                    "giaithich": "Đoạn văn nêu lợi ích hai chiều của việc tình nguyện.",
+                    "luachon": [
+                        {
+                            "noidung": "Volunteers should be paid.",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "Volunteering helps both the community and the volunteer.",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "Community centres are closing down.",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "Volunteering is only useful for students.",
+                            "ladung": false
+                        }
+                    ]
+                },
+                {
+                    "loai": "complete_sentence",
+                    "noidung": "According to the passage, volunteers can develop skills such as ___.",
+                    "giaithich": "Đoạn văn nêu kỹ năng làm việc nhóm và giao tiếp.",
+                    "luachon": [
+                        {
+                            "noidung": "cooking and driving",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "teamwork and communication",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "singing and dancing",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "accounting and law",
+                            "ladung": false
+                        }
+                    ]
+                },
+                {
+                    "loai": "title_passage",
+                    "noidung": "Choose the best title for the passage.",
+                    "giaithich": "Tiêu đề nhấn mạnh lợi ích kỹ năng mà người tình nguyện nhận lại.",
+                    "dapandung": "Giving Time, Gaining Skills"
+                }
+            ]
+        },
+        {
+            "ma": "ext2-ir-006",
+            "loai": "interactive_reading",
+            "danhmuc": "Science & Technology",
+            "noidung": "Hospitals increasingly use artificial intelligence to analyse medical images. In some cases, software can spot early signs of disease faster than a human doctor. This allows treatment to begin sooner and may save lives. Nevertheless, experts insist that AI should support doctors rather than replace them. A machine may miss details that a clinician notices, and patients still need clear explanations and human care. Hospitals therefore combine automated tools with professional judgement.",
+            "giaithich": "Bài đọc: Artificial Intelligence in Medicine",
+            "dokho": 5,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published",
+            "cauhoi_doc": [
+                {
+                    "loai": "identify_idea",
+                    "noidung": "What is the main idea of the passage?",
+                    "giaithich": "Đoạn văn nêu AI hỗ trợ nhưng không thay thế bác sĩ.",
+                    "luachon": [
+                        {
+                            "noidung": "Patients prefer machines to people.",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "AI can support medical diagnosis, but doctors remain essential.",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "Medical images are no longer useful.",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "AI will soon replace all doctors.",
+                            "ladung": false
+                        }
+                    ]
+                },
+                {
+                    "loai": "complete_sentence",
+                    "noidung": "Experts believe that AI should ___.",
+                    "giaithich": "Đoạn văn nhấn mạnh AI nên hỗ trợ bác sĩ.",
+                    "luachon": [
+                        {
+                            "noidung": "work without medical data",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "support doctors rather than replace them",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "replace all hospital staff",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "ignore patients’ explanations",
+                            "ladung": false
+                        }
+                    ]
+                },
+                {
+                    "loai": "highlight_answer",
+                    "noidung": "Why do patients still need human care?",
+                    "giaithich": "Đoạn văn nêu máy có thể bỏ sót chi tiết và bệnh nhân vẫn cần được giải thích, chăm sóc.",
+                    "dapandung": "They need clear explanations and human care, and doctors may notice details a machine misses."
+                }
+            ]
+        },
+        {
+            "ma": "ext2-il-001",
+            "loai": "interactive_listening",
+            "danhmuc": "Travel",
+            "audio": "audio/questions/listening-bank-03.wav",
+            "noidung": "Listen to a conversation at a train station.",
+            "dokho": 3,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published",
+            "cauhoi_nghe": [
+                {
+                    "loai": "listen_and_respond",
+                    "noidung": "The passenger asks when the next train leaves. What is the best response?",
+                    "giaithich": "Phản hồi phù hợp cần cung cấp giờ và địa điểm.",
+                    "luachon": [
+                        {
+                            "noidung": "It leaves at half past nine from platform two.",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "She bought a new suitcase.",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "The ticket office is closed tomorrow.",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "I have never been to this city.",
+                            "ladung": false
+                        }
+                    ]
+                },
+                {
+                    "loai": "listen_and_complete",
+                    "noidung": "The passenger wants a ___ ticket.",
+                    "giaithich": "Hành khách hỏi mua vé khứ hồi.",
+                    "luachon": [
+                        {
+                            "noidung": "free",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "return",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "monthly",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "single",
+                            "ladung": false
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "ma": "ext2-il-002",
+            "loai": "interactive_listening",
+            "danhmuc": "Education",
+            "audio": "audio/questions/listening-bank-04.wav",
+            "noidung": "Listen to a student talking to a course adviser.",
+            "dokho": 4,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published",
+            "cauhoi_nghe": [
+                {
+                    "loai": "listen_and_complete",
+                    "noidung": "The student is worried about the ___ exam.",
+                    "giaithich": "Sinh viên lo lắng về bài thi cuối kỳ.",
+                    "luachon": [
+                        {
+                            "noidung": "driving",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "final",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "medical",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "language",
+                            "ladung": false
+                        }
+                    ]
+                },
+                {
+                    "loai": "listen_and_respond",
+                    "noidung": "The adviser suggests that the student ___.",
+                    "giaithich": "Lời khuyên hợp lý là lập kế hoạch học và ôn tập hằng tuần.",
+                    "luachon": [
+                        {
+                            "noidung": "stop attending classes",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "take the exam next year",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "change to another university",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "make a study plan and review weekly",
+                            "ladung": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "ma": "ext2-il-003",
+            "loai": "interactive_listening",
+            "danhmuc": "Daily Life",
+            "audio": "audio/questions/listening-bank-05.wav",
+            "noidung": "Listen to a conversation in a clothing shop.",
+            "dokho": 2,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published",
+            "cauhoi_nghe": [
+                {
+                    "loai": "listen_and_respond",
+                    "noidung": "The customer asks to try on a jacket. What should the assistant say?",
+                    "giaithich": "Câu trả lời phù hợp chỉ vị trí phòng thử đồ.",
+                    "luachon": [
+                        {
+                            "noidung": "The jacket is made of cotton.",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "I do not like this weather.",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "Of course, the fitting rooms are over there.",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "The shop opens at eight.",
+                            "ladung": false
+                        }
+                    ]
+                },
+                {
+                    "loai": "listen_and_complete",
+                    "noidung": "The jacket is available in ___ colours.",
+                    "giaithich": "Nhân viên nói cửa hàng có ba màu.",
+                    "luachon": [
+                        {
+                            "noidung": "seven",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "two",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "three",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "five",
+                            "ladung": false
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "ma": "ext2-il-004",
+            "loai": "interactive_listening",
+            "danhmuc": "Travel",
+            "audio": "audio/questions/listening-bank-06.wav",
+            "noidung": "Listen to a short weather report.",
+            "dokho": 3,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published",
+            "cauhoi_nghe": [
+                {
+                    "loai": "listen_and_complete",
+                    "noidung": "The forecast says it will rain in the ___.",
+                    "giaithich": "Bản tin dự báo mưa vào buổi chiều.",
+                    "luachon": [
+                        {
+                            "noidung": "night",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "afternoon",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "morning",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "evening",
+                            "ladung": false
+                        }
+                    ]
+                },
+                {
+                    "loai": "listen_and_respond",
+                    "noidung": "What should travellers take with them?",
+                    "giaithich": "Khi có mưa và se lạnh, nên mang ô và áo khoác nhẹ.",
+                    "luachon": [
+                        {
+                            "noidung": "Sunglasses and shorts.",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "An umbrella and a light jacket.",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "Nothing at all.",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "A heavy winter coat.",
+                            "ladung": false
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "ma": "ext2-il-005",
+            "loai": "interactive_listening",
+            "danhmuc": "Daily Life",
+            "audio": "audio/questions/listening-bank-07.wav",
+            "noidung": "Listen to a phone call about a restaurant booking.",
+            "dokho": 4,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published",
+            "cauhoi_nghe": [
+                {
+                    "loai": "listen_and_complete",
+                    "noidung": "The booking is for ___ people.",
+                    "giaithich": "Khách đặt bàn cho sáu người.",
+                    "luachon": [
+                        {
+                            "noidung": "four",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "ten",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "six",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "eight",
+                            "ladung": false
+                        }
+                    ]
+                },
+                {
+                    "loai": "listen_and_respond",
+                    "noidung": "The restaurant confirms the booking and asks for a ___.",
+                    "giaithich": "Nhà hàng cần số điện thoại để xác nhận.",
+                    "luachon": [
+                        {
+                            "noidung": "student card",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "doctor’s note",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "phone number",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "passport",
+                            "ladung": false
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "ma": "ext2-il-006",
+            "loai": "interactive_listening",
+            "danhmuc": "Science & Technology",
+            "audio": "audio/questions/listening-bank-08.wav",
+            "noidung": "Listen to a short talk about recycling.",
+            "dokho": 5,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published",
+            "cauhoi_nghe": [
+                {
+                    "loai": "listen_and_complete",
+                    "noidung": "The speaker says glass can be recycled ___ times.",
+                    "giaithich": "Diễn giả nói thủy tinh có thể tái chế nhiều lần.",
+                    "luachon": [
+                        {
+                            "noidung": "exactly ten",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "only two",
+                            "ladung": false
+                        },
+                        {
+                            "noidung": "many",
+                            "ladung": true
+                        },
+                        {
+                            "noidung": "zero",
+                            "ladung": false
+                        }
+                    ]
+                },
+                {
+                    "loai": "summarise_conversation",
+                    "noidung": "Summarise the main message in one sentence.",
+                    "giaithich": "Thông điệp chính: tái chế thủy tinh nhiều lần giúp tiết kiệm năng lượng và giảm rác.",
+                    "dapandung": "Recycling glass many times saves energy and reduces waste."
+                }
+            ]
+        },
+        {
+            "ma": "ext2-wap-001",
+            "loai": "write_about_photo",
+            "danhmuc": "Daily Life",
+            "anh": "images/questions/photo-3.svg",
+            "noidung": "Describe the photo in 2–3 sentences. Say what the people are doing and how they seem to feel.",
+            "dokho": 5,
+            "thoigian": 180,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-wap-002",
+            "loai": "write_about_photo",
+            "danhmuc": "Travel",
+            "anh": "images/questions/photo-4.svg",
+            "noidung": "Describe the photo in 2–3 sentences. Mention the setting, the weather and one detail you notice.",
+            "dokho": 5,
+            "thoigian": 180,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-wap-003",
+            "loai": "write_about_photo",
+            "danhmuc": "Work & Business",
+            "anh": "images/questions/photo-5.svg",
+            "noidung": "Describe the photo in 2–3 sentences. Explain what is happening and why it might be important.",
+            "dokho": 6,
+            "thoigian": 180,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-wap-004",
+            "loai": "write_about_photo",
+            "danhmuc": "Education",
+            "anh": "images/questions/photo-6.svg",
+            "noidung": "Describe the photo in 2–3 sentences. Include information about the people, objects and atmosphere.",
+            "dokho": 5,
+            "thoigian": 180,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-wap-005",
+            "loai": "write_about_photo",
+            "danhmuc": "Science & Technology",
+            "anh": "images/questions/photo-7.svg",
+            "noidung": "Describe the photo in 2–3 sentences. Focus on colours, shapes and the mood of the scene.",
+            "dokho": 6,
+            "thoigian": 180,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-wap-006",
+            "loai": "write_about_photo",
+            "danhmuc": "Daily Life",
+            "anh": "images/questions/photo-8.svg",
+            "noidung": "Describe the photo in 2–3 sentences. Imagine what happened just before the picture was taken.",
+            "dokho": 6,
+            "thoigian": 180,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-wap-007",
+            "loai": "write_about_photo",
+            "danhmuc": "Travel",
+            "anh": "images/questions/photo-9.svg",
+            "noidung": "Describe the photo in 2–3 sentences. Compare what you see with a place you know.",
+            "dokho": 6,
+            "thoigian": 180,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-wap-008",
+            "loai": "write_about_photo",
+            "danhmuc": "Work & Business",
+            "anh": "images/questions/photo-10.svg",
+            "noidung": "Describe the photo in 2–3 sentences. Use at least two adjectives to describe the scene.",
+            "dokho": 5,
+            "thoigian": 180,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-wap-009",
+            "loai": "write_about_photo",
+            "danhmuc": "Education",
+            "anh": "images/questions/photo-11.svg",
+            "noidung": "Describe the photo in 2–3 sentences. Say whether you would like to be in this place and why.",
+            "dokho": 6,
+            "thoigian": 180,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-wap-010",
+            "loai": "write_about_photo",
+            "danhmuc": "Science & Technology",
+            "anh": "images/questions/photo-12.svg",
+            "noidung": "Describe the photo in 2–3 sentences. Mention one problem shown in the picture and a possible solution.",
+            "dokho": 7,
+            "thoigian": 180,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-ra-001",
+            "loai": "read_aloud",
+            "danhmuc": "Daily Life",
+            "noidung": "Every Saturday morning, my family walks to the local market. We buy fresh fruit, vegetables and sometimes a little bread. The market is always busy, but the sellers are friendly and the prices are fair.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-ra-002",
+            "loai": "read_aloud",
+            "danhmuc": "Travel",
+            "noidung": "The old town is best explored on foot. Narrow streets lead to a square where musicians often play in the evening. Visitors can sit outside a café and watch the light change on the ancient walls.",
+            "dokho": 4,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-ra-003",
+            "loai": "read_aloud",
+            "danhmuc": "Education",
+            "noidung": "A good library is more than a room full of books. It is a quiet place where ideas can grow and questions can be explored without hurry. Many students discover their favourite subject there.",
+            "dokho": 4,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-ra-004",
+            "loai": "read_aloud",
+            "danhmuc": "Science & Technology",
+            "noidung": "Solar panels turn sunlight into electricity. They work best on clear days, but modern panels can still produce power under clouds. This technology is becoming cheaper and more common every year.",
+            "dokho": 5,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-ra-005",
+            "loai": "read_aloud",
+            "danhmuc": "Work & Business",
+            "noidung": "A successful meeting starts with a clear purpose. Everyone should know why they are there and what decision needs to be made. A short list of actions at the end keeps the team focused.",
+            "dokho": 4,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-ra-006",
+            "loai": "read_aloud",
+            "danhmuc": "Travel",
+            "noidung": "The ferry crosses the river three times a day. Passengers usually stand on the deck to enjoy the view. On windy days, the water is rough, and the crossing takes a little longer.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-ra-007",
+            "loai": "read_aloud",
+            "danhmuc": "Daily Life",
+            "noidung": "Cooking at home can be simple and enjoyable. A few fresh ingredients, a sharp knife and a little patience are often enough. The best meals are sometimes the ones we make without a recipe.",
+            "dokho": 3,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-ra-008",
+            "loai": "read_aloud",
+            "danhmuc": "Education",
+            "noidung": "Learning to write well takes practice. Read widely, notice how sentences are built, and revise your own work more than once. Each draft teaches you something the previous one could not.",
+            "dokho": 5,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-ra-009",
+            "loai": "read_aloud",
+            "danhmuc": "Science & Technology",
+            "noidung": "Bees play a vital role in agriculture. As they collect nectar, they carry pollen from one flower to another. Without them, many fruits and vegetables would be much harder to grow.",
+            "dokho": 4,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-ra-010",
+            "loai": "read_aloud",
+            "danhmuc": "Work & Business",
+            "noidung": "Small businesses often succeed because they listen carefully to their customers. A simple conversation can reveal a problem that no survey would ever show. Listening is a practical skill, not a soft one.",
+            "dokho": 5,
+            "thoigian": 60,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-rts-001",
+            "loai": "read_then_speak",
+            "danhmuc": "Education",
+            "noidung": "Read the statement and speak for about one minute: “Exams are the best way to measure a student’s ability.” Give reasons and examples to support your opinion.",
+            "dokho": 7,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-rts-002",
+            "loai": "read_then_speak",
+            "danhmuc": "Daily Life",
+            "noidung": "Read the statement and speak for about one minute: “People spend too much time on their phones.” Explain whether you agree and give examples.",
+            "dokho": 7,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-rts-003",
+            "loai": "read_then_speak",
+            "danhmuc": "Travel",
+            "noidung": "Read the statement and speak for about one minute: “Travelling alone is more valuable than travelling with friends.” Support your view with reasons.",
+            "dokho": 8,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-rts-004",
+            "loai": "read_then_speak",
+            "danhmuc": "Science & Technology",
+            "noidung": "Read the statement and speak for about one minute: “Artificial intelligence will create more jobs than it destroys.” Explain your opinion with examples.",
+            "dokho": 8,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-rts-005",
+            "loai": "read_then_speak",
+            "danhmuc": "Work & Business",
+            "noidung": "Read the statement and speak for about one minute: “A university degree is no longer necessary for a successful career.” Do you agree? Why?",
+            "dokho": 7,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-rts-006",
+            "loai": "read_then_speak",
+            "danhmuc": "Education",
+            "noidung": "Read the statement and speak for about one minute: “Students should learn a second language from primary school.” Give reasons and examples.",
+            "dokho": 7,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-rts-007",
+            "loai": "read_then_speak",
+            "danhmuc": "Daily Life",
+            "noidung": "Read the statement and speak for about one minute: “Cities should be designed for bicycles rather than cars.” Explain your position.",
+            "dokho": 8,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published"
+        },
+        {
+            "ma": "ext2-rts-008",
+            "loai": "read_then_speak",
+            "danhmuc": "Science & Technology",
+            "noidung": "Read the statement and speak for about one minute: “Social media does more harm than good for young people.” Support your opinion.",
+            "dokho": 8,
+            "thoigian": 120,
+            "diem": 1,
+            "trangthai": "published"
+        }
+    ]
+}

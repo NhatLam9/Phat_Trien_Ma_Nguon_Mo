@@ -1,27 +1,28 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookmarkController;
-use App\Http\Controllers\Practice\PracticeController;
 use App\Http\Controllers\MockTest\MockTestController;
 use App\Http\Controllers\MockTest\MockTestDashboardController;
 use App\Http\Controllers\MockTest\MockTestHistoryController;
 use App\Http\Controllers\MockTest\MockTestResultController;
+use App\Http\Controllers\Practice\PracticeAIController;
+use App\Http\Controllers\Practice\PracticeController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Tutor\TutorController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Certificate\CertificateController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes - DET Practice System
-| Phân hệ Tài khoản (TK), Luyện tập (LT) [TV1] & Thi thử Mock Test [TV2]
+| Phân hệ Tài khoản (TK), Luyện tập (LT) [TV1], AI [TV3] & Mock Test [TV2]
 |--------------------------------------------------------------------------
 */
 
@@ -97,6 +98,22 @@ Route::middleware('auth')->prefix('practice')->name('practice.')->group(function
 
     // LT06: Chuyển bài Writing/Speaking sang cho AI chấm
     Route::post('/result/{id}/ai', [PracticeController::class, 'submitAI'])->name('ai');
+
+    // ===================================================
+    // PRACTICE AI - Luyện tập chấm điểm Writing/Speaking (TV3)
+    // ===================================================
+    Route::prefix('ai')->name('ai.')->group(function () {
+        Route::get('/question/{id}', [PracticeAIController::class, 'showQuestion'])
+            ->whereNumber('id')->name('question');
+        Route::post('/submit/{id}', [PracticeAIController::class, 'submit'])
+            ->whereNumber('id')->name('submit');
+        Route::get('/status/{id}', [PracticeAIController::class, 'status'])
+            ->whereNumber('id')->name('status');
+        Route::get('/audio/{id}', [PracticeAIController::class, 'audio'])
+            ->whereNumber('id')->name('audio');
+        Route::post('/retry/{id}', [PracticeAIController::class, 'retry'])
+            ->whereNumber('id')->name('retry');
+    });
 });
 
 // =========================================================================
@@ -153,16 +170,31 @@ Route::middleware('auth')->group(function () {
     // MT08 / MT04 - Bỏ dở hoặc xử lý hết giờ
     Route::post('/mock-test/{id}/abandon', [MockTestController::class, 'abandon'])
         ->whereNumber('id')->name('mock-test.abandon');
+
+    // ==========================================
+    // AI TUTOR - Trợ lý học tập thông minh (TV3)
+    // ==========================================
+    Route::prefix('tutor')->name('tutor.')->group(function () {
+        Route::get('/', [TutorController::class, 'index'])->name('index');
+        Route::get('/grammar', [TutorController::class, 'showGrammar'])->name('grammar');
+        Route::post('/grammar', [TutorController::class, 'processGrammar'])->name('grammar.process');
+        Route::get('/translate', [TutorController::class, 'showTranslate'])->name('translate');
+        Route::post('/translate', [TutorController::class, 'processTranslate'])->name('translate.process');
+        Route::get('/rewrite', [TutorController::class, 'showRewrite'])->name('rewrite');
+        Route::post('/rewrite', [TutorController::class, 'processRewrite'])->name('rewrite.process');
+        Route::get('/history', [TutorController::class, 'history'])->name('history');
+    });
 });
 
 // Phục vụ file tĩnh trong thư mục storage trên môi trường Windows / XAMPP
 Route::get('/storage/{path}', function ($path) {
-    $filePath = public_path('storage/' . $path);
-    if (!file_exists($filePath)) {
-        $filePath = storage_path('app/public/' . $path);
+    $filePath = public_path('storage/'.$path);
+    if (! file_exists($filePath)) {
+        $filePath = storage_path('app/public/'.$path);
     }
-    if (!file_exists($filePath)) {
+    if (! file_exists($filePath)) {
         abort(404);
     }
+
     return response()->file($filePath);
 })->where('path', '.*')->name('storage.file');

@@ -63,6 +63,10 @@ class AdminSchemaTest extends TestCase
 
     public function test_check_constraint_dokho_tu_1_den_10(): void
     {
+        if (DB::getDriverName() !== 'mysql') {
+            $this->markTestSkipped('CHECK constraint qua ALTER TABLE chỉ hỗ trợ trên MySQL.');
+        }
+
         $loaiId = DB::table('loaicauhoi')->insertGetId([
             'ma' => 'check_dokho',
             'ten' => 'Kiểm tra độ khó',

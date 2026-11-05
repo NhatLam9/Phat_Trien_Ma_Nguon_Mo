@@ -142,6 +142,62 @@ class AdminAiLogTest extends TestCase
             ->assertSessionHasErrors('den_ngay');
     }
 
+    public function test_loc_nhat_ky_theo_trang_thai(): void
+    {
+        $nguoidung = $this->nguoiDung('loc-trangthai@example.com');
+
+        $logThanhCong = $this->nhatKy($nguoidung, 'writing', 'Log thành công');
+        $logThatBai = $this->nhatKy($nguoidung, 'writing', 'Log thất bại');
+
+        Ailog::whereKey($logThatBai->id)->update([
+            'trangthai' => 'failed',
+            'http_code' => 500,
+        ]);
+
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->get(route('admin.ai-logs.index', ['trangthai' => 'failed']))
+            ->assertOk()
+            ->assertSee('Log thất bại')
+            ->assertDontSee('Log thành công')
+            ->assertSee('HTTP 500');
+
+        $this->actingAs($admin)
+            ->get(route('admin.ai-logs.index', ['trangthai' => 'success']))
+            ->assertOk()
+            ->assertSee('Log thành công')
+            ->assertDontSee('Log thất bại');
+
+        $this->assertNotNull($logThanhCong->id);
+    }
+
+    public function test_chan_trang_thai_khong_hop_le(): void
+    {
+        $this->actingAs($this->admin())
+            ->get(route('admin.ai-logs.index', ['trangthai' => 'khong-hop-le']))
+            ->assertSessionHasErrors('trangthai');
+    }
+
+    public function test_xem_chi_tiet_nhat_ky_ai(): void
+    {
+        $log = $this->nhatKy($this->nguoiDung('chi-tiet-ai@example.com'), 'speaking', 'Bản ghi âm thử');
+
+        $this->actingAs($this->admin())
+            ->get(route('admin.ai-logs.show', $log->id))
+            ->assertOk()
+            ->assertSee('Bản ghi âm thử')
+            ->assertSee('Kết quả chấm thử')
+            ->assertSee('gpt-test');
+    }
+
+    public function test_xem_chi_tiet_nhat_ky_khong_ton_tai(): void
+    {
+        $this->actingAs($this->admin())
+            ->get(route('admin.ai-logs.show', 999999))
+            ->assertNotFound();
+    }
+
     public function test_hoc_vien_khong_vao_duoc_nhat_ky_ai(): void
     {
         $hocVien = $this->nguoiDung('hocvien-ailog@example.com');
