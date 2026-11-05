@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             MockTestDataSeeder::class,
             FullMockTestSeeder::class,
             OperationalQuestionBankSeeder::class,
+            ExtendedQuestionBankSeeder::class,
             LuyentapSeeder::class,
             DanhdauSeeder::class,
         ]);
