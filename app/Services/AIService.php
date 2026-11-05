@@ -406,30 +406,53 @@ class AIService
             $mimeType = mime_content_type($fullPath) ?: 'audio/mp3';
             $audioData = base64_encode(file_get_contents($fullPath));
 
-            try {
-                $model = config('ai.gemini.model', 'gemini-1.5-flash');
-                $url = rtrim(config('ai.gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta'), '/')
-                    ."/models/{$model}:generateContent?key={$geminiKey}";
+            // try {
+            //     $model = config('ai.gemini.model', 'gemini-1.5-flash');
+            //     $url = rtrim(config('ai.gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta'), '/')
+            //         ."/models/{$model}:generateContent?key={$geminiKey}";
 
-                $response = Http::timeout($timeout)
-                    ->retry(1, 500, fn ($e) => $this->isTransientHttpError($e))
-                    ->post($url, [
-                        'contents' => [
-                            [
-                                'role' => 'user',
-                                'parts' => [
-                                    ['text' => 'Please transcribe this audio recording into English text accurately. Output only the verbatim transcription without commentary.'],
-                                    [
-                                        'inline_data' => [
-                                            'mime_type' => $mimeType,
-                                            'data' => $audioData,
-                                        ],
-                                    ],
-                                ],
+            //     $response = Http::timeout($timeout)
+            //         ->retry(1, 500, fn ($e) => $this->isTransientHttpError($e))
+            //         ->post($url, [
+            //             'contents' => [
+            //                 [
+            //                     'role' => 'user',
+            //                     'parts' => [
+            //                         ['text' => 'Please transcribe this audio recording into English text accurately. Output only the verbatim transcription without commentary.'],
+            //                         [
+            //                             'inline_data' => [
+            //                                 'mime_type' => $mimeType,
+            //                                 'data' => $audioData,
+            //                             ],
+            //                         ],
+            //                     ],
+            //                 ],
+            //             ],
+            //         ]);
+            try {
+    $model = config('ai.gemini.model', 'gemini-1.5-flash');
+    $url = rtrim(config('ai.gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta'), '/')
+        ."/models/{$model}:generateContent?key={$geminiKey}";
+
+    $response = Http::timeout($timeout)
+        ->retry(1, 500, fn ($e) => $this->isTransientHttpError($e))
+        ->post($url, [
+            'contents' => [
+                [
+                    'role' => 'user',
+                    'parts' => [
+                        ['text' => 'Please transcribe this audio recording into English text accurately. Output only the verbatim transcription without commentary.'],
+                        [
+                            // ĐÃ SỬA: Đổi inline_data thành inlineData và mime_type thành mimeType
+                            'inlineData' => [
+                                'mimeType' => $mimeType,
+                                'data' => $audioData,
                             ],
                         ],
-                    ]);
-
+                    ],
+                ],
+            ],
+        ]);
                 if ($response->successful()) {
                     $text = trim((string) ($response->json('candidates.0.content.parts.0.text') ?? ''));
                     if ($userId) {
@@ -788,29 +811,51 @@ class AIService
         $url = rtrim(config('ai.gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta'), '/')
             ."/models/{$model}:generateContent?key={$apiKey}";
 
-        try {
-            $response = Http::timeout($timeout)
-                ->retry(1, 500, fn ($e) => $this->isTransientHttpError($e))
-                ->post($url, [
-                    'system_instruction' => [
+        // try {
+        //     $response = Http::timeout($timeout)
+        //         ->retry(1, 500, fn ($e) => $this->isTransientHttpError($e))
+        //         ->post($url, [
+        //             'system_instruction' => [
+        //                 'parts' => [
+        //                     ['text' => $systemPrompt],
+        //                 ],
+        //             ],
+        //             'contents' => [
+        //                 [
+        //                     'role' => 'user',
+        //                     'parts' => [
+        //                         ['text' => $userPrompt],
+        //                     ],
+        //                 ],
+        //             ],
+        //             'generationConfig' => [
+        //                 'temperature' => 0.2,
+        //                 'responseMimeType' => 'application/json',
+        //             ],
+        //         ]);
+            try {
+        $response = Http::timeout($timeout)
+            ->retry(1, 500, fn ($e) => $this->isTransientHttpError($e))
+            ->post($url, [
+                // ĐÃ SỬA: Đổi system_instruction thành systemInstruction
+                'systemInstruction' => [
+                    'parts' => [
+                        ['text' => $systemPrompt],
+                    ],
+                ],
+                'contents' => [
+                    [
+                        'role' => 'user',
                         'parts' => [
-                            ['text' => $systemPrompt],
+                            ['text' => $userPrompt],
                         ],
                     ],
-                    'contents' => [
-                        [
-                            'role' => 'user',
-                            'parts' => [
-                                ['text' => $userPrompt],
-                            ],
-                        ],
-                    ],
-                    'generationConfig' => [
-                        'temperature' => 0.2,
-                        'responseMimeType' => 'application/json',
-                    ],
-                ]);
-
+                ],
+                'generationConfig' => [
+                    'temperature' => 0.2,
+                    'responseMimeType' => 'application/json',
+                ],
+            ]);
             if ($response->successful()) {
                 $text = (string) ($response->json('candidates.0.content.parts.0.text') ?? '');
                 $usage = $response->json('usageMetadata') ?? [];
