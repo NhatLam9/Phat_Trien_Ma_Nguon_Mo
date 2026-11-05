@@ -49,21 +49,68 @@ class MockTestController extends Controller
         ));
     }
 
-    public function start(Request $request, TestService $service)
-    {
-        $data = $request->validate([
-            'dethi_id' => ['required', 'integer', 'exists:dethi,id'],
-        ]);
+public function start(Request $request, TestService $service)
+{
+    $data = $request->validate([
+        'dethi_id' => ['required', 'integer', 'exists:dethi,id'],
+        'xac_nhan_bat_dau' => ['nullable', 'in:1'],
+    ]);
 
+    $nguoiDungId = (int) $request->user()->getAuthIdentifier();
+
+    $deThi = DB::table('dethi')
+        ->where('id', (int) $data['dethi_id'])
+        ->where('trangthai', 'published')
+        ->first();
+
+    abort_if(!$deThi, 404, 'Đề thi không tồn tại hoặc chưa xuất bản.');
+
+    // Chọn đề chỉ mở trang chuẩn bị, chưa tạo lượt thi.
+    if (($data['xac_nhan_bat_dau'] ?? null) !== '1') {
+        $lanThiDangMo = Lanthi::query()
+            ->where('nguoidung_id', $nguoiDungId)
+            ->where('trangthai', 'in_progress')
+            ->first();
+
+        if ($lanThiDangMo) {
+            $lanThiDangMo = $service->kiemTraHetHan(
+                (int) $lanThiDangMo->id,
+                $nguoiDungId
+            );
+
+            if ($lanThiDangMo->trangthai === 'in_progress') {
+                return redirect()->route('mock-test.show', [
+                    'id' => $lanThiDangMo->id,
+                ]);
+            }
+        }
+
+        return view('mock-test.prepare', compact('deThi'));
+    }
+
+    // Bắt đầu tính giờ và cấp câu đầu tiên trong cùng transaction.
+    $lanThi = DB::transaction(function () use (
+        $service,
+        $nguoiDungId,
+        $data
+    ) {
         $lanThi = $service->batDauThi(
-            (int) $request->user()->getAuthIdentifier(),
+            $nguoiDungId,
             (int) $data['dethi_id']
         );
 
-        return redirect()
-            ->route('mock-test.show', ['id' => $lanThi->id])
-            ->with('success', 'Đã bắt đầu hoặc tiếp tục bài thi.');
-    }
+        $service->capCauHoiTiepTheo(
+            (int) $lanThi->id,
+            $nguoiDungId
+        );
+
+        return $lanThi;
+    }, 3);
+
+    return redirect()
+        ->route('mock-test.show', ['id' => $lanThi->id])
+        ->with('success', 'Bài thi đang diễn ra.');
+}
 
     public function show(Request $request, int $id, TestService $service)
     {
