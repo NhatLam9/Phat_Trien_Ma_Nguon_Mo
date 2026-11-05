@@ -8,58 +8,160 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
     
     @stack('styles')
+    <link rel="stylesheet"
+      href="{{ asset('css/bento.css') }}?v={{ filemtime(public_path('css/bento.css')) }}">
 </head>
-<body class="@yield('body_class', 'app-body')">
 
+@php
+    $isFocusPage = request()->routeIs('mock-test.show', 'practice.show');
+
+    $isAccountPage = request()->routeIs(
+        'login',
+        'register',
+        'password.*',
+        'verification.*'
+    );
+
+    $useSidebar = auth()->check()
+        && !request()->is('/')
+        && !$isAccountPage
+        && !$isFocusPage;
+@endphp
+
+<body class="@yield('body_class', 'app-body') {{ $useSidebar ? 'bento-sidebar-layout' : 'bento-topbar-layout' }} {{ $isFocusPage ? 'bento-focus-layout' : '' }}">
     <!-- HEADER / NAVIGATION THEO VAI TRÒ (Đúng ngữ cảnh: Khách chỉ gồm Trang chủ, Đăng nhập, Đăng ký) -->
     <header class="app-header">
-        <a href="{{ url('/') }}" class="logo-container">
-            <div class="logo">DET<span>Practice</span></div>
+        <a href="{{ url('/') }}" class="logo-container" aria-label="Trang chủ AmberDET">
+            <span class="bento-brand-mark" aria-hidden="true">A</span>
+            <span class="bento-brand-name">Amber<strong>DET</strong></span>
         </a>
+@auth
+    @if (!$isFocusPage)
+        @if ($useSidebar)
+            <a href="{{ route('profile.edit') }}" class="bento-account">
+                <img 
+                    src="{{ auth()->user()->avatar_url }}"
+                    alt=""
+                    class="bento-account__avatar"
+                >
+                <span class="bento-account__info">
+                    <strong>{{ auth()->user()->hoten }}</strong>
+                    <small>
+                        {{ auth()->user()->vaitro === 'admin' || auth()->user()->isAdmin() 
+                            ? 'Quản trị viên' 
+                            : 'Người học' }}
+                    </small>
+                </span>
+            </a>
+        @endif
 
-        @auth
-            <!-- Menu cho Người học và Admin đã đăng nhập -->
-            <nav class="main-nav">
-                <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a>
-                <a href="{{ route('practice.index') }}" class="{{ request()->is('practice*') && !request()->is('practice/bookmarks*') && !request()->is('practice/history*') ? 'active' : '' }}">Luyện tập</a>
-                <a href="{{ route('practice.bookmarks') }}" class="{{ request()->is('practice/bookmarks*') ? 'active' : '' }}">Câu hỏi đã lưu</a>
-                <a href="{{ route('practice.history') }}" class="{{ request()->routeIs('practice.history') ? 'active' : '' }}">Lịch sử luyện tập</a>
-                <a href="{{ route('mock-test.index') }}" class="{{ request()->routeIs('mock-test.*') && !request()->routeIs('mock-test.history') ? 'active' : '' }}">Thi thử</a>
-                <a href="{{ route('mock-test.history') }}" class="{{ request()->routeIs('mock-test.history') ? 'active' : '' }}">Lịch sử thi</a>
-                <a href="{{ route('learning.dashboard') }}" class="{{ request()->routeIs('learning.dashboard') ? 'active' : '' }}">Thống kê</a>
-                <a href="{{ route('tutor.index') }}" class="{{ request()->is('tutor*') ? 'active' : '' }}">AI Tutor</a>
-                @if(Auth::user()->vaitro === 'admin' || Auth::user()->isAdmin())
-                    <!-- Menu dành riêng cho Quản trị viên (Admin) -->
-                    <a href="{{ route('admin.dashboard') }}" class="{{ request()->is('admin*') ? 'active' : '' }}" style="color: #7e22ce; font-weight: 700;">
-                        Quản trị <span class="badge badge-admin">Admin</span>
+        <!-- Menu cho Người học và Admin đã đăng nhập -->
+        <nav class="main-nav">
+            <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a>
+            <a href="{{ route('practice.index') }}" class="{{ request()->is('practice*') && !request()->is('practice/bookmarks*') && !request()->is('practice/history*') ? 'active' : '' }}">Luyện tập</a>
+            <a href="{{ route('practice.bookmarks') }}" class="{{ request()->is('practice/bookmarks*') ? 'active' : '' }}">Câu hỏi đã lưu</a>
+            <a href="{{ route('practice.history') }}" class="{{ request()->routeIs('practice.history') ? 'active' : '' }}">Lịch sử luyện tập</a>
+            <a href="{{ route('mock-test.index') }}" class="{{ request()->routeIs('mock-test.*') && !request()->routeIs('mock-test.history') ? 'active' : '' }}">Thi thử</a>
+            <a href="{{ route('mock-test.history') }}" class="{{ request()->routeIs('mock-test.history') ? 'active' : '' }}">Lịch sử thi</a>
+            <a href="{{ route('learning.dashboard') }}" class="{{ request()->routeIs('learning.dashboard') ? 'active' : '' }}">Thống kê</a>
+            <a href="{{ route('tutor.index') }}" class="{{ request()->is('tutor*') ? 'active' : '' }}">AI Tutor</a>
+            
+            @if(Auth::user()->vaitro === 'admin' || Auth::user()->isAdmin())
+                <!-- Menu dành riêng cho Quản trị viên (Admin) -->
+                <a href="{{ route('admin.dashboard') }}" class="{{ request()->is('admin*') ? 'active' : '' }}" style="color: #7e22ce; font-weight: 700;">
+                    Quản trị <span class="badge badge-admin">Admin</span>
+                </a>
+            @endif
+        </nav>
+    @endif
+
+                <nav class="main-nav" aria-label="Điều hướng chính">
+                    <a href="{{ url('/') }}"
+                    class="{{ request()->is('/') ? 'active' : '' }}">
+                        Trang chủ
                     </a>
-                @endif
-            </nav>
 
-            <div class="header-actions">
-                <!-- Hồ sơ cá nhân & Đăng xuất -->
-                <a href="{{ route('profile.edit') }}" class="user-chip" title="Xem và sửa hồ sơ cá nhân">
-                    <img src="{{ Auth::user()->avatar_url }}" alt="{{ Auth::user()->hoten }}">
-                    <span>{{ Auth::user()->hoten }}</span>
+                    <a href="{{ route('practice.index') }}"
+                    class="{{ request()->routeIs('practice.*') && !request()->routeIs('practice.bookmarks', 'practice.history') ? 'active' : '' }}">
+                        Luyện tập
+                    </a>
+
+                    <a href="{{ route('mock-test.index') }}"
+                    class="{{ request()->routeIs('mock-test.*') && !request()->routeIs('mock-test.history') ? 'active' : '' }}">
+                        Thi thử
+                    </a>
+
+                    <a href="{{ route('mock-test.history') }}"
+                    class="{{ request()->routeIs('mock-test.history') ? 'active' : '' }}">
+                        Lịch sử thi thử
+                    </a>
+
+                    <a href="{{ route('learning.dashboard') }}"
+                    class="{{ request()->routeIs('learning.dashboard') ? 'active' : '' }}">
+                        Thống kê học tập
+                    </a>
+
+                    <a href="{{ route('practice.bookmarks') }}"
+                    class="{{ request()->routeIs('practice.bookmarks') ? 'active' : '' }}">
+                        Câu hỏi đã lưu
+                    </a>
+
+                    <a href="{{ route('practice.history') }}"
+                    class="{{ request()->routeIs('practice.history') ? 'active' : '' }}">
+                        Lịch sử luyện tập
+                    </a>
+
+                    <a href="{{ route('profile.edit') }}"
+                    class="{{ request()->routeIs('profile.*') ? 'active' : '' }}">
+                        Hồ sơ
+                    </a>
+                </nav>
+
+                <div class="header-actions">
+                    @if (auth()->user()->vaitro === 'admin' || auth()->user()->isAdmin())
+                        <a href="{{ route('admin.dashboard') }}" class="bento-admin-link">
+                            Quản trị hệ thống
+                        </a>
+                    @endif
+
+                    @if (!$useSidebar)
+                        <a href="{{ route('profile.edit') }}" class="user-chip">
+                            <img src="{{ auth()->user()->avatar_url }}" alt="">
+                            <span>{{ auth()->user()->hoten }}</span>
+                        </a>
+                    @endif
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="btn btn-outline btn-sm">
+                            Đăng xuất
+                        </button>
+                    </form>
+                </div>
+            @else
+                <span class="bento-focus-label">Không gian làm bài</span>
+            @endif
+        @else
+            <nav class="main-nav" aria-label="Điều hướng chính">
+                <a href="{{ url('/') }}"
+                class="{{ request()->is('/') ? 'active' : '' }}">
+                    Trang chủ
                 </a>
 
-                <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-                    @csrf
-                    <button type="submit" class="btn btn-outline btn-sm">Đăng xuất</button>
-                </form>
-            </div>
-        @else
-            <!-- Thanh điều hướng cho Khách (chưa đăng nhập) đúng ngữ cảnh: Trang chủ, Đăng nhập, Đăng ký -->
-            <nav class="main-nav">
-                <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a>
-                <a href="{{ route('login') }}" class="{{ request()->is('login') ? 'active' : '' }}">Đăng nhập</a>
-                <a href="{{ route('register') }}" class="btn btn-primary btn-sm" style="color: #ffffff; padding: 7px 18px;">Đăng ký</a>
+                <a href="{{ route('login') }}"
+                class="{{ request()->routeIs('login') ? 'active' : '' }}">
+                    Đăng nhập
+                </a>
+
+                <a href="{{ route('register') }}" class="btn btn-primary btn-sm">
+                    Đăng ký
+                </a>
             </nav>
         @endauth
     </header>

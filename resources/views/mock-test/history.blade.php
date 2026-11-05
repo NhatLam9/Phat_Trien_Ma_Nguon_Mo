@@ -234,8 +234,91 @@
             </table>
         </div>
 
-        <div class="history-pagination">
-            {{ $lanThis->links() }}
+ @if ($lanThis->hasPages())
+    @php
+        $currentPage = $lanThis->currentPage();
+        $lastPage = $lanThis->lastPage();
+
+        $pageNumbers = collect([
+            1,
+            $currentPage - 2,
+            $currentPage - 1,
+            $currentPage,
+            $currentPage + 1,
+            $currentPage + 2,
+            $lastPage,
+        ])
+            ->filter(fn ($page) => $page >= 1 && $page <= $lastPage)
+            ->unique()
+            ->sort()
+            ->values();
+
+        $previousNumber = null;
+
+        $pageUrl = fn ($page) => $lanThis->appends(
+            request()->except('page')
+        )->url($page);
+    @endphp
+
+    <nav class="history-pagination bento-pagination"
+         aria-label="Phân trang lịch sử thi thử">
+
+        <div class="bp-summary" aria-live="polite">
+            <strong>Trang {{ $currentPage }} / {{ $lastPage }}</strong>
+            <span>
+                Hiển thị {{ $lanThis->firstItem() }}–{{ $lanThis->lastItem() }}
+                trong {{ $lanThis->total() }} lượt thi
+            </span>
         </div>
+
+        <div class="bp-controls">
+            @if ($lanThis->onFirstPage())
+                <span class="bp-button is-disabled" aria-disabled="true">
+                    Trước
+                </span>
+            @else
+                <a class="bp-button"
+                   href="{{ $pageUrl($currentPage - 1) }}"
+                   rel="prev">
+                    Trước
+                </a>
+            @endif
+
+            @foreach ($pageNumbers as $page)
+                @if ($previousNumber !== null && $page - $previousNumber > 1)
+                    <span class="bp-gap" aria-hidden="true">…</span>
+                @endif
+
+                @if ($page === $currentPage)
+                    <span class="bp-button bp-number is-current"
+                          aria-current="page"
+                          aria-label="Trang {{ $page }}">
+                        {{ $page }}
+                    </span>
+                @else
+                    <a class="bp-button bp-number"
+                       href="{{ $pageUrl($page) }}"
+                       aria-label="Đến trang {{ $page }}">
+                        {{ $page }}
+                    </a>
+                @endif
+
+                @php $previousNumber = $page; @endphp
+            @endforeach
+
+            @if ($lanThis->hasMorePages())
+                <a class="bp-button"
+                   href="{{ $pageUrl($currentPage + 1) }}"
+                   rel="next">
+                    Sau
+                </a>
+            @else
+                <span class="bp-button is-disabled" aria-disabled="true">
+                    Sau
+                </span>
+            @endif
+        </div>
+    </nav>
+@endif
     </section>
 @endsection
