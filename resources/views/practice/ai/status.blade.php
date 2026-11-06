@@ -9,6 +9,9 @@
 @endif
 
 @section('content')
+@if ($traloi->lanThiCauHoi?->lanThi?->dethi_id && $traloi->lanThiCauHoi->lanThi->trangthai === 'completed')
+    <a class="btn btn-outline" href="{{ route('mock-test.result', $traloi->lanThiCauHoi->lanthi_id) }}">← Kết quả bài thi</a>
+@endif
 <div class="ai-status-container" style="max-width: 850px; margin: 2rem auto; padding: 0 1rem;">
     <div style="margin-bottom: 1.5rem;">
         <a href="{{ route('practice.index') }}" style="color: var(--bento-muted); text-decoration: none; font-size: 0.95rem;">&larr; Danh sách luyện tập</a>

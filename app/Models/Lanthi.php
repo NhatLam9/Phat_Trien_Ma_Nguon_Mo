@@ -13,6 +13,7 @@ class Lanthi extends Model
     protected $primaryKey = 'id';
 
     const CREATED_AT = 'ngaytao';
+
     const UPDATED_AT = null;
 
     protected $fillable = [
@@ -27,6 +28,8 @@ class Lanthi extends Model
         'conversation',
         'production',
         'tongdiem',
+        'ai_ngay_tru_luot',
+        'ai_luot_du_phong',
     ];
 
     protected $casts = [
@@ -35,6 +38,8 @@ class Lanthi extends Model
         'ketthuc' => 'datetime',
         'ngaytao' => 'datetime',
         'tongdiem' => 'integer',
+        'ai_ngay_tru_luot' => 'date',
+        'ai_luot_du_phong' => 'integer',
     ];
 
     // Mot lan thi co nhieu cau hoi

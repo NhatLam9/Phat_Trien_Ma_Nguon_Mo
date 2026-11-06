@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Exceptions\AiLimitExceededException;
+use App\Jobs\ProcessAIGradingJob;
 use App\Models\CauhoiDoc;
 use App\Models\CauhoiNghe;
 use App\Models\Lanthi;
@@ -9,8 +11,12 @@ use App\Models\Lanthicauhoi;
 use App\Models\Traloi;
 use App\Models\Vipham;
 use Carbon\Carbon;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class TestService
 {
@@ -34,7 +40,7 @@ class TestService
                 ->lockForUpdate()
                 ->first();
 
-            if (!$nguoiDung || $nguoiDung->trangthai !== 'active') {
+            if (! $nguoiDung || $nguoiDung->trangthai !== 'active') {
                 $this->baoLoi(
                     'nguoidung',
                     'Tài khoản không tồn tại hoặc đã bị khóa.'
@@ -46,7 +52,7 @@ class TestService
                 ->where('trangthai', 'published')
                 ->first();
 
-            if (!$deThi || (int) $deThi->thoigian <= 0) {
+            if (! $deThi || (int) $deThi->thoigian <= 0) {
                 $this->baoLoi(
                     'dethi_id',
                     'Đề thi chưa được xuất bản hoặc thời gian không hợp lệ.'
@@ -71,14 +77,32 @@ class TestService
                 $this->baoLoi(
                     'dethi_id',
                     'Bạn đang có bài thi chưa hoàn thành. '
-                        . 'Hãy tiếp tục hoặc bỏ dở bài thi đó.'
+                        .'Hãy tiếp tục hoặc bỏ dở bài thi đó.'
                 );
+            }
+
+            $soCauAi = DB::table('dethicauhoi as dc')
+                ->join('cauhoi as ch', 'ch.id', '=', 'dc.cauhoi_id')
+                ->join('loaicauhoi as loai', 'loai.id', '=', 'ch.loai_id')
+                ->where('dc.dethi_id', $deThiId)
+                ->where('ch.trangthai', 'published')
+                ->where('loai.cachcham', 'ai')
+                ->count();
+
+            try {
+                if ($soCauAi > 0) {
+                    app(AIService::class)->checkAndDeductLimitBulk($nguoiDungId, $soCauAi);
+                }
+            } catch (AiLimitExceededException $e) {
+                $this->baoLoi('ai_limit', $e->getMessage());
             }
 
             return Lanthi::create([
                 'nguoidung_id' => $nguoiDungId,
                 'dethi_id' => $deThiId,
                 'dokho_hientai' => 5.00,
+                'ai_ngay_tru_luot' => $soCauAi > 0 ? today() : null,
+                'ai_luot_du_phong' => $soCauAi,
                 'batdau' => now(),
                 'trangthai' => 'in_progress',
             ]);
@@ -111,7 +135,7 @@ class TestService
                     ->where('lanthi_id', $lanThiId)
                     ->first();
 
-                if (!$cauHienTai) {
+                if (! $cauHienTai) {
                     $this->baoLoi(
                         'cauhoi',
                         'Câu hỏi không thuộc lần thi này.'
@@ -144,7 +168,7 @@ class TestService
                 ->where('id', $lanThi->dethi_id)
                 ->first();
 
-            if (!$deThi) {
+            if (! $deThi) {
                 $this->baoLoi('dethi', 'Không tìm thấy đề thi.');
             }
 
@@ -170,7 +194,7 @@ class TestService
 
             $cauHoi = $ungVien->first();
 
-            if (!$cauHoi) {
+            if (! $cauHoi) {
                 return null;
             }
 
@@ -195,14 +219,16 @@ class TestService
         int $nguoiDungId,
         int $lanThiCauHoiId,
         ?int $luaChonId,
-        ?string $noiDung
+        ?string $noiDung,
+        ?UploadedFile $audio = null
     ): ?Traloi {
         return DB::transaction(function () use (
             $lanThiId,
             $nguoiDungId,
             $lanThiCauHoiId,
             $luaChonId,
-            $noiDung
+            $noiDung,
+            $audio
         ) {
             $lanThi = $this->khoaLanThi($lanThiId, $nguoiDungId);
 
@@ -233,9 +259,9 @@ class TestService
             $loai = DB::table('cauhoi as ch')
                 ->join('loaicauhoi as loai', 'loai.id', '=', 'ch.loai_id')
                 ->where('ch.id', $cau->cauhoi_id)
-                ->first(['loai.ma', 'loai.cachcham']);
+                ->first(['loai.ma', 'loai.cachcham', 'loai.kynang']);
 
-            if (!$loai) {
+            if (! $loai) {
                 $this->baoLoi('cauhoi', 'Không tìm thấy loại câu hỏi.');
             }
 
@@ -250,7 +276,7 @@ class TestService
                 true
             );
 
-            $coLuaChon = !$laInteractive
+            $coLuaChon = ! $laInteractive
                 && DB::table('luachon')
                     ->where('cauhoi_id', $cau->cauhoi_id)
                     ->exists();
@@ -286,7 +312,7 @@ class TestService
                     ->where('cauhoi_id', $cau->cauhoi_id)
                     ->first();
 
-                if (!$luaChon) {
+                if (! $luaChon) {
                     $this->baoLoi(
                         'luachon_id',
                         'Đáp án không thuộc câu hỏi này.'
@@ -296,7 +322,7 @@ class TestService
                 $laDung = (bool) $luaChon->ladung;
                 $diem = $laDung ? (float) $cau->diemtoida : 0.0;
             } else {
-                if ($luaChonId !== null || $noiDung === '') {
+                if ($luaChonId !== null || ($noiDung === '' && ! $audio)) {
                     $this->baoLoi(
                         'noidung',
                         'Vui lòng nhập nội dung trả lời.'
@@ -309,11 +335,11 @@ class TestService
                         ->where('ladung', 1)
                         ->exists();
 
-                    if (!$coDapAnChuan) {
+                    if (! $coDapAnChuan) {
                         $this->baoLoi(
                             'cauhoi',
                             'Câu hỏi tự động chưa có đáp án chuẩn. '
-                                . 'Vui lòng báo người quản lý đề.'
+                                .'Vui lòng báo người quản lý đề.'
                         );
                     }
 
@@ -326,8 +352,44 @@ class TestService
                     $laDung = $ketQua['is_correct'];
                     $diem = $ketQua['diem'];
                 } elseif ($loai->cachcham === 'ai') {
+                    if ($loai->kynang === 'speaking' && ! $audio) {
+                        $this->baoLoi('audio', 'Vui lòng tải lên file ghi âm câu trả lời.');
+                    }
+                    if ($loai->kynang !== 'speaking' && mb_strlen($noiDung) > 3000) {
+                        $this->baoLoi('noidung', 'Bài viết không được vượt quá 3000 ký tự.');
+                    }
                     $trangThaiAi = 'pending';
                 }
+            }
+
+            $ngayTruLuot = null;
+            if ($trangThaiAi === 'pending') {
+                if ((int) $lanThi->ai_luot_du_phong > 0) {
+                    $ngayTruLuot = $lanThi->ai_ngay_tru_luot;
+                    $lanThi->ai_luot_du_phong--;
+                    $lanThi->save();
+                } else {
+                    // Phiên cũ tạo trước migration: chỉ trừ khi nộp câu AI.
+                    try {
+                        app(AIService::class)->checkAndDeductLimit($nguoiDungId);
+                    } catch (AiLimitExceededException $e) {
+                        $this->baoLoi('ai_limit', $e->getMessage());
+                    }
+                    $ngayTruLuot = today();
+                }
+            }
+            if ($audio && ($trangThaiAi !== 'pending' || $loai->kynang !== 'speaking')) {
+                $this->baoLoi('audio', 'Câu hỏi này không nhận file ghi âm.');
+            }
+
+            $audioPath = $audio?->store('audio', 'local');
+            // Dọn file nếu transaction ngoài (finish/skip) bị rollback.
+            if ($audioPath) {
+                app()->terminating(function () use ($audioPath) {
+                    if (! Traloi::query()->where('audio', $audioPath)->exists()) {
+                        Storage::disk('local')->delete($audioPath);
+                    }
+                });
             }
 
             $traLoi = Traloi::create([
@@ -337,6 +399,10 @@ class TestService
                 'ladung' => $laDung,
                 'diem' => $diem,
                 'trangthai_ai' => $trangThaiAi,
+                'audio' => $audioPath,
+                'luot_cham' => 1,
+                'ngay_tru_luot' => $ngayTruLuot,
+                'thoidiem_cham' => $trangThaiAi ? now() : null,
                 'thoigian' => now(),
             ]);
 
@@ -358,6 +424,20 @@ class TestService
                 );
 
                 $lanThi->save();
+            }
+
+            if ($trangThaiAi === 'pending') {
+                DB::afterCommit(function () use ($traLoi, $nguoiDungId, $ngayTruLuot) {
+                    try {
+                        ProcessAIGradingJob::dispatch($traLoi->id, $nguoiDungId, $ngayTruLuot, 1);
+                    } catch (Throwable $e) {
+                        report($e);
+                        app(AIService::class)->markFailedAndRefund(
+                            $traLoi->id, $nguoiDungId, $ngayTruLuot, 1,
+                            'Không gửi được bài tới hàng đợi chấm. Vui lòng thử chấm lại.'
+                        );
+                    }
+                });
             }
 
             return $traLoi;
@@ -415,7 +495,7 @@ class TestService
 
             $this->kiemTraDangThi($lanThi);
 
-            if (!$xacNhanBoTrong) {
+            if (! $xacNhanBoTrong) {
                 $coCauBoTrong = Lanthicauhoi::query()
                     ->where('lanthi_id', $lanThiId)
                     ->where('datraloi', false)
@@ -434,6 +514,7 @@ class TestService
 
             $this->ganDiemBaiThi($lanThi);
 
+            $this->hoanLuotAiChuaDung($lanThi);
             $lanThi->trangthai = 'completed';
             $lanThi->setAttribute('ketthuc', now());
             $lanThi->save();
@@ -480,6 +561,7 @@ class TestService
 
             $this->kiemTraDangThi($lanThi);
 
+            $this->hoanLuotAiChuaDung($lanThi);
             $lanThi->trangthai = 'abandoned';
             $lanThi->setAttribute('ketthuc', now());
             $lanThi->save();
@@ -518,7 +600,7 @@ class TestService
 
     private function cauHoiChuaCap(
         Lanthi $lanThi
-    ): \Illuminate\Database\Query\Builder {
+    ): Builder {
         return DB::table('dethicauhoi as dc')
             ->join('cauhoi as ch', 'ch.id', '=', 'dc.cauhoi_id')
             ->where('dc.dethi_id', $lanThi->dethi_id)
@@ -545,6 +627,7 @@ class TestService
 
         $this->ganDiemBaiThi($lanThi);
 
+        $this->hoanLuotAiChuaDung($lanThi);
         $lanThi->trangthai = 'completed';
         $lanThi->setAttribute('ketthuc', $hanThi);
         $lanThi->save();
@@ -569,10 +652,10 @@ class TestService
         $payload = json_decode($noiDung, true);
 
         if (
-            !is_array($payload)
+            ! is_array($payload)
             || ($payload['version'] ?? null) !== 1
-            || !isset($payload['answers'])
-            || !is_array($payload['answers'])
+            || ! isset($payload['answers'])
+            || ! is_array($payload['answers'])
         ) {
             $this->baoLoi(
                 'noidung',
@@ -609,8 +692,8 @@ class TestService
 
         foreach ($answers as $id => $giaTri) {
             if (
-                !isset($idHopLe[(string) $id])
-                || (!is_string($giaTri) && !is_int($giaTri))
+                ! isset($idHopLe[(string) $id])
+                || (! is_string($giaTri) && ! is_int($giaTri))
             ) {
                 $this->baoLoi(
                     'noidung',
@@ -640,7 +723,7 @@ class TestService
                     fn ($lua) => (bool) $lua->ladung
                 );
 
-                if (!$coDapAnDung) {
+                if (! $coDapAnDung) {
                     $this->baoLoi(
                         'cauhoi',
                         'Câu hỏi con chưa có đáp án chuẩn.'
@@ -651,7 +734,7 @@ class TestService
                     continue;
                 }
 
-                if (!ctype_digit($dapAn)) {
+                if (! ctype_digit($dapAn)) {
                     $this->baoLoi(
                         'noidung',
                         'Lựa chọn câu hỏi con không hợp lệ.'
@@ -662,7 +745,7 @@ class TestService
                     fn ($lua) => (string) $lua->id === $dapAn
                 );
 
-                if (!$luaChon) {
+                if (! $luaChon) {
                     $this->baoLoi(
                         'noidung',
                         'Lựa chọn không thuộc câu hỏi con.'
@@ -670,6 +753,7 @@ class TestService
                 }
 
                 $soDung += (bool) $luaChon->ladung ? 1 : 0;
+
                 continue;
             }
 
@@ -679,7 +763,7 @@ class TestService
                 $this->baoLoi(
                     'cauhoi',
                     'Câu hỏi con chưa có đáp án tự động. '
-                        . 'Vui lòng báo người quản lý đề.'
+                        .'Vui lòng báo người quản lý đề.'
                 );
             }
 
@@ -793,30 +877,74 @@ class TestService
                 : $this->lamTronDiem(array_sum($diemThanhPhan) / 4)
         );
     }
-        private function lamTronDiem(float $diem): int
-        {
-            $diem = (int) (round(
-                $diem / 5,
-                0,
-                PHP_ROUND_HALF_UP
-            ) * 5);
 
-            return max(10, min(160, $diem));
+    private function lamTronDiem(float $diem): int
+    {
+        $diem = (int) (round(
+            $diem / 5,
+            0,
+            PHP_ROUND_HALF_UP
+        ) * 5);
+
+        return max(10, min(160, $diem));
+    }
+
+    private function hoanLuotAiChuaDung(Lanthi $lanThi): void
+    {
+        $soLuot = (int) $lanThi->ai_luot_du_phong;
+        $lanThi->ai_luot_du_phong = 0;
+        $lanThi->save();
+        for ($i = 0; $i < $soLuot; $i++) {
+            app(AIService::class)->refundUsage((int) $lanThi->nguoidung_id, $lanThi->ai_ngay_tru_luot);
+        }
+    }
+
+    public function ghiNhanKetQuaAi(int $traLoiId, float $diemDet, string $nhanXet, int $attempt): bool
+    {
+        if (! is_finite($diemDet) || $diemDet < 10 || $diemDet > 160) {
+            $this->baoLoi('diem', 'Điểm AI phải nằm trong thang 10–160.');
         }
 
-        private function baoLoi(string $truong, string $thongBao): never
-        {
-            throw ValidationException::withMessages([
-                $truong => $thongBao,
-            ]);
-        }
-        public function ghiNhanDiemCham(
+        return DB::transaction(function () use ($traLoiId, $diemDet, $nhanXet, $attempt) {
+            $lanThiId = DB::table('traloi as tl')
+                ->join('lanthicauhoi as lc', 'lc.id', '=', 'tl.lanthicauhoi_id')
+                ->where('tl.id', $traLoiId)->value('lc.lanthi_id');
+            $lanThi = Lanthi::query()->whereKey($lanThiId)->lockForUpdate()->firstOrFail();
+            $traLoi = Traloi::query()->whereKey($traLoiId)->lockForUpdate()->firstOrFail();
+            if ($traLoi->trangthai_ai !== 'pending' || (int) $traLoi->luot_cham !== $attempt) {
+                return false;
+            }
+            if ($lanThi->trangthai === 'abandoned') {
+                app(AIService::class)->markFailedAndRefund(
+                    $traLoiId, (int) $lanThi->nguoidung_id,
+                    $traLoi->ngay_tru_luot, $attempt, 'Bài thi đã bỏ dở, lượt AI đã được hoàn.'
+                );
+
+                return false;
+            }
+            $diemToiDa = (float) Lanthicauhoi::query()->whereKey($traLoi->lanthicauhoi_id)->value('diemtoida');
+            $diemTho = round(($diemDet - 10) / 150 * $diemToiDa, 2);
+            $this->ghiNhanDiemCham($traLoiId, $diemTho, $nhanXet, true, $diemDet);
+
+            return true;
+        }, 3);
+    }
+
+    private function baoLoi(string $truong, string $thongBao): never
+    {
+        throw ValidationException::withMessages([
+            $truong => $thongBao,
+        ]);
+    }
+
+    public function ghiNhanDiemCham(
         int $traLoiId,
         float $diem,
         string $nhanXet = '',
-        bool $laAi = true
+        bool $laAi = true,
+        ?float $diemAiDet = null
     ): Lanthi {
-        if (!is_finite($diem)) {
+        if (! is_finite($diem)) {
             $this->baoLoi('diem', 'Điểm chấm không hợp lệ.');
         }
 
@@ -824,7 +952,8 @@ class TestService
             $traLoiId,
             $diem,
             $nhanXet,
-            $laAi
+            $laAi,
+            $diemAiDet
         ) {
             $thongTin = DB::table('traloi as tl')
                 ->join(
@@ -839,14 +968,14 @@ class TestService
                     'lc.id as cau_id',
                 ]);
 
-            abort_if(!$thongTin, 404, 'Không tìm thấy câu trả lời.');
+            abort_if(! $thongTin, 404, 'Không tìm thấy câu trả lời.');
 
             $lanThi = Lanthi::query()
                 ->whereKey($thongTin->lanthi_id)
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            if (!in_array($lanThi->trangthai, [
+            if (! in_array($lanThi->trangthai, [
                 'in_progress',
                 'completed',
             ], true)) {
@@ -883,7 +1012,7 @@ class TestService
             $diemToiDa = (float) $cau->diemtoida;
 
             if (
-                !$cau->datraloi
+                ! $cau->datraloi
                 || $diemToiDa <= 0
                 || $diem < 0
                 || $diem > $diemToiDa
@@ -894,13 +1023,17 @@ class TestService
                 );
             }
 
+            if ($lanThi->chungChi()->exists()) {
+                $this->baoLoi('certificate', 'Không đổi điểm của lượt thi đã cấp chứng chỉ.');
+            }
+
             $diem = round($diem, 2);
 
             $traLoi->setAttribute('diem', $diem);
             $traLoi->setAttribute('ladung', null);
 
             if ($laAi) {
-                $traLoi->setAttribute('diem_ai', $diem);
+                $traLoi->setAttribute('diem_ai', $diemAiDet ?? $diem);
                 $traLoi->setAttribute('nhanxet_ai', $nhanXet);
                 $traLoi->setAttribute('trangthai_ai', 'done');
             } else {

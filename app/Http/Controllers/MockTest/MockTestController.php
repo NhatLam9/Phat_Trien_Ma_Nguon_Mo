@@ -7,6 +7,7 @@ use App\Models\CauhoiDoc;
 use App\Models\CauhoiNghe;
 use App\Models\Lanthi;
 use App\Models\Lanthicauhoi;
+use App\Models\Traloi;
 use App\Services\TestService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -49,68 +50,68 @@ class MockTestController extends Controller
         ));
     }
 
-public function start(Request $request, TestService $service)
-{
-    $data = $request->validate([
-        'dethi_id' => ['required', 'integer', 'exists:dethi,id'],
-        'xac_nhan_bat_dau' => ['nullable', 'in:1'],
-    ]);
+    public function start(Request $request, TestService $service)
+    {
+        $data = $request->validate([
+            'dethi_id' => ['required', 'integer', 'exists:dethi,id'],
+            'xac_nhan_bat_dau' => ['nullable', 'in:1'],
+        ]);
 
-    $nguoiDungId = (int) $request->user()->getAuthIdentifier();
+        $nguoiDungId = (int) $request->user()->getAuthIdentifier();
 
-    $deThi = DB::table('dethi')
-        ->where('id', (int) $data['dethi_id'])
-        ->where('trangthai', 'published')
-        ->first();
-
-    abort_if(!$deThi, 404, 'Đề thi không tồn tại hoặc chưa xuất bản.');
-
-    // Chọn đề chỉ mở trang chuẩn bị, chưa tạo lượt thi.
-    if (($data['xac_nhan_bat_dau'] ?? null) !== '1') {
-        $lanThiDangMo = Lanthi::query()
-            ->where('nguoidung_id', $nguoiDungId)
-            ->where('trangthai', 'in_progress')
+        $deThi = DB::table('dethi')
+            ->where('id', (int) $data['dethi_id'])
+            ->where('trangthai', 'published')
             ->first();
 
-        if ($lanThiDangMo) {
-            $lanThiDangMo = $service->kiemTraHetHan(
-                (int) $lanThiDangMo->id,
+        abort_if(! $deThi, 404, 'Đề thi không tồn tại hoặc chưa xuất bản.');
+
+        // Chọn đề chỉ mở trang chuẩn bị, chưa tạo lượt thi.
+        if (($data['xac_nhan_bat_dau'] ?? null) !== '1') {
+            $lanThiDangMo = Lanthi::query()
+                ->where('nguoidung_id', $nguoiDungId)
+                ->where('trangthai', 'in_progress')
+                ->first();
+
+            if ($lanThiDangMo) {
+                $lanThiDangMo = $service->kiemTraHetHan(
+                    (int) $lanThiDangMo->id,
+                    $nguoiDungId
+                );
+
+                if ($lanThiDangMo->trangthai === 'in_progress') {
+                    return redirect()->route('mock-test.show', [
+                        'id' => $lanThiDangMo->id,
+                    ]);
+                }
+            }
+
+            return view('mock-test.prepare', compact('deThi'));
+        }
+
+        // Bắt đầu tính giờ và cấp câu đầu tiên trong cùng transaction.
+        $lanThi = DB::transaction(function () use (
+            $service,
+            $nguoiDungId,
+            $data
+        ) {
+            $lanThi = $service->batDauThi(
+                $nguoiDungId,
+                (int) $data['dethi_id']
+            );
+
+            $service->capCauHoiTiepTheo(
+                (int) $lanThi->id,
                 $nguoiDungId
             );
 
-            if ($lanThiDangMo->trangthai === 'in_progress') {
-                return redirect()->route('mock-test.show', [
-                    'id' => $lanThiDangMo->id,
-                ]);
-            }
-        }
+            return $lanThi;
+        }, 3);
 
-        return view('mock-test.prepare', compact('deThi'));
+        return redirect()
+            ->route('mock-test.show', ['id' => $lanThi->id])
+            ->with('success', 'Bài thi đang diễn ra.');
     }
-
-    // Bắt đầu tính giờ và cấp câu đầu tiên trong cùng transaction.
-    $lanThi = DB::transaction(function () use (
-        $service,
-        $nguoiDungId,
-        $data
-    ) {
-        $lanThi = $service->batDauThi(
-            $nguoiDungId,
-            (int) $data['dethi_id']
-        );
-
-        $service->capCauHoiTiepTheo(
-            (int) $lanThi->id,
-            $nguoiDungId
-        );
-
-        return $lanThi;
-    }, 3);
-
-    return redirect()
-        ->route('mock-test.show', ['id' => $lanThi->id])
-        ->with('success', 'Bài thi đang diễn ra.');
-}
 
     public function show(Request $request, int $id, TestService $service)
     {
@@ -125,7 +126,7 @@ public function start(Request $request, TestService $service)
             ->where('id', $lanThi->dethi_id)
             ->first();
 
-        abort_if(!$deThi, 404, 'Không tìm thấy đề thi.');
+        abort_if(! $deThi, 404, 'Không tìm thấy đề thi.');
 
         $hanThi = $service->layHanThi($lanThi);
 
@@ -163,7 +164,7 @@ public function start(Request $request, TestService $service)
         $cauSau = null;
 
         $cauChuaTraLoi = $dsCauDaCap
-            ->filter(fn ($cau) => !(bool) $cau->datraloi)
+            ->filter(fn ($cau) => ! (bool) $cau->datraloi)
             ->values();
 
         if ($lanThi->trangthai === 'in_progress') {
@@ -182,7 +183,7 @@ public function start(Request $request, TestService $service)
                 ? $cauChuaTraLoi->firstWhere('id', (int) $cauYeuCau)
                 : $cauChuaTraLoi->last();
 
-            if ($cauYeuCau !== null && !$cauDuocCap) {
+            if ($cauYeuCau !== null && ! $cauDuocCap) {
                 abort(404, 'Câu hỏi không tồn tại hoặc đã được nộp.');
             }
 
@@ -201,7 +202,7 @@ public function start(Request $request, TestService $service)
                         'loai.kynang',
                     ]);
 
-                abort_if(!$cauHoi, 404, 'Không tìm thấy câu hỏi.');
+                abort_if(! $cauHoi, 404, 'Không tìm thấy câu hỏi.');
 
                 $luaChon = DB::table('luachon')
                     ->where('cauhoi_id', $cauHoi->id)
@@ -215,14 +216,12 @@ public function start(Request $request, TestService $service)
                 );
 
                 $cauTruoc = $cauChuaTraLoi
-                    ->filter(fn ($cau) =>
-                        (int) $cau->thutu < (int) $cauDuocCap->thutu
+                    ->filter(fn ($cau) => (int) $cau->thutu < (int) $cauDuocCap->thutu
                     )
                     ->last();
 
                 $cauSau = $cauChuaTraLoi->first(
-                    fn ($cau) =>
-                        (int) $cau->thutu > (int) $cauDuocCap->thutu
+                    fn ($cau) => (int) $cau->thutu > (int) $cauDuocCap->thutu
                 );
             }
         }
@@ -244,7 +243,7 @@ public function start(Request $request, TestService $service)
             $phieuTraLoi->push([
                 'thutu' => $thuTu,
                 'status' => $trangThai,
-                'lanthicauhoi_id' => $cau && !(bool) $cau->datraloi
+                'lanthicauhoi_id' => $cau && ! (bool) $cau->datraloi
                     ? (int) $cau->id
                     : null,
             ]);
@@ -337,7 +336,7 @@ public function start(Request $request, TestService $service)
             (int) $cauHienTai->id
         );
 
-        if (!$cauTiepTheo) {
+        if (! $cauTiepTheo) {
             return redirect()
                 ->route('mock-test.show', ['id' => $id])
                 ->with('success', 'Không còn câu hỏi mới. Bạn có thể nộp bài.');
@@ -376,6 +375,7 @@ public function start(Request $request, TestService $service)
             'lanthicauhoi_id' => ['nullable', 'integer'],
             'luachon_id' => ['nullable', 'integer'],
             'noidung' => ['nullable', 'string', 'max:10000'],
+            'audio' => ['nullable', 'file', 'mimes:mp3,wav,m4a,ogg,webm', 'max:10240'],
             'xac_nhan_bo_trong' => ['nullable', 'in:1'],
         ]);
 
@@ -444,13 +444,15 @@ public function start(Request $request, TestService $service)
             'lanthicauhoi_id' => ['required', 'integer'],
             'luachon_id' => ['nullable', 'integer'],
             'noidung' => ['nullable', 'string', 'max:10000'],
+            'audio' => ['nullable', 'file', 'mimes:mp3,wav,m4a,ogg,webm', 'max:10240'],
         ]);
     }
 
     private function coDapAn(array $data): bool
     {
         return isset($data['luachon_id'])
-            || trim($data['noidung'] ?? '') !== '';
+            || trim($data['noidung'] ?? '') !== ''
+            || isset($data['audio']);
     }
 
     private function luuDapAn(
@@ -458,13 +460,14 @@ public function start(Request $request, TestService $service)
         int $lanThiId,
         int $nguoiDungId,
         array $data
-    ): ?\App\Models\Traloi {
+    ): ?Traloi {
         return $service->nopCauTraLoi(
             $lanThiId,
             $nguoiDungId,
             (int) $data['lanthicauhoi_id'],
             isset($data['luachon_id']) ? (int) $data['luachon_id'] : null,
-            $data['noidung'] ?? null
+            $data['noidung'] ?? null,
+            $data['audio'] ?? null
         );
     }
 
@@ -473,7 +476,7 @@ public function start(Request $request, TestService $service)
         $cauHoiCon = collect();
         $luaChonCon = collect();
 
-        if (!in_array($maLoai, [
+        if (! in_array($maLoai, [
             'interactive_reading',
             'interactive_listening',
         ], true)) {
