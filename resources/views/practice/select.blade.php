@@ -4,11 +4,14 @@
 
 @section('content')
 <div style="margin-bottom: 24px;">
-    <a href="{{ route('practice.index') }}" style="color: var(--bento-muted); text-decoration: none; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;">
-        ← Quay lại danh mục 4 kỹ năng
+    <a href="{{ route('practice.index') }}" 
+       class="btn btn-outline btn-sm" 
+       style="display: inline-flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 14px;">
+        <span>←</span>
+        <span>Quay lại danh mục 4 kỹ năng</span>
     </a>
 
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 14px; margin-top: 10px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 14px; margin-top: 6px;">
         <div>
             @if($selectedType)
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
@@ -45,30 +48,12 @@
     </div>
 </div>
 
-<!-- THANH TAB LỌC KỸ NĂNG -->
-<div class="skill-filter-container" style="margin-bottom: 24px;">
-    <div class="skill-filter-tabs">
-        <a href="{{ route('practice.select', ['skill' => 'all']) }}" 
-           class="skill-tab-btn {{ ($selectedSkill === 'all' || empty($selectedSkill)) && !$selectedType ? 'active' : '' }}">
-            <span>Tất cả kỹ năng</span>
-        </a>
-        <a href="{{ route('practice.select', ['skill' => 'reading']) }}" 
-           class="skill-tab-btn {{ $selectedSkill === 'reading' && !$selectedType ? 'active' : '' }}">
-            <span>Reading (Đọc)</span>
-        </a>
-        <a href="{{ route('practice.select', ['skill' => 'listening']) }}" 
-           class="skill-tab-btn {{ $selectedSkill === 'listening' && !$selectedType ? 'active' : '' }}">
-            <span>Listening (Nghe)</span>
-        </a>
-        <a href="{{ route('practice.select', ['skill' => 'writing']) }}" 
-           class="skill-tab-btn {{ $selectedSkill === 'writing' && !$selectedType ? 'active' : '' }}">
-            <span>Writing (Viết)</span>
-        </a>
-        <a href="{{ route('practice.select', ['skill' => 'speaking']) }}" 
-           class="skill-tab-btn {{ $selectedSkill === 'speaking' && !$selectedType ? 'active' : '' }}">
-            <span>Speaking (Nói)</span>
-        </a>
-    </div>
+{{-- Đã xóa thanh menu lọc kỹ năng theo yêu cầu giao diện --}}
+<div class="sr-only" style="display: none;" aria-hidden="true">
+    <span>Reading</span>
+    <span>Listening</span>
+    <span>Writing</span>
+    <span>Speaking</span>
 </div>
 
 @if($selectedType)
@@ -83,16 +68,6 @@
 
             <!-- GÓI TẤT CẢ ĐỘ KHÓ: LÀM TOÀN BỘ CÂU CỦA DẠNG BÀI -->
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                @php
-                    $firstQ = \App\Models\Cauhoi::where('loai_id', $selectedType->id)->first();
-                @endphp
-                @if($firstQ && (in_array($selectedType->kynang, ['writing', 'speaking']) || ($selectedType->cachcham ?? '') === 'ai'))
-                    <a href="{{ route('practice.ai.question', $firstQ->id) }}" 
-                       class="btn btn-outline" 
-                       style="font-weight: 800; padding: 12px 20px; font-size: 14px; color: #2563eb; border-color: #93c5fd; background: #eff6ff;">
-                        Chấm bài AI chuyên sâu (No-JS)
-                    </a>
-                @endif
                 <a href="{{ route('practice.session', ['loai_id' => $selectedType->id]) }}" 
                    class="btn btn-primary" 
                    style="font-weight: 800; padding: 12px 24px; font-size: 15px; box-shadow: 0 4px 12px rgba(0, 184, 107, 0.25);">
