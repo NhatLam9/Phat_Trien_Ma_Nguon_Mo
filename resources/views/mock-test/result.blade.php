@@ -416,7 +416,7 @@
                                         <audio class="mr-audio"
                                                controls
                                                preload="none"
-                                               src="{{ asset(ltrim($cau->traloi_audio, '/')) }}">
+                                               src="{{ route('practice.ai.audio', $cau->traloi_id) }}">
                                         </audio>
                                     @endif
 
@@ -443,6 +443,14 @@
                                     <strong>Giải thích chi tiết</strong>
                                     <p>{{ $cau->giaithich }}</p>
                                 </div>
+                            @endif
+
+                            @if ($cau->traloi_id && in_array($cau->trangthai_ai, ['pending', 'failed'], true))
+                                <p class="mr-review-note">
+                                    <a href="{{ route('practice.ai.status', $cau->traloi_id) }}">
+                                        {{ $cau->trangthai_ai === 'failed' ? 'Xem lỗi / chấm lại bằng AI' : 'Theo dõi tiến trình chấm AI' }}
+                                    </a>
+                                </p>
                             @endif
 
                             @if ($cau->nhanxet_ai)

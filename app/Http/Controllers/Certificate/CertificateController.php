@@ -38,6 +38,22 @@ class CertificateController extends Controller
                 return $chungChiDaCap;
             }
 
+            $conChoCham = DB::table('lanthicauhoi as lc')
+                ->leftJoin('traloi as tl', 'tl.lanthicauhoi_id', '=', 'lc.id')
+                ->where('lc.lanthi_id', $lanThi->id)
+                ->where('lc.datraloi', true)
+                ->where(function ($query) {
+                    $query->whereNull('tl.diem')
+                        ->orWhereIn('tl.trangthai_ai', ['pending', 'failed']);
+                })
+                ->exists();
+
+            if ($conChoCham) {
+                throw ValidationException::withMessages([
+                    'certificate' => 'Chưa thể cấp chứng chỉ: còn câu trả lời chờ chấm hoặc chấm lỗi.',
+                ]);
+            }
+
             $cacCotDiem = [
                 'tongdiem',
                 'literacy',
@@ -51,7 +67,7 @@ class CertificateController extends Controller
                 $giaTri = $lanThi->{$cot};
 
                 // Không tự quy đổi điểm thô sang thang DET 10–160.
-                if (!is_numeric($giaTri)
+                if (! is_numeric($giaTri)
                     || (float) $giaTri !== (float) (int) $giaTri
                     || (int) $giaTri < 10
                     || (int) $giaTri > 160) {
@@ -66,7 +82,7 @@ class CertificateController extends Controller
             return Chungchi::create([
                 'nguoidung_id' => $nguoiDungId,
                 'lanthi_id' => $lanThi->id,
-                'ma' => 'DET-' . now()->format('Ymd') . '-' . Str::upper(Str::random(10)),
+                'ma' => 'DET-'.now()->format('Ymd').'-'.Str::upper(Str::random(10)),
                 ...$diem,
                 // Quy tắc ánh xạ cấp độ chưa được dự án xác nhận.
                 'trinhdo' => null,

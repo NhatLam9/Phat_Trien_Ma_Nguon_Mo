@@ -175,7 +175,7 @@
                             @endif
                         </div>
 
-                        <form method="POST"
+                        <form method="POST" enctype="multipart/form-data"
                               action="{{ $laCauCuoi
                                   ? route('mock-test.finish', $lanThi->id)
                                   : route('mock-test.skip', $lanThi->id) }}"
@@ -269,6 +269,13 @@
                                     @endforeach
                                 </div>
 
+                            @elseif ($cauHoi->kynang === 'speaking')
+                                <div class="text-answer-box">
+                                    <label for="audio" class="field-label">FILE GHI ÂM CÂU TRẢ LỜI</label>
+                                    <input type="file" id="audio" name="audio"
+                                           accept=".mp3,.wav,.m4a,.ogg,.webm,audio/*">
+                                    <p>MP3, WAV, M4A, OGG hoặc WebM, tối đa 10 MB.</p>
+                                </div>
                             @else
                                 <div class="text-answer-box">
                                     <label for="noidung" class="field-label">

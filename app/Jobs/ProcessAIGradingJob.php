@@ -6,6 +6,7 @@ use App\Models\Cauhoi;
 use App\Models\Lanthicauhoi;
 use App\Models\Traloi;
 use App\Services\AIService;
+use App\Services\TestService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -73,6 +74,7 @@ class ProcessAIGradingJob implements ShouldQueue
         }
 
         // 2. Tìm thông tin câu hỏi và kỹ năng
+        $lanThiCauHoi = null;
         $cauHoi = null;
         $loaiCauHoi = null;
 
@@ -85,6 +87,15 @@ class ProcessAIGradingJob implements ShouldQueue
             if (! $this->userId && $lanThiCauHoi?->lanThi) {
                 $this->userId = (int) $lanThiCauHoi->lanThi->nguoidung_id;
             }
+        }
+
+        if ($lanThiCauHoi?->lanThi?->trangthai === 'abandoned') {
+            $aiService->markFailedAndRefund(
+                $this->traloiId, $this->userId, $this->date, $this->attempt,
+                'Bài thi đã bỏ dở, lượt AI đã được hoàn.'
+            );
+
+            return;
         }
 
         $kyNang = strtolower((string) ($loaiCauHoi?->kynang ?? ''));
@@ -160,6 +171,23 @@ class ProcessAIGradingJob implements ShouldQueue
 
         if (! empty($gradeResult['subscores'])) {
             $feedback .= "\n\n--- TIÊU CHÍ CHI TIẾT ---\n".json_encode($gradeResult['subscores'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        }
+
+        // Practice giữ điểm DET; Thi thử cần điểm có trọng số để tổng hợp.
+        if ($lanThiCauHoi?->lanThi?->dethi_id !== null) {
+            if (! is_numeric($score) || ! is_finite((float) $score) || $score < 10 || $score > 160) {
+                $aiService->markFailedAndRefund(
+                    $this->traloiId, $this->userId, $this->date, $this->attempt,
+                    'AI trả về điểm không hợp lệ.'
+                );
+
+                return;
+            }
+            app(TestService::class)->ghiNhanKetQuaAi(
+                $this->traloiId, (float) $score, (string) $feedback, $this->attempt
+            );
+
+            return;
         }
 
         $affected = Traloi::query()

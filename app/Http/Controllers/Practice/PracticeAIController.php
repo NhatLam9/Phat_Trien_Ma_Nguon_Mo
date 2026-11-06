@@ -206,6 +206,8 @@ class PracticeAIController extends Controller
 
         abort_unless($userId === (int) Auth::id(), 403, 'Bạn không có quyền chấm lại bài làm này.');
 
+        abort_if($traloi->lanThiCauHoi?->lanThi?->trangthai === 'abandoned', 422, 'Không chấm lại bài thi đã bỏ dở.');
+
         // Chỉ chấm lại khi bài đang ở trạng thái thất bại.
         // pending/done không được phép trừ thêm lượt của người dùng.
         if ($traloi->trangthai_ai !== 'failed') {

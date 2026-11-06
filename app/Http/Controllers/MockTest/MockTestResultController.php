@@ -45,7 +45,7 @@ class MockTestResultController extends Controller
             ->where('id', $lanThi->dethi_id)
             ->first();
 
-        abort_if(!$deThi, 404, 'Không tìm thấy đề thi.');
+        abort_if(! $deThi, 404, 'Không tìm thấy đề thi.');
 
         $dsCauHoi = $this->layCauHoi($id);
 
@@ -186,6 +186,7 @@ class MockTestResultController extends Controller
                 'loai.ten as tenloai',
                 'loai.ma as maloai',
                 'loai.cachcham',
+                'tl.id as traloi_id',
                 'tl.luachon_id',
                 'tl.noidung as traloi_noidung',
                 'tl.audio as traloi_audio',
@@ -202,7 +203,7 @@ class MockTestResultController extends Controller
             || in_array($cau->trangthai_ai, ['pending', 'failed'], true);
 
         return match (true) {
-            !(bool) $cau->datraloi => 'skipped',
+            ! (bool) $cau->datraloi => 'skipped',
             $choCham => 'pending',
             (float) $cau->diem > 0
                 && (float) $cau->diem < (float) $cau->diemtoida => 'partial',
@@ -224,7 +225,7 @@ class MockTestResultController extends Controller
 
             if (
                 $diem === null
-                || !is_numeric($diem)
+                || ! is_numeric($diem)
                 || (float) $diem !== (float) (int) $diem
                 || (int) $diem < 10
                 || (int) $diem > 160
