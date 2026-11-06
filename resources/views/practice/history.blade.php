@@ -6,14 +6,14 @@
 <div style="margin-bottom: 24px;">
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
         <div>
-            <h1 style="font-size: 26px; font-weight: 800; color: var(--bento-heading);">⏱️ Lịch sử luyện tập các dạng bài kỹ năng</h1>
+            <h1 style="font-size: 26px; font-weight: 800; color: var(--bento-heading);">Lịch sử luyện tập các dạng bài kỹ năng</h1>
             <p style="color: var(--bento-muted); font-size: 14px; margin-top: 4px;">
                 Lưu lại chi tiết quá trình làm bài theo từng kỹ năng và dạng bài (Reading, Listening, Writing, Speaking) trong Duolingo English Test.
             </p>
         </div>
         <div style="display: flex; gap: 10px;">
             <a href="{{ route('practice.index') }}" class="btn btn-primary btn-sm">Luyện tập thêm dạng bài mới</a>
-            <a href="{{ route('practice.bookmarks') }}" class="btn btn-outline btn-sm">⭐ Câu hỏi đã lưu</a>
+            <a href="{{ route('practice.bookmarks') }}" class="btn btn-outline btn-sm">Câu hỏi đã lưu</a>
         </div>
     </div>
 </div>
@@ -50,10 +50,10 @@
                 </label>
                 <select name="skill" class="form-control" style="font-size: 13px;">
                     <option value="">-- Tất cả kỹ năng --</option>
-                    <option value="reading" {{ ($skill ?? '') === 'reading' ? 'selected' : '' }}>📖 Reading (Đọc)</option>
-                    <option value="listening" {{ ($skill ?? '') === 'listening' ? 'selected' : '' }}>🎧 Listening (Nghe)</option>
-                    <option value="writing" {{ ($skill ?? '') === 'writing' ? 'selected' : '' }}>✍️ Writing (Viết)</option>
-                    <option value="speaking" {{ ($skill ?? '') === 'speaking' ? 'selected' : '' }}>🎙️ Speaking (Nói)</option>
+                    <option value="reading" {{ ($skill ?? '') === 'reading' ? 'selected' : '' }}>Reading (Đọc)</option>
+                    <option value="listening" {{ ($skill ?? '') === 'listening' ? 'selected' : '' }}>Listening (Nghe)</option>
+                    <option value="writing" {{ ($skill ?? '') === 'writing' ? 'selected' : '' }}>Writing (Viết)</option>
+                    <option value="speaking" {{ ($skill ?? '') === 'speaking' ? 'selected' : '' }}>Speaking (Nói)</option>
                 </select>
             </div>
 
@@ -76,12 +76,12 @@
                 </label>
                 <select name="period" id="period-select" class="form-control" style="font-size: 13px;">
                     <option value="">-- Tất cả thời gian --</option>
-                    <option value="today" {{ $period === 'today' ? 'selected' : '' }}>📅 Hôm nay</option>
-                    <option value="yesterday" {{ $period === 'yesterday' ? 'selected' : '' }}>📅 Hôm qua</option>
-                    <option value="7_days" {{ $period === '7_days' ? 'selected' : '' }}>⏱️ 7 ngày qua</option>
-                    <option value="30_days" {{ $period === '30_days' ? 'selected' : '' }}>⏱️ 30 ngày qua</option>
-                    <option value="this_month" {{ $period === 'this_month' ? 'selected' : '' }}>🗓️ Tháng này</option>
-                    <option value="last_month" {{ $period === 'last_month' ? 'selected' : '' }}>🗓️ Tháng trước</option>
+                    <option value="today" {{ $period === 'today' ? 'selected' : '' }}>Hôm nay</option>
+                    <option value="yesterday" {{ $period === 'yesterday' ? 'selected' : '' }}>Hôm qua</option>
+                    <option value="7_days" {{ $period === '7_days' ? 'selected' : '' }}>7 ngày qua</option>
+                    <option value="30_days" {{ $period === '30_days' ? 'selected' : '' }}>30 ngày qua</option>
+                    <option value="this_month" {{ $period === 'this_month' ? 'selected' : '' }}>Tháng này</option>
+                    <option value="last_month" {{ $period === 'last_month' ? 'selected' : '' }}>Tháng trước</option>
                 </select>
             </div>
 
@@ -131,7 +131,6 @@
 <!-- BẢNG LỊCH SỬ CHI TIẾT CÁC DẠNG BÀI ĐÃ LÀM -->
 @if($attempts->isEmpty())
     <div class="card" style="text-align: center; padding: 48px 20px;">
-        <div style="font-size: 40px; margin-bottom: 12px;">📋</div>
         <h3 style="font-size: 18px; color: var(--bento-heading); margin-bottom: 6px;">Chưa tìm thấy lịch sử luyện tập</h3>
         <p style="color: var(--bento-muted); font-size: 14px; margin-bottom: 18px;">Hãy thử điều chỉnh lại bộ lọc hoặc bắt đầu một bài luyện tập mới.</p>
         <a href="{{ route('practice.history') }}" class="btn btn-outline" style="margin-right: 8px;">Xem tất cả</a>

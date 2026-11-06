@@ -101,7 +101,6 @@
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
         <div>
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                <span style="font-size: 26px;">⭐</span>
                 <h1 style="font-size: 26px; font-weight: 800; color: var(--bento-heading); margin: 0;">
                     Câu hỏi đã lưu & Dạng bài quan tâm
                 </h1>
@@ -114,7 +113,7 @@
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
             @if($stats['total'] > 0)
                 <a href="{{ route('practice.bookmarks.practice', ['skill' => $selectedSkill]) }}" class="btn btn-primary" style="font-weight: 700;">
-                     Luyện tập các câu đã lưu
+                    Luyện tập các câu đã lưu
                 </a>
             @endif
             <a href="{{ route('practice.select') }}" class="btn btn-outline btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
@@ -130,7 +129,6 @@
             <div class="card" style="margin-bottom: 0; padding: 16px 18px; border-radius: 12px; border: 1.5px solid {{ $sMeta['border'] }}; background: {{ $sMeta['bg'] }};">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="font-size: 24px;">{{ $sMeta['icon'] }}</span>
                         <div>
                             <span style="font-size: 12px; font-weight: 700; color: {{ $sMeta['color'] }}; text-transform: uppercase; display: block;">
                                 {{ $sMeta['short'] }}
@@ -154,12 +152,12 @@
         <div style="display: flex; gap: 10px;">
             <a href="{{ route('practice.bookmarks', array_merge(request()->query(), ['tab' => 'questions'])) }}" 
                class="view-mode-tab {{ $activeTab === 'questions' ? 'active' : '' }}">
-                <span> Câu hỏi đã lưu</span>
+                <span>Câu hỏi đã lưu</span>
                 <span class="stat-badge-chip">{{ $stats['total'] }}</span>
             </a>
             <a href="{{ route('practice.bookmarks', array_merge(request()->query(), ['tab' => 'types'])) }}" 
                class="view-mode-tab {{ $activeTab === 'types' ? 'active' : '' }}">
-                <span> Dạng bài quan tâm</span>
+                <span>Dạng bài quan tâm</span>
                 <span class="stat-badge-chip">{{ $savedTypes->count() }}</span>
             </a>
         </div>
@@ -172,13 +170,13 @@
         <div style="background: #ffffff; border: 1px solid var(--bento-line); border-radius: 12px 12px 0 0; border-bottom: none; display: flex; overflow-x: auto; padding: 6px 12px 0;">
             <a href="{{ route('practice.bookmarks', array_merge(request()->except(['page']), ['skill' => 'all'])) }}" 
                class="skill-tab-item {{ $selectedSkill === 'all' ? 'active' : '' }}">
-                <span>✨ Tất cả</span>
+                <span>Tất cả</span>
                 <span class="stat-badge-chip">{{ $stats['total'] }}</span>
             </a>
             @foreach($skillMeta as $sKey => $sMeta)
                 <a href="{{ route('practice.bookmarks', array_merge(request()->except(['page']), ['skill' => $sKey])) }}" 
                    class="skill-tab-item {{ $selectedSkill === $sKey ? 'active' : '' }}">
-                    <span>{{ $sMeta['icon'] }} {{ $sMeta['short'] }}</span>
+                    <span>{{ $sMeta['short'] }}</span>
                     <span class="stat-badge-chip">{{ $stats[$sKey] ?? 0 }}</span>
                 </a>
             @endforeach
@@ -252,7 +250,6 @@
         {{-- DANH SÁCH BẢNG CÂU HỎI ĐÃ LƯU --}}
         @if($bookmarks->isEmpty())
             <div class="card" style="text-align: center; padding: 50px 20px; border-radius: 14px;">
-                <div style="font-size: 48px; margin-bottom: 12px;">🌟</div>
                 <h3 style="font-size: 18px; color: var(--bento-heading); margin-bottom: 6px;">
                     @if($selectedSkill !== 'all' || $selectedLoai || $selectedDokho || $keyword)
                         Không tìm thấy câu hỏi đã lưu phù hợp với bộ lọc
@@ -313,7 +310,6 @@
                                     {{-- Cột 2: Kỹ năng & Dạng bài --}}
                                     <td style="padding: 14px 18px; white-space: nowrap;">
                                         <span class="badge {{ $sm['badge'] }}" style="font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; display: inline-flex; align-items: center; gap: 4px;">
-                                            <span>{{ $sm['icon'] }}</span>
                                             <span>{{ $sm['short'] }}</span>
                                         </span>
                                         <div style="font-size: 13px; font-weight: 700; color: var(--bento-heading); margin-top: 2px;">
@@ -328,10 +324,10 @@
                                         </div>
                                         <div style="margin-top: 4px; display: flex; gap: 8px; align-items: center; font-size: 12px; color: var(--bento-muted);">
                                             @if(!empty($bm->cauhoi->audio))
-                                                <span style="color: #7c3aed; font-weight: 700;">🎧 Kèm âm thanh</span>
+                                                <span style="color: #7c3aed; font-weight: 700;">Kèm âm thanh</span>
                                             @endif
                                             @if(!empty($bm->cauhoi->anh))
-                                                <span style="color: #0284c7; font-weight: 700;">🖼️ Kèm hình ảnh</span>
+                                                <span style="color: #0284c7; font-weight: 700;">Kèm hình ảnh</span>
                                             @endif
                                             <span>Điểm: {{ $bm->cauhoi->diem ?? 1 }}đ</span>
                                         </div>
@@ -356,7 +352,7 @@
                                                    class="btn btn-outline btn-sm" 
                                                    style="font-size: 13px; font-weight: 600; padding: 6px 10px;"
                                                    title="Luyện tập tất cả câu thuộc dạng bài này">
-                                                    🎯 Dạng này
+                                                    Dạng này
                                                 </a>
                                             @endif
 
@@ -392,12 +388,11 @@
 
         @if($savedTypes->isEmpty())
             <div class="card" style="text-align: center; padding: 50px 20px; border-radius: 14px;">
-                <div style="font-size: 48px; margin-bottom: 12px;">📌</div>
                 <h3 style="font-size: 18px; color: var(--bento-heading); margin-bottom: 6px;">
                     Bạn chưa lưu dạng bài nào
                 </h3>
                 <p style="color: var(--bento-muted); font-size: 14px; margin-bottom: 20px; max-width: 500px; margin-left: auto; margin-right: auto;">
-                    Tại trang chọn dạng bài luyện tập, bạn có thể nhấn nút <strong>"⭐ Lưu dạng bài"</strong> trên mỗi thẻ để lưu các dạng bài trọng tâm vào đây.
+                    Tại trang chọn dạng bài luyện tập, bạn có thể nhấn nút <strong>"Lưu dạng bài"</strong> trên mỗi thẻ để lưu các dạng bài trọng tâm vào đây.
                 </p>
                 <a href="{{ route('practice.select') }}" class="btn btn-primary">
                     Khám phá các dạng bài luyện tập →
@@ -413,7 +408,7 @@
                         <div>
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                                 <span class="badge {{ $stMeta['badge'] }}" style="font-size: 11px; font-weight: 700; text-transform: uppercase;">
-                                    {{ $stMeta['icon'] }} {{ $stMeta['name'] }}
+                                    {{ $stMeta['name'] }}
                                 </span>
                                 <button type="button" 
                                         onclick="removeTypeBookmark({{ $st->id }})" 
@@ -435,7 +430,7 @@
 
                         <div style="border-top: 1px solid #f1f5f9; padding-top: 14px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="font-size: 13px; color: var(--bento-muted); font-weight: 600;">
-                                📚 {{ $st->question_count }} câu trong ngân hàng
+                                {{ $st->question_count }} câu trong ngân hàng
                             </span>
 
                             <a href="{{ route('practice.session', ['loai_id' => $st->id]) }}" class="btn btn-primary btn-sm" style="font-weight: 700;">
