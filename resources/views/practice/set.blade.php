@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="{{ asset('css/practice.css') }}">
     <style>
         .sheet-btn.has-answer {
-            background-color: #00b86b !important;
-            border-color: #00b86b !important;
+            background-color: var(--bento-orange) !important;
+            border-color: var(--bento-orange) !important;
             color: #ffffff !important;
             font-weight: 700;
         }
@@ -35,7 +35,7 @@
             align-items: center;
             gap: 14px;
             padding: 14px 18px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid var(--bento-line);
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.15s ease-in-out;
@@ -43,15 +43,15 @@
             margin-bottom: 12px;
         }
         .option-label:hover {
-            border-color: #00b86b;
-            background: #f8fafc;
+            border-color: var(--bento-orange);
+            background: var(--bento-subtle);
         }
         .option-label input[type="radio"]:checked + .opt-badge + .opt-text {
-            color: #00b86b;
+            color: var(--bento-orange);
             font-weight: 700;
         }
         .option-label.selected {
-            border-color: #00b86b;
+            border-color: var(--bento-orange);
             background: #f0fdf4;
         }
     </style>
@@ -119,13 +119,13 @@
                             {{-- Header câu hỏi: Số câu, Phân loại, Đánh dấu cờ --}}
                             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px; margin-bottom: 20px;">
                                 <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span style="font-weight: 800; color: #00b86b; background: #e6f9f0; padding: 4px 10px; border-radius: 6px; font-size: 13px;">
+                                    <span style="font-weight: 800; color: var(--bento-orange); background: #e6f9f0; padding: 4px 10px; border-radius: 6px; font-size: 13px;">
                                         CÂU {{ sprintf('%02d', $index + 1) }}/{{ sprintf('%02d', count($questions)) }}
                                     </span>
                                     <span class="badge {{ !empty($q->loai_kynang) ? 'badge-' . $q->loai_kynang : 'badge-user' }}">
                                         {{ $q->loai_ten ?? 'Duolingo English Test' }}
                                     </span>
-                                    <span style="font-size: 13px; color: #64748b;">
+                                    <span style="font-size: 13px; color: var(--bento-muted);">
                                         Độ khó: {{ $q->dokho ?? $set->dokho }}/10
                                     </span>
                                 </div>
@@ -137,10 +137,10 @@
 
                             {{-- Nội dung đề bài --}}
                             <div style="margin-bottom: 24px;">
-                                <div style="font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 8px; text-transform: uppercase;">
+                                <div style="font-size: 13px; font-weight: 700; color: var(--bento-muted); margin-bottom: 8px; text-transform: uppercase;">
                                     NỘI DUNG CÂU HỎI:
                                 </div>
-                                <div style="font-size: 18px; font-weight: 700; color: #1e293b; line-height: 1.6; background: #f8fafc; padding: 18px 20px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                                <div style="font-size: 18px; font-weight: 700; color: var(--bento-heading); line-height: 1.6; background: var(--bento-subtle); padding: 18px 20px; border-radius: 10px; border: 1px solid var(--bento-line);">
                                     {{ $q->noidung }}
                                 </div>
 
@@ -151,7 +151,7 @@
                                         $imgUrl = file_exists(public_path($cleanImg)) ? asset($cleanImg) : (file_exists(public_path('images/questions/' . basename($cleanImg))) ? asset('images/questions/' . basename($cleanImg)) : asset($cleanImg));
                                     @endphp
                                     <div style="text-align: center; margin: 20px 0;">
-                                        <img src="{{ $imgUrl }}" alt="Question Image" style="max-width: 100%; max-height: 360px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                        <img src="{{ $imgUrl }}" alt="Question Image" style="max-width: 100%; max-height: 360px; border-radius: 8px; border: 1px solid var(--bento-line);">
                                     </div>
                                 @endif
 
@@ -163,7 +163,7 @@
                                         $ext = strtolower(pathinfo(parse_url($audUrl, PHP_URL_PATH), PATHINFO_EXTENSION));
                                         $mime = $ext === 'wav' ? 'audio/wav' : ($ext === 'ogg' ? 'audio/ogg' : 'audio/mpeg');
                                     @endphp
-                                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 12px; margin: 18px 0; text-align: center;">
+                                    <div style="background: var(--bento-subtle); border: 1px solid var(--bento-line); padding: 16px; border-radius: 12px; margin: 18px 0; text-align: center;">
                                         <p style="font-size: 13px; color: #475569; margin-bottom: 8px; font-weight: 700;">🎧 Nghe đoạn âm thanh câu hỏi:</p>
                                         <audio controls preload="auto" style="width: 100%; max-width: 480px;">
                                             <source src="{{ $audUrl }}" type="{{ $mime }}">
@@ -176,7 +176,7 @@
 
                             {{-- KHU VỰC CHỌN HOẶC NHẬP ĐÁP ÁN --}}
                             <div style="margin-bottom: 10px;">
-                                <div style="font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 12px; text-transform: uppercase;">
+                                <div style="font-size: 13px; font-weight: 700; color: var(--bento-ink); margin-bottom: 12px; text-transform: uppercase;">
                                     CHỌN ĐÁP ÁN CỦA BẠN:
                                 </div>
 
@@ -187,12 +187,12 @@
                                                 <input type="radio" 
                                                        name="answers[{{ $q->id }}]" 
                                                        value="{{ $opt->id }}" 
-                                                       style="accent-color: #00b86b; width: 18px; height: 18px;" 
+                                                       style="accent-color: var(--bento-orange); width: 18px; height: 18px;"
                                                        onchange="onOptionSelected({{ $index }}, {{ $q->id }}, {{ $opt->id }})">
-                                                <span class="opt-badge" style="font-weight: 800; color: #00b86b; width: 22px; font-size: 15px;">
+                                                <span class="opt-badge" style="font-weight: 800; color: var(--bento-orange); width: 22px; font-size: 15px;">
                                                     {{ chr(65 + $optIdx) }}.
                                                 </span>
-                                                <span class="opt-text" style="font-size: 15px; color: #1e293b; line-height: 1.4;">
+                                                <span class="opt-text" style="font-size: 15px; color: var(--bento-heading); line-height: 1.4;">
                                                     {{ $opt->noidung }}
                                                 </span>
                                             </label>
@@ -237,7 +237,7 @@
                                     </button>
                                 @endif
 
-                                <button type="submit" class="btn btn-success" onclick="return confirmSubmit()" style="padding: 10px 24px; font-weight: 700; background: #00b86b; border-color: #00b86b; color: #fff;">
+                                <button type="submit" class="btn btn-success" onclick="return confirmSubmit()" style="padding: 10px 24px; font-weight: 700; background: var(--bento-orange); border-color: var(--bento-orange); color: #fff;">
                                     Nộp bài làm ✓
                                 </button>
                             </div>
@@ -307,12 +307,12 @@
 
                 <div class="sheet-legend" style="margin-top: 16px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
                     <div class="legend-item">
-                        <span class="legend-dot" style="background: #00b86b;"></span>
+                        <span class="legend-dot" style="background: var(--bento-orange);"></span>
                         <span>Đã trả lời</span>
                     </div>
 
                     <div class="legend-item">
-                        <span class="legend-dot" style="background: #ffffff; border: 1px solid #cbd5e1;"></span>
+                        <span class="legend-dot" style="background: #ffffff; border: 1px solid var(--bento-line);"></span>
                         <span>Chưa làm</span>
                     </div>
 
@@ -330,7 +330,7 @@
 
             {{-- 3. HƯỚNG DẪN QUAN TRỌNG KHI LÀM BÀI --}}
             <section class="glass-card" style="margin-top: 18px; padding: 18px; font-size: 13px; line-height: 1.6; color: #475569;">
-                <h4 style="font-size: 13px; font-weight: 800; color: #1e293b; margin-bottom: 8px; text-transform: uppercase;">
+                <h4 style="font-size: 13px; font-weight: 800; color: var(--bento-heading); margin-bottom: 8px; text-transform: uppercase;">
                     📌 Lưu ý quan trọng khi làm bài
                 </h4>
                 <ul style="padding-left: 18px; margin: 0;">

@@ -148,7 +148,7 @@
                 <strong style="font-size: 1.9rem; color: #047857; line-height: 1;">
                     {{ isset($duLieu['score']) ? (int) $duLieu['score'] : '—' }}
                 </strong>
-                <span style="color: #64748b; font-size: 0.9rem;">/ 160</span>
+                <span style="color: var(--bento-muted); font-size: 0.9rem;">/ 160</span>
             </div>
 
             @if (! empty($duLieu['feedback']))

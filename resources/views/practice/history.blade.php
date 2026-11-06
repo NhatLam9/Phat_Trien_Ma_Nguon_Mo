@@ -6,8 +6,8 @@
 <div style="margin-bottom: 24px;">
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
         <div>
-            <h1 style="font-size: 26px; font-weight: 800; color: #1e293b;">⏱️ Lịch sử luyện tập các dạng bài kỹ năng</h1>
-            <p style="color: #64748b; font-size: 14px; margin-top: 4px;">
+            <h1 style="font-size: 26px; font-weight: 800; color: var(--bento-heading);">⏱️ Lịch sử luyện tập các dạng bài kỹ năng</h1>
+            <p style="color: var(--bento-muted); font-size: 14px; margin-top: 4px;">
                 Lưu lại chi tiết quá trình làm bài theo từng kỹ năng và dạng bài (Reading, Listening, Writing, Speaking) trong Duolingo English Test.
             </p>
         </div>
@@ -21,18 +21,18 @@
 <!-- THẺ THỐNG KÊ TỔNG QUAN -->
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
     <div class="card" style="margin-bottom: 0; padding: 20px;">
-        <div style="font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase;">Tổng lượt làm bài</div>
-        <div style="font-size: 28px; font-weight: 800; color: #1e293b; margin-top: 4px;">{{ $totalAttempts }}</div>
+        <div style="font-size: 13px; color: var(--bento-muted); font-weight: 600; text-transform: uppercase;">Tổng lượt làm bài</div>
+        <div style="font-size: 28px; font-weight: 800; color: var(--bento-heading); margin-top: 4px;">{{ $totalAttempts }}</div>
     </div>
 
     <div class="card" style="margin-bottom: 0; padding: 20px;">
-        <div style="font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase;">Số câu trả lời đúng</div>
-        <div style="font-size: 28px; font-weight: 800; color: #00b86b; margin-top: 4px;">{{ $correctAttempts }}</div>
+        <div style="font-size: 13px; color: var(--bento-muted); font-weight: 600; text-transform: uppercase;">Số câu trả lời đúng</div>
+        <div style="font-size: 28px; font-weight: 800; color: var(--bento-orange); margin-top: 4px;">{{ $correctAttempts }}</div>
     </div>
 
     <div class="card" style="margin-bottom: 0; padding: 20px;">
-        <div style="font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase;">Tỷ lệ chính xác</div>
-        <div style="font-size: 28px; font-weight: 800; color: {{ $accuracy >= 70 ? '#00b86b' : ($accuracy >= 50 ? '#f59e0b' : '#ef4444') }}; margin-top: 4px;">
+        <div style="font-size: 13px; color: var(--bento-muted); font-weight: 600; text-transform: uppercase;">Tỷ lệ chính xác</div>
+        <div style="font-size: 28px; font-weight: 800; color: {{ $accuracy >= 70 ? 'var(--bento-orange)' : ($accuracy >= 50 ? '#f59e0b' : '#ef4444') }}; margin-top: 4px;">
             {{ $accuracy }}%
         </div>
     </div>
@@ -132,16 +132,16 @@
 @if($attempts->isEmpty())
     <div class="card" style="text-align: center; padding: 48px 20px;">
         <div style="font-size: 40px; margin-bottom: 12px;">📋</div>
-        <h3 style="font-size: 18px; color: #1e293b; margin-bottom: 6px;">Chưa tìm thấy lịch sử luyện tập</h3>
-        <p style="color: #64748b; font-size: 14px; margin-bottom: 18px;">Hãy thử điều chỉnh lại bộ lọc hoặc bắt đầu một bài luyện tập mới.</p>
+        <h3 style="font-size: 18px; color: var(--bento-heading); margin-bottom: 6px;">Chưa tìm thấy lịch sử luyện tập</h3>
+        <p style="color: var(--bento-muted); font-size: 14px; margin-bottom: 18px;">Hãy thử điều chỉnh lại bộ lọc hoặc bắt đầu một bài luyện tập mới.</p>
         <a href="{{ route('practice.history') }}" class="btn btn-outline" style="margin-right: 8px;">Xem tất cả</a>
         <a href="{{ route('practice.index') }}" class="btn btn-primary">Luyện tập ngay</a>
     </div>
 @else
-    <div class="card" style="padding: 0; overflow: hidden; border-radius: 14px; border: 1px solid #e2e8f0;">
+    <div class="card" style="padding: 0; overflow: hidden; border-radius: 14px; border: 1px solid var(--bento-line);">
         <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
             <thead>
-                <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; color: #475569; font-weight: 700;">
+                <tr style="background: var(--bento-subtle); border-bottom: 1px solid var(--bento-line); color: #475569; font-weight: 700;">
                     <th style="padding: 14px 18px;">Lần thi #</th>
                     <th style="padding: 14px 18px;">Kỹ năng & Dạng bài</th>
                     <th style="padding: 14px 18px;">Nội dung câu hỏi</th>
@@ -155,7 +155,7 @@
             <tbody>
                 @foreach($attempts as $att)
                     <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.15s ease;">
-                        <td style="padding: 14px 18px; font-weight: 700; color: #64748b;">
+                        <td style="padding: 14px 18px; font-weight: 700; color: var(--bento-muted);">
                             #{{ $att->id }}
                         </td>
 
@@ -165,17 +165,17 @@
                                     <span class="badge {{ !empty($att->loai_kynang) ? 'badge-' . $att->loai_kynang : 'badge-user' }}" style="font-size: 11px; text-transform: uppercase;">
                                         {{ $att->loai_kynang ?? 'DET' }}
                                     </span>
-                                    <strong style="color: #1e293b; font-size: 13px;">
+                                    <strong style="color: var(--bento-heading); font-size: 13px;">
                                         {{ $att->loai_ten ?? 'Câu hỏi DET' }}
                                     </strong>
                                 </div>
-                                <span style="font-size: 11px; color: #64748b;">
+                                <span style="font-size: 11px; color: var(--bento-muted);">
                                     Độ khó: {{ $att->cauhoi_dokho ?? 5 }}/10
                                 </span>
                             </div>
                         </td>
 
-                        <td style="padding: 14px 18px; color: #1e293b; max-width: 240px;">
+                        <td style="padding: 14px 18px; color: var(--bento-heading); max-width: 240px;">
                             {{ Str::limit($att->cauhoi_noidung ?? ('Câu hỏi #' . $att->cauhoi_id), 60) }}
                         </td>
 
@@ -191,15 +191,15 @@
                             @elseif($att->ladung === 0)
                                 <span class="badge badge-writing" style="background:#fee2e2;color:#991b1b; font-weight: 700;">✗ Sai</span>
                             @else
-                                <span class="badge" style="background: #f1f5f9; color: #64748b;">— Chưa chấm</span>
+                                <span class="badge" style="background: #f1f5f9; color: var(--bento-muted);">— Chưa chấm</span>
                             @endif
                         </td>
 
-                        <td style="padding: 14px 18px; font-weight: 800; color: #1e293b;">
+                        <td style="padding: 14px 18px; font-weight: 800; color: var(--bento-heading);">
                             {{ $att->diem ?? 0 }}
                         </td>
 
-                        <td style="padding: 14px 18px; color: #64748b; font-size: 13px;">
+                        <td style="padding: 14px 18px; color: var(--bento-muted); font-size: 13px;">
                             {{ date('d/m/Y H:i', strtotime($att->ngaylam)) }}
                         </td>
 

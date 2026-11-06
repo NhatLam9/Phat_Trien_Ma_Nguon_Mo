@@ -34,7 +34,7 @@
 
         .study-card,
         .study-panel {
-            border: 1px solid #e5e7eb;
+            border: 1px solid var(--bento-line);
             border-radius: 14px;
             background: #fff;
         }
@@ -115,7 +115,7 @@
             display: block;
             height: 100%;
             border-radius: inherit;
-            background: #58cc02;
+            background: var(--bento-orange);
         }
 
         .study-list {

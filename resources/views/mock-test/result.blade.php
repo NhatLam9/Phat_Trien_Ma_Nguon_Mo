@@ -45,7 +45,7 @@
         .mr-interactive-review article {
             margin-bottom: 12px;
             padding: 14px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--bento-line);
             border-radius: 12px;
         }
 

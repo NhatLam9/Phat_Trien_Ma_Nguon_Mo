@@ -11,8 +11,8 @@
 @section('content')
 <div class="ai-status-container" style="max-width: 850px; margin: 2rem auto; padding: 0 1rem;">
     <div style="margin-bottom: 1.5rem;">
-        <a href="{{ route('practice.index') }}" style="color: #6b7280; text-decoration: none; font-size: 0.95rem;">&larr; Danh sách luyện tập</a>
-        <h1 style="font-size: 1.8rem; color: #111827; margin-top: 0.5rem;">Trạng thái chấm điểm AI</h1>
+        <a href="{{ route('practice.index') }}" style="color: var(--bento-muted); text-decoration: none; font-size: 0.95rem;">&larr; Danh sách luyện tập</a>
+        <h1 style="font-size: 1.8rem; color: var(--bento-heading); margin-top: 0.5rem;">Trạng thái chấm điểm AI</h1>
     </div>
 
     @if (session('success'))
@@ -32,7 +32,7 @@
         <div style="background: #ffffff; border: 2px solid #3b82f6; border-radius: 12px; padding: 2.5rem 1.5rem; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 2rem;">
             <div style="font-size: 3rem; margin-bottom: 1rem;">⏳</div>
             <h2 style="font-size: 1.5rem; color: #1e40af; margin-bottom: 0.75rem;">Hệ thống AI đang chấm bài của bạn...</h2>
-            <p style="color: #4b5563; font-size: 1.05rem; line-height: 1.6; max-width: 600px; margin: 0 auto 1.5rem auto;">
+            <p style="color: var(--bento-muted); font-size: 1.05rem; line-height: 1.6; max-width: 600px; margin: 0 auto 1.5rem auto;">
                 Quá trình phân tích ngôn ngữ và đối chiếu rubric DET thường mất từ 10 đến 30 giây. Trang sẽ tự động tải lại mỗi 5 giây cho đến khi có điểm.
             </p>
             <div style="display: inline-block; background: #eff6ff; color: #1d4ed8; padding: 0.5rem 1rem; border-radius: 999px; font-size: 0.9rem; font-weight: 600;">
@@ -43,18 +43,18 @@
     <!-- TRƯỜNG HỢP 2: ĐÃ CHẤM XONG (DONE) -->
     @elseif ($traloi->trangthai_ai === 'done')
         <div style="background: #ffffff; border: 2px solid #22c55e; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 2rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb; padding-bottom: 1.25rem; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--bento-line); padding-bottom: 1.25rem; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                 <div>
                     <span style="background: #dcfce7; color: #15803d; font-size: 0.85rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 999px; text-transform: uppercase;">
                         Chấm điểm hoàn tất
                     </span>
-                    <h2 style="font-size: 1.5rem; color: #111827; margin-top: 0.5rem; margin-bottom: 0;">Điểm số bài làm</h2>
+                    <h2 style="font-size: 1.5rem; color: var(--bento-heading); margin-top: 0.5rem; margin-bottom: 0;">Điểm số bài làm</h2>
                 </div>
                 <div style="text-align: right;">
                     <div style="font-size: 2.5rem; font-weight: 900; color: #16a34a; line-height: 1;">
                         {{ $traloi->diem_ai !== null ? number_format($traloi->diem_ai, 0) : 'N/A' }}
                     </div>
-                    <span style="font-size: 0.85rem; color: #6b7280; font-weight: 600;">Thang điểm DET: 10 - 160</span>
+                    <span style="font-size: 0.85rem; color: var(--bento-muted); font-weight: 600;">Thang điểm DET: 10 - 160</span>
                 </div>
             </div>
 
@@ -66,8 +66,8 @@
             @endif
 
             @if (!empty($traloi->audio))
-                <div style="margin-bottom: 1.5rem; background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;">
-                    <strong style="display: block; color: #334155; margin-bottom: 0.5rem; font-size: 0.95rem;">File ghi âm bài nói:</strong>
+                <div style="margin-bottom: 1.5rem; background: var(--bento-subtle); padding: 1rem; border-radius: 8px; border: 1px solid var(--bento-line);">
+                    <strong style="display: block; color: var(--bento-ink); margin-bottom: 0.5rem; font-size: 0.95rem;">File ghi âm bài nói:</strong>
                     <audio controls style="width: 100%;">
                         <source src="{{ route('practice.ai.audio', $traloi->id) }}">
                         Trình duyệt không hỗ trợ phát âm thanh.
@@ -77,15 +77,15 @@
 
             @if (!empty($traloi->noidung))
                 <div style="margin-bottom: 1.5rem;">
-                    <strong style="display: block; color: #334155; margin-bottom: 0.5rem; font-size: 1rem;">
+                    <strong style="display: block; color: var(--bento-ink); margin-bottom: 0.5rem; font-size: 1rem;">
                         {{ $isSpeaking ? 'Bản chép lời giọng nói (Transcript):' : 'Bài viết của bạn:' }}
                     </strong>
-                    <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 1rem; color: #1e293b; font-size: 1rem; line-height: 1.6; white-space: pre-wrap;">{{ $traloi->noidung }}</div>
+                    <div style="background: var(--bento-subtle); border: 1px solid var(--bento-line); border-radius: 8px; padding: 1rem; color: var(--bento-heading); font-size: 1rem; line-height: 1.6; white-space: pre-wrap;">{{ $traloi->noidung }}</div>
                 </div>
             @endif
 
             <div>
-                <strong style="display: block; color: #334155; margin-bottom: 0.5rem; font-size: 1rem;">Nhận xét & Tiêu chí chi tiết từ AI Examiner:</strong>
+                <strong style="display: block; color: var(--bento-ink); margin-bottom: 0.5rem; font-size: 1rem;">Nhận xét & Tiêu chí chi tiết từ AI Examiner:</strong>
                 <div style="background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 4px; padding: 1.25rem; color: #064e3b; font-size: 1rem; line-height: 1.6; white-space: pre-wrap;">{{ $nhanXet }}</div>
             </div>
         </div>
@@ -97,7 +97,7 @@
                 <span style="font-size: 2rem;">❌</span>
                 <div>
                     <h2 style="font-size: 1.4rem; color: #991b1b; margin: 0;">Chấm bài không thành công</h2>
-                    <span style="color: #6b7280; font-size: 0.85rem;">Hệ thống đã tự động hoàn lại lượt sử dụng cho bạn.</span>
+                    <span style="color: var(--bento-muted); font-size: 0.85rem;">Hệ thống đã tự động hoàn lại lượt sử dụng cho bạn.</span>
                 </div>
             </div>
 
@@ -118,7 +118,7 @@
             @else
                 <!-- Nút Chấm lại hợp lệ (POST form) -->
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                    <span style="font-size: 0.9rem; color: #4b5563;">
+                    <span style="font-size: 0.9rem; color: var(--bento-muted);">
                         Bấm "Chấm lại" để gửi lại yêu cầu chấm (sẽ tiêu tốn 1 lượt mới).
                     </span>
                     <form method="POST" action="{{ route('practice.ai.retry', $traloi->id) }}">
