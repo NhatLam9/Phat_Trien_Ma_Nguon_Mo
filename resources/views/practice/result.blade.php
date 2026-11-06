@@ -92,7 +92,33 @@
                     {{ $attempt->noidung ?? '(Không có nội dung)' }}
                 @endif
             </div>
+            @if(!empty($attempt->audio))
+                <div style="margin-top: 10px;">
+                    <audio controls style="height: 36px; max-width: 100%;">
+                        <source src="{{ asset($attempt->audio) }}">
+                    </audio>
+                </div>
+            @endif
         </div>
+
+        @if(!empty($attempt->nhanxet_ai))
+            <!-- Nhận xét chi tiết từ AI (AIService) -->
+            <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 10px; padding: 16px 20px; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                    <div style="font-size: 14px; font-weight: 800; color: #1d4ed8; display: flex; align-items: center; gap: 6px;">
+                        🤖 NHẬN XÉT & ĐÁNH GIÁ TỪ TRỢ LÝ AI (AI GRADER):
+                    </div>
+                    @if(!empty($attempt->diem_ai))
+                        <span style="background: #2563eb; color: #ffffff; font-size: 13px; font-weight: 800; padding: 3px 12px; border-radius: 20px;">
+                            Ước lượng DET: {{ $attempt->diem_ai }}/160
+                        </span>
+                    @endif
+                </div>
+                <div style="font-size: 14px; color: #1e3a8a; line-height: 1.7; white-space: pre-line;">
+                    {{ $attempt->nhanxet_ai }}
+                </div>
+            </div>
+        @endif
 
         <!-- Đáp án đúng & Giải thích -->
         <div style="background: #eefcf5; padding: 16px 20px; border-radius: 8px; border: 1px solid #c8f3dc; margin-bottom: 24px;">

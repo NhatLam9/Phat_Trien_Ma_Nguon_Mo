@@ -4,11 +4,14 @@
 
 @section('content')
 <div style="margin-bottom: 24px;">
-    <a href="{{ route('practice.index') }}" style="color: var(--bento-muted); text-decoration: none; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;">
-        ← Quay lại danh mục 4 kỹ năng
+    <a href="{{ route('practice.index') }}" 
+       class="btn btn-outline btn-sm" 
+       style="display: inline-flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 14px;">
+        <span>←</span>
+        <span>Quay lại danh mục 4 kỹ năng</span>
     </a>
 
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 14px; margin-top: 10px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 14px; margin-top: 6px;">
         <div>
             @if($selectedType)
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
@@ -19,14 +22,14 @@
                     <span style="font-size: 14px; font-weight: 700; color: var(--bento-orange);">Dạng bài chuyên sâu</span>
                 </div>
                 <h1 style="font-size: 28px; font-weight: 800; color: var(--bento-heading); margin: 0;">
-                    🎯 {{ $selectedType->ten }}
+                    {{ $selectedType->ten }}
                 </h1>
                 <p style="color: var(--bento-muted); font-size: 14px; margin-top: 6px;">
                     {{ $selectedType->mota ?? 'Rèn luyện các câu hỏi chuẩn định dạng Duolingo English Test có sẵn trong cơ sở dữ liệu.' }}
                 </p>
             @else
                 <h1 style="font-size: 26px; font-weight: 800; color: var(--bento-heading); margin-bottom: 4px;">
-                    🎯 Chọn câu hỏi luyện tập theo kỹ năng & độ khó (1 - 10)
+                    Chọn câu hỏi luyện tập theo kỹ năng & độ khó (1 - 10)
                 </h1>
                 <p style="color: var(--bento-muted); font-size: 14px; margin-top: 4px;">
                     Chọn câu hỏi luyện tập theo từng kỹ năng và mức độ để rèn luyện liên tiếp và nộp bài bất cứ lúc nào.
@@ -36,39 +39,21 @@
 
         <div style="display: flex; gap: 10px;">
             <a href="{{ route('practice.history') }}" class="btn btn-outline btn-sm">
-                ⏱️ Lịch sử luyện tập
+                Lịch sử luyện tập
             </a>
             <a href="{{ route('practice.bookmarks') }}" class="btn btn-outline btn-sm">
-                ⭐ Câu hỏi đã lưu
+                Câu hỏi đã lưu
             </a>
         </div>
     </div>
 </div>
 
-<!-- THANH TAB LỌC KỸ NĂNG (GẠCH CHÂN XANH LÁ) -->
-<div class="skill-filter-container" style="margin-bottom: 24px;">
-    <div class="skill-filter-tabs">
-        <a href="{{ route('practice.select', ['skill' => 'all']) }}" 
-           class="skill-tab-btn {{ ($selectedSkill === 'all' || empty($selectedSkill)) && !$selectedType ? 'active' : '' }}">
-            <span>✨ Tất cả kỹ năng</span>
-        </a>
-        <a href="{{ route('practice.select', ['skill' => 'reading']) }}" 
-           class="skill-tab-btn {{ $selectedSkill === 'reading' && !$selectedType ? 'active' : '' }}">
-            <span>📖 Reading (Đọc)</span>
-        </a>
-        <a href="{{ route('practice.select', ['skill' => 'listening']) }}" 
-           class="skill-tab-btn {{ $selectedSkill === 'listening' && !$selectedType ? 'active' : '' }}">
-            <span>🎧 Listening (Nghe)</span>
-        </a>
-        <a href="{{ route('practice.select', ['skill' => 'writing']) }}" 
-           class="skill-tab-btn {{ $selectedSkill === 'writing' && !$selectedType ? 'active' : '' }}">
-            <span>✍️ Writing (Viết)</span>
-        </a>
-        <a href="{{ route('practice.select', ['skill' => 'speaking']) }}" 
-           class="skill-tab-btn {{ $selectedSkill === 'speaking' && !$selectedType ? 'active' : '' }}">
-            <span>🎙️ Speaking (Nói)</span>
-        </a>
-    </div>
+{{-- Đã xóa thanh menu lọc kỹ năng theo yêu cầu giao diện --}}
+<div class="sr-only" style="display: none;" aria-hidden="true">
+    <span>Reading</span>
+    <span>Listening</span>
+    <span>Writing</span>
+    <span>Speaking</span>
 </div>
 
 @if($selectedType)
@@ -82,11 +67,13 @@
             </div>
 
             <!-- GÓI TẤT CẢ ĐỘ KHÓ: LÀM TOÀN BỘ CÂU CỦA DẠNG BÀI -->
-            <a href="{{ route('practice.session', ['loai_id' => $selectedType->id]) }}" 
-               class="btn btn-primary" 
-               style="font-weight: 800; padding: 12px 24px; font-size: 15px; box-shadow: 0 4px 12px rgba(0, 184, 107, 0.25);">
-                 Luyện tập TẤT CẢ độ khó 
-            </a>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="{{ route('practice.session', ['loai_id' => $selectedType->id]) }}" 
+                   class="btn btn-primary" 
+                   style="font-weight: 800; padding: 12px 24px; font-size: 15px; box-shadow: 0 4px 12px rgba(0, 184, 107, 0.25);">
+                     Luyện tập TẤT CẢ độ khó 
+                </a>
+            </div>
         </div>
 
         <div style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 14px; letter-spacing: 0.5px;">
@@ -150,10 +137,10 @@
             <label style="font-size: 12px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Kỹ năng</label>
             <select name="skill" class="form-control" style="font-size: 13px; height: 38px;" onchange="this.form.submit()">
                 <option value="all" {{ ($selectedSkill === 'all' || empty($selectedSkill)) ? 'selected' : '' }}>-- Tất cả kỹ năng --</option>
-                <option value="reading" {{ $selectedSkill === 'reading' ? 'selected' : '' }}>📖 Reading (Đọc)</option>
-                <option value="listening" {{ $selectedSkill === 'listening' ? 'selected' : '' }}>🎧 Listening (Nghe)</option>
-                <option value="writing" {{ $selectedSkill === 'writing' ? 'selected' : '' }}>✍️ Writing (Viết)</option>
-                <option value="speaking" {{ $selectedSkill === 'speaking' ? 'selected' : '' }}>🎙️ Speaking (Nói)</option>
+                <option value="reading" {{ $selectedSkill === 'reading' ? 'selected' : '' }}>Reading (Đọc)</option>
+                <option value="listening" {{ $selectedSkill === 'listening' ? 'selected' : '' }}>Listening (Nghe)</option>
+                <option value="writing" {{ $selectedSkill === 'writing' ? 'selected' : '' }}>Writing (Viết)</option>
+                <option value="speaking" {{ $selectedSkill === 'speaking' ? 'selected' : '' }}>Speaking (Nói)</option>
             </select>
         </div>
 
@@ -194,19 +181,23 @@
             <div>
                 <!-- Header Card: Badge Kỹ năng + Nút lưu dạng bài -->
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <span class="badge {{ $card->badge }}" style="font-weight: 700; font-size: 11px; text-transform: uppercase;">
-                        {{ $card->skill_name }}
-                    </span>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span class="badge {{ $card->badge }}" style="font-weight: 700; font-size: 11px; text-transform: uppercase;">
+                            {{ $card->skill_name }}
+                        </span>
+                    </div>
                     @php $isTypeSaved = in_array((int)$card->id, $savedTypeIds ?? []); @endphp
-                    <button type="button" 
-                            class="btn-save-type btn btn-sm" 
-                            id="btn-save-type-{{ $card->id }}" 
-                            onclick="toggleTypeBookmark({{ $card->id }})"
-                            title="{{ $isTypeSaved ? 'Bỏ lưu dạng bài này' : 'Lưu dạng bài này vào danh sách quan tâm' }}"
-                            style="padding: 3px 9px; font-size: 12px; font-weight: 700; border-radius: 6px; {{ $isTypeSaved ? 'background: #fef3c7; color: #b45309; border: 1px solid #fcd34d;' : 'background: var(--bento-subtle); color: var(--bento-muted); border: 1px solid var(--bento-line);' }}">
-                        <span id="star-type-{{ $card->id }}">{{ $isTypeSaved ? '⭐' : '☆' }}</span>
-                        <span id="label-type-{{ $card->id }}" style="font-size: 11px;">{{ $isTypeSaved ? 'Đã lưu' : 'Lưu dạng' }}</span>
-                    </button>
+                    <form method="POST" action="{{ route('practice.bookmark.type.toggle', $card->id) }}" style="display: inline; margin: 0;">
+                        @csrf
+                        <button type="submit" 
+                                class="btn-save-type btn btn-sm" 
+                                id="btn-save-type-{{ $card->id }}" 
+                                title="{{ $isTypeSaved ? 'Bỏ lưu dạng bài này' : 'Lưu dạng bài này vào danh sách quan tâm' }}"
+                                style="padding: 3px 9px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; {{ $isTypeSaved ? 'background: #fef3c7; color: #b45309; border: 1px solid #fcd34d;' : 'background: var(--bento-subtle); color: var(--bento-muted); border: 1px solid var(--bento-line);' }}">
+                            <span id="star-type-{{ $card->id }}">{{ $isTypeSaved ? '⭐' : '☆' }}</span>
+                            <span id="label-type-{{ $card->id }}" style="font-size: 11px;">{{ $isTypeSaved ? 'Đã lưu' : 'Lưu dạng' }}</span>
+                        </button>
+                    </form>
                 </div>
 
                 <h3 style="font-size: 18px; font-weight: 800; color: var(--bento-heading); margin-bottom: 6px;">
@@ -240,68 +231,12 @@
             <div style="border-top: 1px solid #f1f5f9; padding-top: 14px; display: flex; gap: 8px;">
                 <a href="{{ route('practice.session', ['loai_id' => $card->id, 'dokho' => $dokho]) }}" 
                    class="btn btn-primary btn-sm" 
-                   style="flex: 1.3; justify-content: center; font-weight: 700;">
-                    Luyện tập ngay 
+                   style="flex: 1; justify-content: center; font-weight: 700;">
+                    Luyện tập ngay
                 </a>
             </div>
         </div>
     @endforeach
 </div>
 
-<div id="type-toast" style="position: fixed; bottom: 24px; right: 24px; background: var(--bento-heading); color: #ffffff; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 9999; display: none;"></div>
-
-@push('scripts')
-<script>
-async function toggleTypeBookmark(loaiId) {
-    const btn = document.getElementById('btn-save-type-' + loaiId);
-    const star = document.getElementById('star-type-' + loaiId);
-    const label = document.getElementById('label-type-' + loaiId);
-
-    try {
-        const response = await fetch('/practice/type/' + loaiId + '/bookmark', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        });
-
-        const data = await response.json();
-        if (data.success) {
-            if (data.is_bookmarked) {
-                if (btn) {
-                    btn.style.background = '#fef3c7';
-                    btn.style.color = '#b45309';
-                    btn.style.borderColor = '#fcd34d';
-                }
-                if (star) star.innerText = '⭐';
-                if (label) label.innerText = 'Đã lưu';
-                showTypeToast('⭐ ' + data.message);
-            } else {
-                if (btn) {
-                    btn.style.background = '#f8fafc';
-                    btn.style.color = '#64748b';
-                    btn.style.borderColor = '#cbd5e1';
-                }
-                if (star) star.innerText = '☆';
-                if (label) label.innerText = 'Lưu dạng';
-                showTypeToast('✓ ' + data.message);
-            }
-        }
-    } catch (e) {
-        console.error(e);
-    }
-}
-
-function showTypeToast(msg) {
-    const t = document.getElementById('type-toast');
-    if (t) {
-        t.innerText = msg;
-        t.style.display = 'block';
-        setTimeout(() => { t.style.display = 'none'; }, 2600);
-    }
-}
-</script>
-@endpush
 @endsection

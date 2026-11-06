@@ -15,7 +15,7 @@
                 <span style="font-size: 13px; color: var(--bento-muted);">• {{ $result['created_at'] }}</span>
             </div>
             <h1 style="font-size: 26px; font-weight: 800; color: var(--bento-heading); margin: 0;">
-                🎉 Hoàn thành bài luyện tập
+                Hoàn thành bài luyện tập
             </h1>
             <p style="color: var(--bento-muted); font-size: 15px; margin: 4px 0 0 0;">
                 {{ $result['session_title'] }}
@@ -88,7 +88,7 @@
     {{-- DANH SÁCH CHI TIẾT TỪNG CÂU HỎI, ĐÁP ÁN VÀ GIẢI THÍCH --}}
     <div style="margin-bottom: 20px;">
         <h2 style="font-size: 20px; font-weight: 800; color: var(--bento-heading); margin-bottom: 16px;">
-            📋 Chi tiết từng câu hỏi & Đáp án giải thích:
+            Chi tiết từng câu hỏi & Đáp án giải thích:
         </h2>
 
         @foreach($result['evaluations'] as $qid => $eval)
@@ -127,6 +127,12 @@
                         @else
                             <span class="badge" style="font-size: 12px; font-weight: 700; background: #f1f5f9; color: var(--bento-muted);">
                                 — Chưa làm
+                            </span>
+                        @endif
+
+                        @if(!empty($eval['diem_ai']))
+                            <span style="background: #2563eb; color: #ffffff; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 12px; margin-left: 6px;">
+                                Ước lượng DET: {{ $eval['diem_ai'] }}/160
                             </span>
                         @endif
                     </div>

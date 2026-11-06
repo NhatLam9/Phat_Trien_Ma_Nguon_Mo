@@ -10,14 +10,17 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Luyentap;
 use App\Models\Danhdau;
 use App\Services\ScoringService;
+use App\Services\AIService;
 
 class PracticeController extends Controller
 {
     protected ScoringService $scoringService;
+    protected AIService $aiService;
 
-    public function __construct(ScoringService $scoringService)
+    public function __construct(ScoringService $scoringService, AIService $aiService)
     {
         $this->scoringService = $scoringService;
+        $this->aiService = $aiService;
     }
 
     /**
@@ -453,9 +456,20 @@ class PracticeController extends Controller
             $ngheQuestionsMap = $ngheQuestions->groupBy('cauhoi_id');
         }
 
-        // 4. Gắn dữ liệu chi tiết vào từng câu hỏi
+        // 4. Tải đáp án chuẩn (dap_an) cho câu hỏi tự luận / nghe gõ lại / fill-in
+        $dapanMap = collect();
+        if (Schema::hasTable('dap_an') && count($questionIds) > 0) {
+            $dapanMap = DB::table('dap_an')
+                ->whereIn('cauhoi_id', $questionIds)
+                ->orderBy('thutu')
+                ->get()
+                ->groupBy('cauhoi_id');
+        }
+
+        // 5. Gắn dữ liệu chi tiết vào từng câu hỏi
         foreach ($questions as $q) {
             $q->luachon = $optionsMap->get($q->id, $q->luachon ?? collect());
+            $q->dapan = $dapanMap->get($q->id, collect());
             $q->cauhoi_doc = $docQuestionsMap->get($q->id, collect());
             $q->cauhoi_nghe = $ngheQuestionsMap->get($q->id, collect());
         }
@@ -494,6 +508,8 @@ class PracticeController extends Controller
         $loaiId = (int) $request->input('loai_id', 1);
         $dokho = $request->input('dokho');
         $submittedAnswers = $request->input('answers', []);
+        $subAnswers = $request->input('sub_answers', []);
+        $subTextAnswers = $request->input('sub_text_answers', []);
         $timeSpent = (int) $request->input('time_spent', 0);
 
         $types = Schema::hasTable('loaicauhoi')
@@ -531,29 +547,159 @@ class PracticeController extends Controller
             $maxScore += $qDiem;
 
             $userAns = $submittedAnswers[$q->id] ?? null;
+
+            // Kiểm tra nếu người dùng tải file âm thanh lên trực tiếp (No-JS)
+            if ($request->hasFile("audio_files.{$q->id}")) {
+                $audioFile = $request->file("audio_files.{$q->id}");
+                $recordingsDir = public_path('storage/audio/recordings');
+                if (!file_exists($recordingsDir)) {
+                    @mkdir($recordingsDir, 0755, true);
+                }
+                $ext = $audioFile->getClientOriginalExtension() ?: 'webm';
+                $fileName = 'voice_' . ($userId ?: 'guest') . '_' . $q->id . '_' . time() . '.' . $ext;
+                $destination = $recordingsDir . DIRECTORY_SEPARATOR . $fileName;
+                try {
+                    $audioFile->move($recordingsDir, $fileName);
+                } catch (\Throwable $e) {
+                    @copy($audioFile->getRealPath(), $destination);
+                }
+                $userAns = 'storage/audio/recordings/' . $fileName;
+            }
+
             $hasAnswered = $userAns !== null && $userAns !== '';
 
             $isCorrect = false;
             $diemDat = 0.0;
+            $aiDetScore = null;
+            $aiFeedback = null;
+
+            $isSpeaking = (!empty($type->kynang) && $type->kynang === 'speaking') || (is_string($userAns) && str_contains($userAns, 'storage/audio/'));
+            $isWriting = (!$isSpeaking && !empty($type->kynang) && $type->kynang === 'writing');
 
             if ($hasAnswered) {
-                $scoreResult = $this->scoringService->calculateResult($q, $userAns, $qDiem);
-                $isCorrect = (bool) $scoreResult['is_correct'];
-                $diemDat = (float) $scoreResult['diem'];
+                if ($isSpeaking) {
+                    try {
+                        $gradeResult = $this->aiService->gradeSpeaking(
+                            question: $q->noidung ?? '',
+                            audioPath: (string)$userAns,
+                            existingTranscript: null,
+                            questionType: $type->ten ?? 'Speaking',
+                            userId: $userId
+                        );
+                        if (!empty($gradeResult['status']) && in_array($gradeResult['status'], ['success', 'done'])) {
+                            $aiDetScore = (float)($gradeResult['score'] ?? 110);
+                            $diemDat = round(($aiDetScore / 160) * $qDiem, 1);
+                            $isCorrect = $aiDetScore >= 80;
+                            $aiFeedback = $gradeResult['feedback'] ?? 'Đã hoàn thành chấm điểm AI.';
+                            if (!empty($gradeResult['transcript'])) {
+                                $aiFeedback = "Bản chép lời bài nói: \"{$gradeResult['transcript']}\"\n\n" . $aiFeedback;
+                            }
+                        } else {
+                            $aiFeedback = $gradeResult['message'] ?? 'Chưa thể chấm điểm bài nói bằng AI lúc này.';
+                        }
+                    } catch (\Throwable $e) {
+                        $aiFeedback = 'Lỗi kết nối AI: ' . $e->getMessage();
+                    }
 
-                if ($isCorrect) {
-                    $correctCount++;
+                    if ($isCorrect) {
+                        $correctCount++;
+                    } else {
+                        $wrongCount++;
+                    }
+                } elseif ($isWriting) {
+                    try {
+                        $gradeResult = $this->aiService->gradeWriting(
+                            question: $q->noidung ?? '',
+                            answer: (string)$userAns,
+                            questionType: $type->ten ?? 'Writing',
+                            userId: $userId
+                        );
+                        if (!empty($gradeResult['status']) && in_array($gradeResult['status'], ['success', 'done'])) {
+                            $aiDetScore = (float)($gradeResult['score'] ?? 110);
+                            $diemDat = round(($aiDetScore / 160) * $qDiem, 1);
+                            $isCorrect = $aiDetScore >= 80;
+                            $aiFeedback = $gradeResult['feedback'] ?? 'Đã hoàn thành chấm điểm AI.';
+                        } else {
+                            $aiFeedback = $gradeResult['message'] ?? 'Chưa thể chấm điểm bài viết bằng AI lúc này.';
+                        }
+                    } catch (\Throwable $e) {
+                        $aiFeedback = 'Lỗi kết nối AI: ' . $e->getMessage();
+                    }
+
+                    if ($isCorrect) {
+                        $correctCount++;
+                    } else {
+                        $wrongCount++;
+                    }
                 } else {
-                    $wrongCount++;
+                    $scoreResult = $this->scoringService->calculateResult($q, $userAns, $qDiem);
+                    $isCorrect = (bool) $scoreResult['is_correct'];
+                    $diemDat = (float) $scoreResult['diem'];
+
+                    if ($isCorrect) {
+                        $correctCount++;
+                    } else {
+                        $wrongCount++;
+                    }
                 }
             } else {
-                $unansweredCount++;
-            }
+                $qSubAnswers = $subAnswers[$q->id] ?? [];
+                $qSubTextAnswers = $subTextAnswers[$q->id] ?? [];
+                $hasSubInput = (!empty($qSubAnswers) || !empty($qSubTextAnswers));
 
-            $isSpeaking = (!empty($type->kynang) && $type->kynang === 'speaking') || (str_contains((string)$userAns, 'storage/audio/'));
-            if ($isSpeaking && $hasAnswered) {
-                $isCorrect = true;
-                $diemDat = round($qDiem * 0.9, 1);
+                if ($hasSubInput) {
+                    $subList = collect();
+                    if (isset($q->cauhoi_doc) && count($q->cauhoi_doc) > 0) {
+                        $subList = collect($q->cauhoi_doc);
+                    } elseif (isset($q->cauhoi_nghe) && count($q->cauhoi_nghe) > 0) {
+                        $subList = collect($q->cauhoi_nghe);
+                    }
+
+                    if ($subList->count() > 0) {
+                        $subCount = $subList->count();
+                        $subCorrectCount = 0;
+                        $hasAnySub = false;
+
+                        foreach ($subList as $subQ) {
+                            $chosenSubOpt = $qSubAnswers[$subQ->id] ?? null;
+                            $typedSubText = $qSubTextAnswers[$subQ->id] ?? null;
+
+                            if ($chosenSubOpt !== null) {
+                                $hasAnySub = true;
+                                $isSubCorrect = false;
+                                if (isset($subQ->luachon)) {
+                                    $opt = collect($subQ->luachon)->firstWhere('id', (int)$chosenSubOpt);
+                                    if ($opt && !empty($opt->ladung)) {
+                                        $isSubCorrect = true;
+                                    }
+                                }
+                                if ($isSubCorrect) $subCorrectCount++;
+                            } elseif ($typedSubText !== null && trim($typedSubText) !== '') {
+                                $hasAnySub = true;
+                                $normTyped = mb_strtolower(trim($typedSubText));
+                                $normCorrect = mb_strtolower(trim($subQ->dapandung ?? ''));
+                                if ($normTyped !== '' && ($normTyped === $normCorrect || ($normCorrect !== '' && str_contains($normCorrect, $normTyped)))) {
+                                    $subCorrectCount++;
+                                }
+                            }
+                        }
+
+                        if ($hasAnySub) {
+                            $hasAnswered = true;
+                            $diemDat = round(($subCorrectCount / max(1, $subCount)) * $qDiem, 2);
+                            $isCorrect = ($subCorrectCount === $subCount);
+                            if ($isCorrect) {
+                                $correctCount++;
+                            } else {
+                                $wrongCount++;
+                            }
+                        }
+                    }
+                }
+
+                if (!$hasAnswered) {
+                    $unansweredCount++;
+                }
             }
 
             $totalScore += $diemDat;
@@ -561,6 +707,13 @@ class PracticeController extends Controller
             $correctOptions = [];
             if (Schema::hasTable('luachon')) {
                 $correctOptions = DB::table('luachon')
+                    ->where('cauhoi_id', $q->id)
+                    ->where('ladung', 1)
+                    ->pluck('noidung')
+                    ->toArray();
+            }
+            if (empty($correctOptions) && Schema::hasTable('dap_an')) {
+                $correctOptions = DB::table('dap_an')
                     ->where('cauhoi_id', $q->id)
                     ->where('ladung', 1)
                     ->pluck('noidung')
@@ -584,7 +737,8 @@ class PracticeController extends Controller
                 'diem_dat' => $diemDat,
                 'diem_max' => $qDiem,
                 'correct_answers' => $correctOptions,
-                'giaithich' => $q->giaithich ?? null,
+                'giaithich' => $aiFeedback ?: ($q->giaithich ?? null),
+                'diem_ai' => $aiDetScore,
             ];
 
             if (Schema::hasTable('luyentap') && $userId) {
@@ -603,8 +757,9 @@ class PracticeController extends Controller
                     'audio' => $isSpeaking ? (string)$userAns : null,
                     'ladung' => $hasAnswered ? ($isCorrect ? 1 : 0) : null,
                     'diem' => $diemDat,
-                    'diem_ai' => $isSpeaking ? $diemDat : null,
-                    'trangthai_ai' => $isSpeaking ? 'done' : null,
+                    'diem_ai' => $aiDetScore,
+                    'trangthai_ai' => $aiDetScore !== null ? 'done' : ($hasAnswered && ($isSpeaking || $isWriting) ? 'failed' : null),
+                    'nhanxet_ai' => $aiFeedback,
                     'thoigianlam' => (int) ceil($timeSpent / max(1, count($questions))),
                     'ngaylam' => now(),
                 ]);
@@ -712,28 +867,71 @@ class PracticeController extends Controller
             }
         }
 
-        // 2. Chấm điểm phát âm & phân tích giọng nói AI (Duolingo Speaking AI Assessor)
+        // 2. Chấm điểm phát âm & phân tích giọng nói AI (sử dụng AIService của nhóm trưởng)
         $maxDiem = (float)($cauhoi->diem ?? 10.0);
+        $type = Schema::hasTable('loaicauhoi') ? DB::table('loaicauhoi')->where('id', $cauhoi->loai_id ?? 1)->first() : null;
+        $typeName = $type->ten ?? 'Speaking';
+
+        $score = round($maxDiem * 0.9, 1);
+        $detEst = '120 / 160';
+        $isCorrect = true;
+        $pronunciation = 'Nguyên âm và phụ âm rõ ràng, âm /s/ và /ed/ được phát âm khá chuẩn.';
+        $fluency = 'Tốc độ nói ổn định, ngắt nghỉ đúng chỗ, ngữ điệu tự nhiên.';
+        $tips = 'Cần chú ý thêm trọng âm câu (sentence stress) và nối âm (linking words) để giọng nói mượt mà hơn.';
+        $overall = 'Bài nói rất tốt! Bạn đã phát âm rõ ràng, nhịp điệu tự nhiên và truyền tải đủ thông điệp.';
+        $nhanxetFull = '';
 
         if ($duration < 2.0 && $duration > 0) {
             $score = round($maxDiem * 0.4, 1);
-            $detEst = '75 - 85 / 160';
+            $detEst = '75 / 160';
             $isCorrect = false;
             $pronunciation = 'Đoạn ghi âm còn quá ngắn để nhận diện đầy đủ các trường âm.';
             $fluency = 'Cần kéo dài bài nói để đạt độ lưu loát tiêu chuẩn.';
             $tips = 'Hãy luyện tập phát âm trọn vẹn câu và nói liên tục từ 10 đến 45 giây.';
             $overall = 'Đoạn nói quá ngắn (dưới 2 giây). Hãy ghi âm lại để AI đánh giá chính xác hơn.';
+            $nhanxetFull = "Đoạn nói quá ngắn (dưới 2 giây). Điểm AI: {$score}/{$maxDiem}. Hãy ghi âm lại từ 10 đến 45 giây để AI đánh giá chính xác hơn.";
         } else {
-            $score = round($maxDiem * (mt_rand(84, 96) / 100), 1);
-            $detEst = mt_rand(115, 130) . ' / 160';
-            $isCorrect = true;
-            $pronunciation = 'Nguyên âm và phụ âm rõ ràng, âm /s/ và /ed/ được phát âm khá chuẩn.';
-            $fluency = 'Tốc độ nói ổn định, ngắt nghỉ đúng chỗ, ngữ điệu tự nhiên.';
-            $tips = 'Cần chú ý thêm trọng âm câu (sentence stress) và nối âm (linking words) để giọng nói mượt mà hơn.';
-            $overall = 'Bài nói rất tốt! Bạn đã phát âm rõ ràng, nhịp điệu tự nhiên và truyền tải đủ thông điệp.';
-        }
+            try {
+                $aiGrade = $this->aiService->gradeSpeaking(
+                    question: $cauhoi->noidung ?? 'Please read aloud or speak about the prompt.',
+                    audioPath: $savedPath,
+                    existingTranscript: null,
+                    questionType: $typeName,
+                    userId: $userId
+                );
 
-        $nhanxetFull = "Điểm AI: {$score}/{$maxDiem} (Ước lượng DET: {$detEst}). {$overall} Phát âm: {$pronunciation} Lưu loát: {$fluency} Góp ý: {$tips}";
+                if (!empty($aiGrade['status']) && in_array($aiGrade['status'], ['success', 'done'])) {
+                    $detScore = (int) ($aiGrade['score'] ?? 115);
+                    $detEst = $detScore . ' / 160';
+                    $score = round(($detScore / 160) * $maxDiem, 1);
+                    $isCorrect = $detScore >= 80;
+                    $overall = $aiGrade['feedback'] ?? $overall;
+                    $sub = $aiGrade['subscores'] ?? [];
+                    if (!empty($sub)) {
+                        $pronunciation = isset($sub['vocabulary']) ? "Từ vựng: {$sub['vocabulary']}/160" : $pronunciation;
+                        $fluency = isset($sub['fluency']) ? "Độ lưu loát: {$sub['fluency']}/160" : $fluency;
+                        $tips = isset($sub['grammar']) ? "Ngữ pháp: {$sub['grammar']}/160" : $tips;
+                    }
+                    if (!empty($aiGrade['transcript'])) {
+                        $tips .= " (Bản chép lời bài nói: \"{$aiGrade['transcript']}\")";
+                    }
+                    $nhanxetFull = "Điểm AI: {$score}/{$maxDiem} (Ước lượng DET: {$detEst}). " . $overall;
+                } else {
+                    $errMsg = $aiGrade['message'] ?? 'AI chưa thể hoàn thành đánh giá bài nói.';
+                    $score = 0;
+                    $detEst = 'Chưa đạt';
+                    $isCorrect = false;
+                    $overall = $errMsg;
+                    $nhanxetFull = "Chấm bài AI: " . $errMsg;
+                }
+            } catch (\Throwable $e) {
+                $score = 0;
+                $detEst = 'Chưa đạt';
+                $isCorrect = false;
+                $overall = 'Lỗi kết nối AI: ' . $e->getMessage();
+                $nhanxetFull = $overall;
+            }
+        }
 
         // 3. Ghi nhận vào bảng luyentap nếu người dùng đã đăng nhập
         $attemptId = null;
@@ -933,6 +1131,8 @@ class PracticeController extends Controller
         abort_if(!$set, 404, "Không tìm thấy mã đề: {$code}");
 
         $submittedAnswers = $request->input('answers', []);
+        $subAnswers = $request->input('sub_answers', []);
+        $subTextAnswers = $request->input('sub_text_answers', []);
         $timeSpent = (int) $request->input('time_spent', 0);
         $isTimeout = (bool) $request->input('is_timeout', false);
 
@@ -959,29 +1159,159 @@ class PracticeController extends Controller
             $maxScore += $qDiem;
 
             $userAns = $submittedAnswers[$q->id] ?? null;
+
+            // Kiểm tra nếu người dùng tải file âm thanh lên trực tiếp (No-JS)
+            if ($request->hasFile("audio_files.{$q->id}")) {
+                $audioFile = $request->file("audio_files.{$q->id}");
+                $recordingsDir = public_path('storage/audio/recordings');
+                if (!file_exists($recordingsDir)) {
+                    @mkdir($recordingsDir, 0755, true);
+                }
+                $ext = $audioFile->getClientOriginalExtension() ?: 'webm';
+                $fileName = 'voice_' . ($userId ?: 'guest') . '_' . $q->id . '_' . time() . '.' . $ext;
+                $destination = $recordingsDir . DIRECTORY_SEPARATOR . $fileName;
+                try {
+                    $audioFile->move($recordingsDir, $fileName);
+                } catch (\Throwable $e) {
+                    @copy($audioFile->getRealPath(), $destination);
+                }
+                $userAns = 'storage/audio/recordings/' . $fileName;
+            }
+
             $hasAnswered = $userAns !== null && $userAns !== '';
 
             $isCorrect = false;
             $diemDat = 0.0;
+            $aiDetScore = null;
+            $aiFeedback = null;
+
+            $isSpeaking = (!empty($type->kynang) && $type->kynang === 'speaking') || (is_string($userAns) && str_contains($userAns, 'storage/audio/'));
+            $isWriting = (!$isSpeaking && !empty($type->kynang) && $type->kynang === 'writing');
 
             if ($hasAnswered) {
-                $scoreResult = $this->scoringService->calculateResult($q, $userAns, $qDiem);
-                $isCorrect = (bool) $scoreResult['is_correct'];
-                $diemDat = (float) $scoreResult['diem'];
+                if ($isSpeaking) {
+                    try {
+                        $gradeResult = $this->aiService->gradeSpeaking(
+                            question: $q->noidung ?? '',
+                            audioPath: (string)$userAns,
+                            existingTranscript: null,
+                            questionType: $type->ten ?? 'Speaking',
+                            userId: $userId
+                        );
+                        if (!empty($gradeResult['status']) && in_array($gradeResult['status'], ['success', 'done'])) {
+                            $aiDetScore = (float)($gradeResult['score'] ?? 110);
+                            $diemDat = round(($aiDetScore / 160) * $qDiem, 1);
+                            $isCorrect = $aiDetScore >= 80;
+                            $aiFeedback = $gradeResult['feedback'] ?? 'Đã hoàn thành chấm điểm AI.';
+                            if (!empty($gradeResult['transcript'])) {
+                                $aiFeedback = "Bản chép lời bài nói: \"{$gradeResult['transcript']}\"\n\n" . $aiFeedback;
+                            }
+                        } else {
+                            $aiFeedback = $gradeResult['message'] ?? 'Chưa thể chấm điểm bài nói bằng AI lúc này.';
+                        }
+                    } catch (\Throwable $e) {
+                        $aiFeedback = 'Lỗi kết nối AI: ' . $e->getMessage();
+                    }
 
-                if ($isCorrect) {
-                    $correctCount++;
+                    if ($isCorrect) {
+                        $correctCount++;
+                    } else {
+                        $wrongCount++;
+                    }
+                } elseif ($isWriting) {
+                    try {
+                        $gradeResult = $this->aiService->gradeWriting(
+                            question: $q->noidung ?? '',
+                            answer: (string)$userAns,
+                            questionType: $type->ten ?? 'Writing',
+                            userId: $userId
+                        );
+                        if (!empty($gradeResult['status']) && in_array($gradeResult['status'], ['success', 'done'])) {
+                            $aiDetScore = (float)($gradeResult['score'] ?? 110);
+                            $diemDat = round(($aiDetScore / 160) * $qDiem, 1);
+                            $isCorrect = $aiDetScore >= 80;
+                            $aiFeedback = $gradeResult['feedback'] ?? 'Đã hoàn thành chấm điểm AI.';
+                        } else {
+                            $aiFeedback = $gradeResult['message'] ?? 'Chưa thể chấm điểm bài viết bằng AI lúc này.';
+                        }
+                    } catch (\Throwable $e) {
+                        $aiFeedback = 'Lỗi kết nối AI: ' . $e->getMessage();
+                    }
+
+                    if ($isCorrect) {
+                        $correctCount++;
+                    } else {
+                        $wrongCount++;
+                    }
                 } else {
-                    $wrongCount++;
+                    $scoreResult = $this->scoringService->calculateResult($q, $userAns, $qDiem);
+                    $isCorrect = (bool) $scoreResult['is_correct'];
+                    $diemDat = (float) $scoreResult['diem'];
+
+                    if ($isCorrect) {
+                        $correctCount++;
+                    } else {
+                        $wrongCount++;
+                    }
                 }
             } else {
-                $unansweredCount++;
-            }
+                $qSubAnswers = $subAnswers[$q->id] ?? [];
+                $qSubTextAnswers = $subTextAnswers[$q->id] ?? [];
+                $hasSubInput = (!empty($qSubAnswers) || !empty($qSubTextAnswers));
 
-            $isSpeaking = (!empty($type->kynang) && $type->kynang === 'speaking') || (str_contains((string)$userAns, 'storage/audio/'));
-            if ($isSpeaking && $hasAnswered) {
-                $isCorrect = true;
-                $diemDat = round($qDiem * 0.9, 1);
+                if ($hasSubInput) {
+                    $subList = collect();
+                    if (isset($q->cauhoi_doc) && count($q->cauhoi_doc) > 0) {
+                        $subList = collect($q->cauhoi_doc);
+                    } elseif (isset($q->cauhoi_nghe) && count($q->cauhoi_nghe) > 0) {
+                        $subList = collect($q->cauhoi_nghe);
+                    }
+
+                    if ($subList->count() > 0) {
+                        $subCount = $subList->count();
+                        $subCorrectCount = 0;
+                        $hasAnySub = false;
+
+                        foreach ($subList as $subQ) {
+                            $chosenSubOpt = $qSubAnswers[$subQ->id] ?? null;
+                            $typedSubText = $qSubTextAnswers[$subQ->id] ?? null;
+
+                            if ($chosenSubOpt !== null) {
+                                $hasAnySub = true;
+                                $isSubCorrect = false;
+                                if (isset($subQ->luachon)) {
+                                    $opt = collect($subQ->luachon)->firstWhere('id', (int)$chosenSubOpt);
+                                    if ($opt && !empty($opt->ladung)) {
+                                        $isSubCorrect = true;
+                                    }
+                                }
+                                if ($isSubCorrect) $subCorrectCount++;
+                            } elseif ($typedSubText !== null && trim($typedSubText) !== '') {
+                                $hasAnySub = true;
+                                $normTyped = mb_strtolower(trim($typedSubText));
+                                $normCorrect = mb_strtolower(trim($subQ->dapandung ?? ''));
+                                if ($normTyped !== '' && ($normTyped === $normCorrect || ($normCorrect !== '' && str_contains($normCorrect, $normTyped)))) {
+                                    $subCorrectCount++;
+                                }
+                            }
+                        }
+
+                        if ($hasAnySub) {
+                            $hasAnswered = true;
+                            $diemDat = round(($subCorrectCount / max(1, $subCount)) * $qDiem, 2);
+                            $isCorrect = ($subCorrectCount === $subCount);
+                            if ($isCorrect) {
+                                $correctCount++;
+                            } else {
+                                $wrongCount++;
+                            }
+                        }
+                    }
+                }
+
+                if (!$hasAnswered) {
+                    $unansweredCount++;
+                }
             }
 
             $totalScore += $diemDat;
@@ -989,6 +1319,13 @@ class PracticeController extends Controller
             $correctOptions = [];
             if (Schema::hasTable('luachon')) {
                 $correctOptions = DB::table('luachon')
+                    ->where('cauhoi_id', $q->id)
+                    ->where('ladung', 1)
+                    ->pluck('noidung')
+                    ->toArray();
+            }
+            if (empty($correctOptions) && Schema::hasTable('dap_an')) {
+                $correctOptions = DB::table('dap_an')
                     ->where('cauhoi_id', $q->id)
                     ->where('ladung', 1)
                     ->pluck('noidung')
@@ -1012,7 +1349,8 @@ class PracticeController extends Controller
                 'diem_dat' => $diemDat,
                 'diem_max' => $qDiem,
                 'correct_answers' => $correctOptions,
-                'giaithich' => $q->giaithich ?? null,
+                'giaithich' => $aiFeedback ?: ($q->giaithich ?? null),
+                'diem_ai' => $aiDetScore,
             ];
 
             if (Schema::hasTable('luyentap') && $userId) {
@@ -1031,8 +1369,9 @@ class PracticeController extends Controller
                     'audio' => $isSpeaking ? (string)$userAns : null,
                     'ladung' => $hasAnswered ? ($isCorrect ? 1 : 0) : null,
                     'diem' => $diemDat,
-                    'diem_ai' => $isSpeaking ? $diemDat : null,
-                    'trangthai_ai' => $isSpeaking ? 'done' : null,
+                    'diem_ai' => $aiDetScore,
+                    'trangthai_ai' => $aiDetScore !== null ? 'done' : ($hasAnswered && ($isSpeaking || $isWriting) ? 'failed' : null),
+                    'nhanxet_ai' => $aiFeedback,
                     'thoigianlam' => (int) ceil($timeSpent / max(1, count($questions))),
                     'ngaylam' => now(),
                 ]);
@@ -1139,6 +1478,13 @@ class PracticeController extends Controller
                 }
                 $question->cauhoi_nghe = $ngheQuestions;
             }
+
+            if ($question && Schema::hasTable('dap_an')) {
+                $question->dapan = DB::table('dap_an')
+                    ->where('cauhoi_id', $id)
+                    ->orderBy('thutu')
+                    ->get();
+            }
         }
 
         if (!$question) {
@@ -1209,22 +1555,152 @@ class PracticeController extends Controller
 
         $isSpeaking = !empty($audioPath);
 
-        if ($isSpeaking) {
+        $type = null;
+        if (!empty($cauhoi->loai_id) && Schema::hasTable('loaicauhoi')) {
+            $type = DB::table('loaicauhoi')->where('id', $cauhoi->loai_id)->first();
+        }
+        $typeName = $type->ten ?? 'General';
+        $isSpeaking = !empty($audioPath) || (!empty($type->kynang) && $type->kynang === 'speaking');
+        $isWriting = (!$isSpeaking && !empty($type->kynang) && $type->kynang === 'writing') ||
+                     (!$isSpeaking && (!isset($cauhoi->luachon) || count($cauhoi->luachon) === 0) && !empty($validated['noidung']));
+
+        if ($isSpeaking && !empty($audioPath)) {
             $maxDiem = (float)($cauhoi->diem ?? 10.0);
-            $aiDiem = $request->filled('diem_ai') ? (float)$request->input('diem_ai') : round($maxDiem * (mt_rand(85, 96) / 100), 1);
-            $aiNhanXet = $request->input('nhanxet_ai') ?: "Điểm phát âm AI: {$aiDiem}/{$maxDiem}. Bài nói lưu loát, phát âm rõ ràng, nhịp điệu tự nhiên.";
+            try {
+                $gradeResult = $this->aiService->gradeSpeaking(
+                    question: $cauhoi->noidung ?? '',
+                    audioPath: $audioPath,
+                    existingTranscript: null,
+                    questionType: $typeName,
+                    userId: $userId
+                );
+            } catch (\Throwable $e) {
+                $gradeResult = ['status' => 'failed', 'message' => $e->getMessage()];
+            }
+
+            if (!empty($gradeResult['status']) && in_array($gradeResult['status'], ['success', 'done'])) {
+                $detScore = (float)($gradeResult['score'] ?? 110);
+                $aiDiem = round(($detScore / 160) * $maxDiem, 1);
+                $feedback = $gradeResult['feedback'] ?? 'Đã hoàn thành chấm điểm AI.';
+                if (!empty($gradeResult['transcript'])) {
+                    $feedback = "Bản chép lời bài nói: \"{$gradeResult['transcript']}\"\n\n" . $feedback;
+                }
+                $statusAi = 'done';
+            } else {
+                $detScore = null;
+                $aiDiem = 0.0;
+                $feedback = $gradeResult['message'] ?? 'Chưa thể chấm điểm bài nói bằng AI.';
+                $statusAi = 'failed';
+            }
 
             $attempt = Luyentap::create([
                 'nguoidung_id' => $userId,
                 'cauhoi_id' => (int)$id,
                 'luachon_id' => null,
-                'noidung' => $validated['noidung'] ?? 'Bài ghi âm nói (Voice Recording)',
+                'noidung' => $validated['noidung'] ?? ($gradeResult['transcript'] ?? 'Bài ghi âm nói (Voice Recording)'),
                 'audio' => $audioPath,
-                'ladung' => 1,
+                'ladung' => ($detScore && $detScore >= 80) ? 1 : 0,
                 'diem' => $aiDiem,
-                'diem_ai' => $aiDiem,
-                'nhanxet_ai' => $aiNhanXet,
-                'trangthai_ai' => 'done',
+                'diem_ai' => $detScore,
+                'nhanxet_ai' => $feedback,
+                'trangthai_ai' => $statusAi,
+                'thoigianlam' => $validated['thoigianlam'] ?? 0,
+                'ngaylam' => now(),
+            ]);
+        } elseif ($isWriting && !empty($validated['noidung'])) {
+            $maxDiem = (float)($cauhoi->diem ?? 10.0);
+            try {
+                $gradeResult = $this->aiService->gradeWriting(
+                    question: $cauhoi->noidung ?? '',
+                    answer: (string)$validated['noidung'],
+                    questionType: $typeName,
+                    userId: $userId
+                );
+            } catch (\Throwable $e) {
+                $gradeResult = ['status' => 'failed', 'message' => $e->getMessage()];
+            }
+
+            if (!empty($gradeResult['status']) && in_array($gradeResult['status'], ['success', 'done'])) {
+                $detScore = (float)($gradeResult['score'] ?? 110);
+                $aiDiem = round(($detScore / 160) * $maxDiem, 1);
+                $feedback = $gradeResult['feedback'] ?? 'Đã hoàn thành chấm điểm AI.';
+                $statusAi = 'done';
+            } else {
+                $detScore = null;
+                $aiDiem = 0.0;
+                $feedback = $gradeResult['message'] ?? 'Chưa thể chấm điểm bài viết bằng AI.';
+                $statusAi = 'failed';
+            }
+
+            $attempt = Luyentap::create([
+                'nguoidung_id' => $userId,
+                'cauhoi_id' => (int)$id,
+                'luachon_id' => null,
+                'noidung' => $validated['noidung'],
+                'audio' => null,
+                'ladung' => ($detScore && $detScore >= 80) ? 1 : 0,
+                'diem' => $aiDiem,
+                'diem_ai' => $detScore,
+                'nhanxet_ai' => $feedback,
+                'trangthai_ai' => $statusAi,
+                'thoigianlam' => $validated['thoigianlam'] ?? 0,
+                'ngaylam' => now(),
+            ]);
+        } elseif ($request->has('sub_answers') && is_array($request->input('sub_answers'))) {
+            $subAnswers = $request->input('sub_answers');
+            $maxDiem = (float)($cauhoi->diem ?? 1.0);
+            $subList = collect();
+            if (Schema::hasTable('cauhoi_doc')) {
+                $docSubs = DB::table('cauhoi_doc')->where('cauhoi_id', $id)->get();
+                if ($docSubs->isNotEmpty()) {
+                    $subList = $docSubs;
+                    $docIds = $docSubs->pluck('id')->toArray();
+                    $docOpts = Schema::hasTable('luachon_doc') ? DB::table('luachon_doc')->whereIn('cauhoi_doc_id', $docIds)->get()->groupBy('cauhoi_doc_id') : collect();
+                    foreach ($subList as $s) {
+                        $s->luachon = $docOpts->get($s->id, collect());
+                    }
+                }
+            }
+            if ($subList->isEmpty() && Schema::hasTable('cauhoi_nghe')) {
+                $ngheSubs = DB::table('cauhoi_nghe')->where('cauhoi_id', $id)->get();
+                if ($ngheSubs->isNotEmpty()) {
+                    $subList = $ngheSubs;
+                    $ngheIds = $ngheSubs->pluck('id')->toArray();
+                    $ngheOpts = Schema::hasTable('luachon_nghe') ? DB::table('luachon_nghe')->whereIn('cauhoi_nghe_id', $ngheIds)->get()->groupBy('cauhoi_nghe_id') : collect();
+                    foreach ($subList as $s) {
+                        $s->luachon = $ngheOpts->get($s->id, collect());
+                    }
+                }
+            }
+
+            $subCount = max(1, $subList->count());
+            $subCorrect = 0;
+            foreach ($subList as $subQ) {
+                $val = $subAnswers[$subQ->id] ?? null;
+                if ($val !== null) {
+                    if (is_numeric($val) && isset($subQ->luachon)) {
+                        $opt = collect($subQ->luachon)->firstWhere('id', (int)$val);
+                        if ($opt && !empty($opt->ladung)) $subCorrect++;
+                    } else {
+                        $normVal = mb_strtolower(trim((string)$val));
+                        $normCorrect = mb_strtolower(trim((string)($subQ->dapandung ?? '')));
+                        if ($normVal !== '' && ($normVal === $normCorrect || ($normCorrect !== '' && str_contains($normCorrect, $normVal)))) {
+                            $subCorrect++;
+                        }
+                    }
+                }
+            }
+
+            $diem = round(($subCorrect / $subCount) * $maxDiem, 2);
+            $isCorrect = ($subCorrect === $subCount);
+
+            $attempt = Luyentap::create([
+                'nguoidung_id' => $userId,
+                'cauhoi_id' => (int)$id,
+                'luachon_id' => null,
+                'noidung' => json_encode($subAnswers, JSON_UNESCAPED_UNICODE),
+                'ladung' => $isCorrect ? 1 : 0,
+                'diem' => $diem,
                 'thoigianlam' => $validated['thoigianlam'] ?? 0,
                 'ngaylam' => now(),
             ]);
@@ -1295,21 +1771,89 @@ class PracticeController extends Controller
     }
 
     /**
-     * LT06: Chuyển bài Writing/Speaking cho AI chấm
+     * LT06: Chuyển bài Writing/Speaking cho AI chấm (sử dụng AIService của nhóm trưởng)
      */
     public function submitAI(Request $request, $attemptId)
     {
+        $userId = (int) Auth::id();
         $attempt = Luyentap::findOrFail($attemptId);
 
-        if ($attempt->nguoidung_id !== Auth::id()) {
+        if ($attempt->nguoidung_id !== $userId) {
             abort(403);
         }
 
-        $attempt->update([
-            'trangthai_ai' => 'pending',
-        ]);
+        $cauhoi = DB::table('cauhoi')->where('id', $attempt->cauhoi_id)->first();
+        if (!$cauhoi) {
+            return back()->with('status', 'Không tìm thấy câu hỏi liên quan để chấm AI.');
+        }
 
-        return back()->with('status', 'Bài làm đã được chuyển vào hàng đợi chấm điểm AI. Kết quả sẽ được cập nhật sớm nhất!');
+        $type = DB::table('loaicauhoi')->where('id', $cauhoi->loai_id)->first();
+        $typeName = $type->ten ?? 'General';
+        $isSpeaking = (!empty($type->kynang) && $type->kynang === 'speaking') || !empty($attempt->audio);
+
+        try {
+            // Kiểm tra và trừ lượt AI nếu có
+            if ($userId) {
+                try {
+                    $this->aiService->checkAndDeductLimit($userId);
+                } catch (\Throwable $e) {
+                    return back()->with('status', '⚠️ Bạn đã hết hạn mức AI trong ngày. Vui lòng quay lại vào ngày mai!');
+                }
+            }
+
+            if ($isSpeaking) {
+                $gradeResult = $this->aiService->gradeSpeaking(
+                    question: $cauhoi->noidung ?? '',
+                    audioPath: $attempt->audio,
+                    existingTranscript: null,
+                    questionType: $typeName,
+                    userId: $userId
+                );
+            } else {
+                $content = $attempt->noidung ?: 'No answer content';
+                $gradeResult = $this->aiService->gradeWriting(
+                    question: $cauhoi->noidung ?? '',
+                    answer: $content,
+                    questionType: $typeName,
+                    userId: $userId
+                );
+            }
+
+            if (!empty($gradeResult['status']) && in_array($gradeResult['status'], ['success', 'done'])) {
+                $detScore = (float)($gradeResult['score'] ?? 100);
+                $maxDiem = (float)($cauhoi->diem ?? 1.0);
+                $diemQuyDoi = round(($detScore / 160) * $maxDiem, 2);
+
+                $feedbackText = $gradeResult['feedback'] ?? 'Đã hoàn thành chấm điểm AI.';
+                if (!empty($gradeResult['transcript'])) {
+                    $feedbackText = "Bản chép lời bài nói: \"{$gradeResult['transcript']}\"\n\n" . $feedbackText;
+                }
+
+                $attempt->update([
+                    'diem_ai' => $detScore,
+                    'diem' => $diemQuyDoi,
+                    'nhanxet_ai' => $feedbackText,
+                    'trangthai_ai' => 'done',
+                    'ladung' => $detScore >= 80 ? 1 : 0,
+                ]);
+
+                return back()->with('status', "Trợ lý AI đã chấm xong bài của bạn! Điểm ước lượng DET: {$detScore}/160.");
+            } else {
+                $attempt->update([
+                    'trangthai_ai' => 'failed',
+                    'nhanxet_ai' => $gradeResult['message'] ?? ($gradeResult['feedback'] ?? 'Không thể chấm bài lúc này.'),
+                ]);
+
+                return back()->with('status', 'Trợ lý AI: ' . ($gradeResult['message'] ?? 'Chưa thể chấm điểm bài lúc này.'));
+            }
+        } catch (\Throwable $e) {
+            $attempt->update([
+                'trangthai_ai' => 'failed',
+                'nhanxet_ai' => 'Lỗi kết nối AI: ' . $e->getMessage(),
+            ]);
+
+            return back()->with('status', '⚠️ Gặp lỗi khi chấm AI: ' . $e->getMessage());
+        }
     }
 
     /**

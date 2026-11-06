@@ -190,7 +190,7 @@
 
         {{-- CỘT TRÁI: KHU VỰC CÂU HỎI & GIẢI THÍCH TỨC THÌ --}}
         <main>
-            <form id="practice-session-form" method="POST" action="{{ route('practice.session.submit') }}">
+            <form id="practice-session-form" method="POST" action="{{ route('practice.session.submit') }}" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="loai_id" value="{{ $type->id }}">
                 @if($dokho)
@@ -328,14 +328,18 @@
                                     </div>
                                 </div>
 
-                            {{-- TRƯỜNG HỢP 2: CÁC CÂU HỎI CON TƯƠNG TÁC TRONG CAUHOI_DOC (Interactive Reading) --}}
-                            @elseif(isset($q->cauhoi_doc) && $q->cauhoi_doc->count() > 0)
+                            {{-- TRƯỜNG HỢP 2: CÁC CÂU HỎI CON TƯƠNG TÁC (Interactive Reading & Interactive Listening) --}}
+                            @elseif((isset($q->cauhoi_doc) && $q->cauhoi_doc->count() > 0) || (isset($q->cauhoi_nghe) && $q->cauhoi_nghe->count() > 0))
+                                @php
+                                    $subList = (isset($q->cauhoi_doc) && $q->cauhoi_doc->count() > 0) ? $q->cauhoi_doc : $q->cauhoi_nghe;
+                                    $isNgheSub = (isset($q->cauhoi_nghe) && $q->cauhoi_nghe->count() > 0);
+                                @endphp
                                 <div style="margin-top: 20px;">
                                     <div style="font-size: 14px; font-weight: 800; color: #0284c7; margin-bottom: 14px; text-transform: uppercase;">
-                                        DANH SÁCH CÂU HỎI ĐỌC HIỂU TƯƠNG TÁC ({{ $q->cauhoi_doc->count() }} câu con):
+                                        {{ $isNgheSub ? 'DANH SÁCH CÂU HỎI NGHE HIỂU TƯƠNG TÁC' : 'DANH SÁCH CÂU HỎI ĐỌC HIỂU TƯƠNG TÁC' }} ({{ $subList->count() }} câu con):
                                     </div>
 
-                                    @foreach($q->cauhoi_doc as $subIdx => $subQ)
+                                    @foreach($subList as $subIdx => $subQ)
                                         <div style="background: #ffffff; border: 1px solid var(--bento-line); border-radius: 12px; padding: 18px; margin-bottom: 18px;">
                                             <div style="font-weight: 700; color: var(--bento-heading); font-size: 15px; margin-bottom: 12px;">
                                                 Câu hỏi {{ $subIdx + 1 }}: {{ $subQ->noidung }}
@@ -350,8 +354,9 @@
                                                              onclick="handleSelectSubAnswer({{ $qIndex }}, {{ $q->id }}, {{ $subQ->id }}, {{ $opt->id }}, {{ !empty($opt->ladung) ? 1 : 0 }}, this)">
                                                             <input type="radio" 
                                                                    name="sub_answers[{{ $q->id }}][{{ $subQ->id }}]" 
+                                                                   id="sub-radio-{{ $q->id }}-{{ $subQ->id }}-{{ $opt->id }}"
                                                                    value="{{ $opt->id }}" 
-                                                                   style="display: none;">
+                                                                   style="margin-right: 6px;">
                                                             
                                                             <div class="opt-badge">
                                                                 {{ chr(65 + $optIdx) }}
@@ -374,12 +379,12 @@
                                                     <div class="feedback-desc" style="font-size: 14px; line-height: 1.6; background: #ffffff; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--bento-line); color: var(--bento-ink);">
                                                         <strong>Giải thích chi tiết:</strong>
                                                         <div style="margin-top: 4px;">
-                                                            {{ $subQ->giaithich ?: ($q->giaithich ?: 'Hãy đối chiếu câu trong đoạn văn để xác nhận thông tin chính xác.') }}
+                                                            {{ $subQ->giaithich ?: ($q->giaithich ?: 'Hãy đối chiếu câu trong đoạn văn/audio để xác nhận thông tin chính xác.') }}
                                                         </div>
                                                     </div>
                                                 </div>
                                             @else
-                                                {{-- Trường hợp câu hỏi con dạng nhập câu trả lời / điền từ / text input (Interactive Reading) --}}
+                                                {{-- Trường hợp câu hỏi con dạng nhập câu trả lời / điền từ / text input --}}
                                                 <div style="margin-top: 10px;">
                                                     <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                                                         <input type="text" 
@@ -411,7 +416,7 @@
                                                             @endif
                                                             <strong>Giải thích chi tiết:</strong>
                                                             <div style="margin-top: 4px;">
-                                                                {{ $subQ->giaithich ?: ($q->giaithich ?: 'Hãy đối chiếu câu trong đoạn văn để xác nhận thông tin chính xác.') }}
+                                                                {{ $subQ->giaithich ?: ($q->giaithich ?: 'Hãy đối chiếu câu trong đoạn văn/audio để xác nhận thông tin chính xác.') }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -421,100 +426,45 @@
                                     @endforeach
                                 </div>
 
-                            {{-- TRƯỜNG HỢP 3: DẠNG BÀI NÓI SPEAKING (NÚT VOICE GHI ÂM TRỰC TIẾP ĐỂ AI KIỂM TRA) --}}
+                            {{-- TRƯỜNG HỢP 3: DẠNG BÀI NÓI SPEAKING (TẢI LÊN FILE ÂM THANH ĐỂ AI CHẤM ĐIỂM) --}}
                             @elseif((!empty($type->kynang) && $type->kynang === 'speaking') || (!empty($q->loai_kynang) && $q->loai_kynang === 'speaking'))
                                 <div style="margin-top: 24px;">
-
-
-                                    <div class="voice-recording-studio" style="background: var(--bento-subtle); border: 2px dashed var(--bento-line); border-radius: 16px; padding: 26px 20px; text-align: center; margin-bottom: 18px;">
-                                        
-                                        <div id="voice-controls-{{ $q->id }}">
-              
-
-                                            <!-- Nút Voice Ghi Âm Lớn -->
-                                            <button type="button" 
-                                                    class="btn-voice-record" 
-                                                    id="btn-voice-{{ $q->id }}" 
-                                                    onclick="toggleVoiceRecording({{ $qIndex }}, {{ $q->id }})"
-                                                    style="width: 82px; height: 82px; border-radius: 50%; background: var(--bento-orange-dark); color: #ffffff; border: none; font-size: 34px; cursor: pointer; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4); transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center;">
-                                                🎙️
-                                            </button>
-
-                                            <div id="voice-status-text-{{ $q->id }}" style="font-size: 14px; font-weight: 700; color: var(--bento-heading); margin-top: 14px;">
-                                                Nhấn vào nút Micro để bắt đầu ghi âm bài nói
-                                            </div>
-
-                                            <div id="voice-timer-box-{{ $q->id }}" style="display: none; margin-top: 12px;">
-                                                <div style="display: inline-flex; align-items: center; gap: 8px; background: #fee2e2; color: #991b1b; padding: 6px 16px; border-radius: 20px; font-weight: 800; font-family: monospace; font-size: 16px;">
-                                                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #ef4444; animation: pulseRed 1s infinite;"></span>
-                                                    <span id="voice-time-{{ $q->id }}">00:00</span>
-                                                </div>
+                                    <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 14px; padding: 22px 20px; text-align: left; margin-bottom: 18px;">
+                                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                                            <div>
+                                                <strong style="font-size: 15px; color: #166534; display: block;">Tải lên file ghi âm bài nói của bạn để AI chấm điểm (Thang DET 10 - 160)</strong>
+                                                <span style="font-size: 13px; color: #15803d;">Trợ lý AI sẽ lắng nghe, phân tích độ lưu loát, từ vựng và nhận xét chi tiết sau khi nộp bài.</span>
                                             </div>
                                         </div>
 
-                                        <!-- Trình phát nghe lại và nút gửi AI -->
-                                        <div id="voice-playback-box-{{ $q->id }}" style="display: none; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--bento-line);">
-                                            <p style="font-size: 13px; font-weight: 700; color: var(--bento-ink); margin-bottom: 8px;">
-                                                🎧 Nghe lại bài nói vừa ghi âm:
-                                            </p>
-                                            <audio id="voice-audio-{{ $q->id }}" controls style="width: 100%; max-width: 460px; margin-bottom: 16px;"></audio>
-
-                                            <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-                                                <button type="button" class="btn btn-outline btn-sm" onclick="resetVoiceRecording({{ $qIndex }}, {{ $q->id }})" style="font-weight: 700;">
-                                                    Ghi âm lại
-                                                </button>
-                                                <button type="button" class="btn btn-primary btn-sm" id="btn-ai-check-{{ $q->id }}" onclick="sendVoiceToAI({{ $qIndex }}, {{ $q->id }})" style="font-weight: 800; background: var(--bento-orange); border-color: var(--bento-orange); padding: 8px 20px;">
-                                                    Nhấn để AI kiểm tra bài nói ngay
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <!-- Loading AI -->
-                                        <div id="voice-ai-loading-{{ $q->id }}" style="display: none; margin-top: 18px;">
-                                            <div style="display: inline-flex; align-items: center; gap: 10px; color: #0284c7; font-weight: 700; font-size: 14px;">
-                                                <span class="spinner-border" style="width: 22px; height: 22px; border: 3px solid #0284c7; border-top-color: transparent; border-radius: 50%; display: inline-block; animation: spin 0.8s linear infinite;"></span>
-                                                <span>AI đang lắng nghe và chấm điểm phát âm & độ lưu loát...</span>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                    <!-- Thẻ hiển thị kết quả AI đánh giá -->
-                                    <div class="card" id="ai-result-card-{{ $q->id }}" style="display: none; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 14px; padding: 20px 22px; margin-top: 16px;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
-                                            <div style="display: flex; align-items: center; gap: 8px;">
-                           
-                                                <strong style="font-size: 16px; color: #166534;">Kết quả AI đánh giá bài nói (Duolingo AI Assessor)</strong>
-                                            </div>
-                                            <div style="background: #16a34a; color: #ffffff; font-weight: 800; padding: 5px 16px; border-radius: 20px; font-size: 14px;">
-                                                Điểm bài nói: <span id="ai-score-{{ $q->id }}">--</span> / {{ $q->diem ?? 10 }}
-                                            </div>
-                                        </div>
-
-                                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 14px;">
-                                            <div style="background: #ffffff; padding: 12px 14px; border-radius: 8px; border: 1px solid #bbf7d0;">
-                                                <span style="font-size: 12px; font-weight: 700; color: #166534; display: block; margin-bottom: 2px;">🗣️ Phát âm (Pronunciation):</span>
-                                                <span id="ai-pronun-{{ $q->id }}" style="font-size: 13px; color: var(--bento-ink);">--</span>
-                                            </div>
-                                            <div style="background: #ffffff; padding: 12px 14px; border-radius: 8px; border: 1px solid #bbf7d0;">
-                                                <span style="font-size: 12px; font-weight: 700; color: #166534; display: block; margin-bottom: 2px;">⚡ Độ lưu loát (Fluency):</span>
-                                                <span id="ai-fluency-{{ $q->id }}" style="font-size: 13px; color: var(--bento-ink);">--</span>
-                                            </div>
-                                            <div style="background: #ffffff; padding: 12px 14px; border-radius: 8px; border: 1px solid #bbf7d0;">
-                                                <span style="font-size: 12px; font-weight: 700; color: #166534; display: block; margin-bottom: 2px;">🎯 Ước lượng DET:</span>
-                                                <span id="ai-det-{{ $q->id }}" style="font-size: 14px; font-weight: 800; color: var(--bento-orange);">--</span>
-                                            </div>
-                                        </div>
-
-                                        <div style="background: #ffffff; padding: 12px 16px; border-radius: 8px; border: 1px solid #bbf7d0; font-size: 13px; line-height: 1.6; color: var(--bento-heading);">
-                                            <strong>💡 Nhận xét chi tiết & Lời khuyên:</strong>
-                                            <p id="ai-tips-{{ $q->id }}" style="margin: 4px 0 0 0; color: #475569;">--</p>
+                                        <div style="background: #ffffff; padding: 14px 16px; border-radius: 10px; border: 1.5px dashed #16a34a;">
+                                            <label for="audio-file-{{ $q->id }}" style="display: block; font-size: 13px; font-weight: 700; color: #14532d; margin-bottom: 6px;">
+                                                Chọn file âm thanh bài nói từ thiết bị của bạn:
+                                            </label>
+                                            <input type="file" 
+                                                   id="audio-file-{{ $q->id }}" 
+                                                   name="audio_files[{{ $q->id }}]" 
+                                                   accept="audio/*" 
+                                                   class="form-control" 
+                                                   style="font-size: 14px; padding: 8px; width: 100%; box-sizing: border-box;">
+                                            <span style="display: block; font-size: 12px; color: var(--bento-muted); margin-top: 6px;">
+                                                Hỗ trợ các định dạng: MP3, WAV, M4A, OGG, WEBM (Tối đa 10MB)
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
 
-                            {{-- TRƯỜNG HỢP 4: DẠNG ĐIỀN TỪ / GÕ VĂN BẢN / LUẬN --}}
+                            {{-- TRƯỜNG HỢP 4: DẠNG ĐIỀN TỪ / GÕ VĂN BẢN / NGHE VÀ GÕ LẠI (LISTENING & WRITING) --}}
                             @else
+                                @php
+                                    $correctText = '';
+                                    if (isset($q->dapan) && $q->dapan->count() > 0) {
+                                        $dungDapAn = $q->dapan->where('ladung', 1)->first();
+                                        $correctText = $dungDapAn ? $dungDapAn->noidung : $q->dapan->first()->noidung;
+                                    } elseif (!empty($q->giaithich)) {
+                                        $correctText = $q->giaithich;
+                                    }
+                                @endphp
                                 <div style="margin-top: 20px;">
                                     <label for="text-ans-{{ $q->id }}" style="font-size: 13px; font-weight: 700; color: var(--bento-ink); margin-bottom: 8px; display: block;">
                                         NHẬP CÂU TRẢ LỜI CỦA BẠN:
@@ -526,17 +476,26 @@
                                               placeholder="Nhập câu trả lời bằng tiếng Anh tại đây..."
                                               style="font-size: 15px; line-height: 1.6; margin-bottom: 12px;"></textarea>
 
-                                    <div style="display: flex; gap: 10px;">
-                                        <button type="button" class="btn btn-outline btn-sm" onclick="checkTextAnswer({{ $qIndex }}, {{ $q->id }})" style="font-weight: 700;">
+                                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                                        <button type="button" class="btn btn-primary btn-sm" onclick="checkTextAnswer({{ $qIndex }}, {{ $q->id }}, '{{ addslashes($correctText) }}')" style="font-weight: 700; padding: 9px 18px;">
                                             Kiểm tra đáp án ngay
                                         </button>
                                     </div>
 
                                     <div class="feedback-box" id="feedback-box-{{ $q->id }}" style="display: none; margin-top: 14px;">
+                                        <div class="feedback-header" style="font-size: 15px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                                            <span class="fb-icon"></span>
+                                            <span class="fb-text"></span>
+                                        </div>
                                         <div class="feedback-desc" style="font-size: 14px; line-height: 1.6; background: #ffffff; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--bento-line); color: var(--bento-ink);">
+                                            @if(!empty($correctText))
+                                                <div style="margin-bottom: 6px; color: #166534; font-weight: 700;">
+                                                    Đáp án chuẩn: <span class="correct-val-display" style="background: #eefcf5; padding: 2px 8px; border-radius: 4px; border: 1px solid #86efac;">{{ $correctText }}</span>
+                                                </div>
+                                            @endif
                                             <strong>💡 Hướng dẫn & Giải thích:</strong>
                                             <div style="margin-top: 4px;">
-                                                {{ $q->giaithich ?: 'Hãy kiểm tra lại ngữ pháp, từ vựng và cấu trúc câu cho chuẩn format bài thi DET.' }}
+                                                {{ $q->giaithich ?: 'Hãy kiểm tra lại chính tả, từ vựng và ngữ pháp cho chuẩn format bài thi DET.' }}
                                             </div>
                                         </div>
                                     </div>
@@ -825,8 +784,8 @@
 
     // Kiểm tra câu hỏi đọc hiểu điền từ dạng text
     function checkSubTextInput(qIndex, qId, subId, correctAnswer) {
-        const input = document.getElementById('sub-text-input-' + subId);
-        const feedbackBox = document.getElementById('sub-feedback-box-' + subId);
+        const input = document.getElementById('sub-input-' + subId) || document.getElementById('sub-text-input-' + subId);
+        const feedbackBox = document.getElementById('feedback-box-sub-' + subId) || document.getElementById('sub-feedback-box-' + subId);
         const paletteBtn = document.getElementById('palette-btn-' + qIndex);
         if (!input || !feedbackBox) return;
 
@@ -834,20 +793,23 @@
         const correct = (correctAnswer || '').trim().toLowerCase();
         const isCorrect = (val.length > 0 && (val === correct || (correct.length > 0 && correct.includes(val))));
 
+        const fbIcon = feedbackBox.querySelector('.fb-icon');
+        const fbText = feedbackBox.querySelector('.fb-text');
+
         if (isCorrect) {
             input.style.borderColor = '#16a34a';
             input.style.backgroundColor = '#f0fdf4';
             feedbackBox.className = 'feedback-box correct';
-            feedbackBox.querySelector('.fb-icon').textContent = '✓';
-            feedbackBox.querySelector('.fb-text').textContent = 'Chính xác!';
+            if (fbIcon) fbIcon.textContent = '✓';
+            if (fbText) fbText.textContent = 'Chính xác!';
             if (paletteBtn) paletteBtn.classList.add('answered-correct');
             if (!answeredQuestions.has('sub_' + subId)) correctCount++;
         } else {
             input.style.borderColor = '#dc2626';
             input.style.backgroundColor = '#fef2f2';
             feedbackBox.className = 'feedback-box wrong';
-            feedbackBox.querySelector('.fb-icon').textContent = '💡';
-            feedbackBox.querySelector('.fb-text').textContent = 'Chưa chính xác! Hãy đối chiếu đáp án chuẩn bên dưới:';
+            if (fbIcon) fbIcon.textContent = '✗';
+            if (fbText) fbText.textContent = 'Chưa chính xác! Hãy đối chiếu đáp án chuẩn bên dưới:';
             if (paletteBtn && !paletteBtn.classList.contains('answered-correct')) {
                 paletteBtn.classList.add('answered-wrong');
             }
@@ -860,14 +822,58 @@
         updateCounters();
     }
 
-    // Kiểm tra câu tự luận / điền từ
-    function checkTextAnswer(qIndex, qId) {
+    // Kiểm tra câu tự luận / điền từ / nghe và gõ lại
+    function checkTextAnswer(qIndex, qId, correctAnswer) {
+        const textarea = document.getElementById('text-ans-' + qId);
         const feedbackBox = document.getElementById('feedback-box-' + qId);
-        if (feedbackBox) feedbackBox.style.display = 'block';
-
         const paletteBtn = document.getElementById('palette-btn-' + qIndex);
-        if (paletteBtn) paletteBtn.classList.add('answered-correct');
+        if (!feedbackBox) return;
 
+        const val = (textarea ? textarea.value : '').trim().toLowerCase();
+        const correct = (correctAnswer || '').trim().toLowerCase();
+
+        // Loại bỏ dấu câu cuối dòng khi so sánh (dấu chấm, dấu phẩy, dấu chấm hỏi)
+        const cleanVal = val.replace(/[.,!?;:"']+$/g, '').trim();
+        const cleanCorrect = correct.replace(/[.,!?;:"']+$/g, '').trim();
+
+        const isCorrect = (cleanVal.length > 0 && (cleanVal === cleanCorrect || (cleanCorrect.length > 0 && cleanCorrect.includes(cleanVal))));
+
+        const fbIcon = feedbackBox.querySelector('.fb-icon');
+        const fbText = feedbackBox.querySelector('.fb-text');
+
+        if (val.length === 0) {
+            if (textarea) {
+                textarea.style.borderColor = '#dc2626';
+                textarea.focus();
+            }
+            feedbackBox.className = 'feedback-box wrong';
+            if (fbIcon) fbIcon.textContent = '⚠️';
+            if (fbText) fbText.textContent = 'Vui lòng nhập câu trả lời của bạn trước khi kiểm tra!';
+        } else if (isCorrect) {
+            if (textarea) {
+                textarea.style.borderColor = '#16a34a';
+                textarea.style.backgroundColor = '#f0fdf4';
+            }
+            feedbackBox.className = 'feedback-box correct';
+            if (fbIcon) fbIcon.textContent = '✓';
+            if (fbText) fbText.textContent = 'Chính xác! Đáp án của bạn hoàn toàn chuẩn xác.';
+            if (paletteBtn) paletteBtn.classList.add('answered-correct');
+            if (!answeredQuestions.has(qId)) correctCount++;
+        } else {
+            if (textarea) {
+                textarea.style.borderColor = '#dc2626';
+                textarea.style.backgroundColor = '#fef2f2';
+            }
+            feedbackBox.className = 'feedback-box wrong';
+            if (fbIcon) fbIcon.textContent = '✗';
+            if (fbText) fbText.textContent = 'Chưa chính xác! Hãy đối chiếu với đáp án chuẩn bên dưới:';
+            if (paletteBtn && !paletteBtn.classList.contains('answered-correct')) {
+                paletteBtn.classList.add('answered-wrong');
+            }
+            if (!answeredQuestions.has(qId)) wrongCount++;
+        }
+
+        feedbackBox.style.display = 'block';
         answeredQuestions.add(qId);
         updateCounters();
     }
@@ -902,213 +908,6 @@
 
     function confirmExit() {
         return confirm("Bạn có chắc muốn rời khỏi bài luyện tập này? Tiến độ làm bài hiện tại sẽ không được lưu vào lịch sử nếu chưa nộp bài.");
-    }
-
-    // ==========================================
-    // PHẦN THU ÂM BÀI NÓI (VOICE RECORDING) & AI KIỂM TRA
-    // ==========================================
-    let mediaRecorders = {};
-    let audioChunks = {};
-    let recordingIntervals = {};
-    let recordingSeconds = {};
-    let recordedBlobs = {};
-
-    async function toggleVoiceRecording(qIndex, qId) {
-        if (mediaRecorders[qId] && mediaRecorders[qId].state === 'recording') {
-            stopVoiceRecording(qIndex, qId);
-            return;
-        }
-
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            startVoiceRecording(qIndex, qId, stream);
-        } catch (err) {
-            alert("Không thể truy cập Microphone: " + (err.message || 'Quyền bị từ chối') + "\nVui lòng cho phép trình duyệt truy cập Microphone để ghi âm bài nói.");
-        }
-    }
-
-    function startVoiceRecording(qIndex, qId, stream) {
-        audioChunks[qId] = [];
-        recordingSeconds[qId] = 0;
-
-        let options = { mimeType: 'audio/webm' };
-        if (!MediaRecorder.isTypeSupported('audio/webm')) {
-            options = { mimeType: 'audio/ogg' };
-            if (!MediaRecorder.isTypeSupported('audio/ogg')) {
-                options = {};
-            }
-        }
-
-        const recorder = new MediaRecorder(stream, options);
-        mediaRecorders[qId] = recorder;
-
-        recorder.ondataavailable = function(e) {
-            if (e.data && e.data.size > 0) {
-                audioChunks[qId].push(e.data);
-            }
-        };
-
-        recorder.onstop = function() {
-            clearInterval(recordingIntervals[qId]);
-            const tracks = stream.getTracks();
-            tracks.forEach(track => track.stop());
-
-            const blob = new Blob(audioChunks[qId], { type: recorder.mimeType || 'audio/webm' });
-            recordedBlobs[qId] = blob;
-
-            const audioUrl = URL.createObjectURL(blob);
-            const audioPlayer = document.getElementById('voice-audio-' + qId);
-            if (audioPlayer) {
-                audioPlayer.src = audioUrl;
-            }
-
-            const playbackBox = document.getElementById('voice-playback-box-' + qId);
-            if (playbackBox) playbackBox.style.display = 'block';
-
-            const btnVoice = document.getElementById('btn-voice-' + qId);
-            if (btnVoice) {
-                btnVoice.classList.remove('recording');
-                btnVoice.textContent = '🎙️';
-                btnVoice.style.background = '#64748b';
-            }
-
-            const statusText = document.getElementById('voice-status-text-' + qId);
-            if (statusText) statusText.textContent = 'Đã hoàn thành ghi âm (' + formatTime(recordingSeconds[qId]) + '). Nhấn nút AI bên dưới để kiểm tra.';
-        };
-
-        recorder.start();
-
-        const btnVoice = document.getElementById('btn-voice-' + qId);
-        if (btnVoice) {
-            btnVoice.classList.add('recording');
-            btnVoice.textContent = '⏹️';
-            btnVoice.style.background = '#dc2626';
-        }
-
-        const timerBox = document.getElementById('voice-timer-box-' + qId);
-        if (timerBox) timerBox.style.display = 'block';
-
-        const statusText = document.getElementById('voice-status-text-' + qId);
-        if (statusText) statusText.textContent = 'Đang ghi âm bài nói... Nhấn lại vào nút để DỪNG';
-
-        recordingIntervals[qId] = setInterval(function() {
-            recordingSeconds[qId]++;
-            const timeEl = document.getElementById('voice-time-' + qId);
-            if (timeEl) timeEl.textContent = formatTime(recordingSeconds[qId]);
-        }, 1000);
-    }
-
-    function stopVoiceRecording(qIndex, qId) {
-        if (mediaRecorders[qId] && mediaRecorders[qId].state === 'recording') {
-            mediaRecorders[qId].stop();
-        }
-    }
-
-    function resetVoiceRecording(qIndex, qId) {
-        delete recordedBlobs[qId];
-        delete audioChunks[qId];
-        recordingSeconds[qId] = 0;
-
-        const playbackBox = document.getElementById('voice-playback-box-' + qId);
-        if (playbackBox) playbackBox.style.display = 'none';
-
-        const timerBox = document.getElementById('voice-timer-box-' + qId);
-        if (timerBox) timerBox.style.display = 'none';
-
-        const aiCard = document.getElementById('ai-result-card-' + qId);
-        if (aiCard) aiCard.style.display = 'none';
-
-        const btnVoice = document.getElementById('btn-voice-' + qId);
-        if (btnVoice) {
-            btnVoice.classList.remove('recording');
-            btnVoice.textContent = '🎙️';
-            btnVoice.style.background = '#';
-        }
-
-        const statusText = document.getElementById('voice-status-text-' + qId);
-        if (statusText) statusText.textContent = 'Nhấn vào nút Micro để bắt đầu ghi âm bài nói';
-    }
-
-    async function sendVoiceToAI(qIndex, qId) {
-        const blob = recordedBlobs[qId];
-        if (!blob) {
-            alert("Chưa có đoạn ghi âm bài nói! Vui lòng nhấn nút Voice để ghi âm trước.");
-            return;
-        }
-
-        const loadingEl = document.getElementById('voice-ai-loading-' + qId);
-        if (loadingEl) loadingEl.style.display = 'block';
-
-        const btnAi = document.getElementById('btn-ai-check-' + qId);
-        if (btnAi) btnAi.disabled = true;
-
-        const formData = new FormData();
-        formData.append('_token', '{{ csrf_token() }}');
-        formData.append('cauhoi_id', qId);
-        formData.append('duration', recordingSeconds[qId] || 15);
-        formData.append('audio', blob, 'speaking_' + qId + '.webm');
-
-        try {
-            const response = await fetch('{{ route("practice.speaking.evaluate") }}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-
-            const data = await response.json();
-            if (data.success) {
-                const resultCard = document.getElementById('ai-result-card-' + qId);
-                if (resultCard) resultCard.style.display = 'block';
-
-                const scoreEl = document.getElementById('ai-score-' + qId);
-                if (scoreEl) scoreEl.textContent = data.score;
-
-                const pronunEl = document.getElementById('ai-pronun-' + qId);
-                if (pronunEl) pronunEl.textContent = data.feedback.pronunciation;
-
-                const fluencyEl = document.getElementById('ai-fluency-' + qId);
-                if (fluencyEl) fluencyEl.textContent = data.feedback.fluency;
-
-                const detEl = document.getElementById('ai-det-' + qId);
-                if (detEl) detEl.textContent = data.det_estimated;
-
-                const tipsEl = document.getElementById('ai-tips-' + qId);
-                if (tipsEl) tipsEl.textContent = data.feedback.overall + ' ' + data.feedback.tips;
-
-                const paletteBtn = document.getElementById('palette-btn-' + qIndex);
-                if (paletteBtn) {
-                    paletteBtn.classList.remove('answered-wrong');
-                    paletteBtn.classList.add('answered-correct');
-                }
-
-                if (!answeredQuestions.has(qId)) {
-                    correctCount++;
-                    answeredQuestions.add(qId);
-                    updateCounters();
-                }
-
-                let hiddenAudio = document.getElementById('hidden-audio-' + qId);
-                if (!hiddenAudio) {
-                    hiddenAudio = document.createElement('input');
-                    hiddenAudio.type = 'hidden';
-                    hiddenAudio.id = 'hidden-audio-' + qId;
-                    hiddenAudio.name = 'answers[' + qId + ']';
-                    document.getElementById('practice-session-form').appendChild(hiddenAudio);
-                }
-                hiddenAudio.value = data.audio_url;
-
-                resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            } else {
-                alert("Không thể đánh giá bài nói: " + (data.message || 'Lỗi không xác định'));
-            }
-        } catch (err) {
-            alert("Lỗi khi kết nối với AI chấm điểm: " + err.message);
-        } finally {
-            if (loadingEl) loadingEl.style.display = 'none';
-            if (btnAi) btnAi.disabled = false;
-        }
     }
 
     async function toggleSessionBookmark(qid, qIndex) {
