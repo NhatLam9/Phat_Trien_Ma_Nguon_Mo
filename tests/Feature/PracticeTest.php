@@ -2,14 +2,17 @@
 
 namespace Tests\Feature;
 
+use App\Models\Cauhoi;
+use App\Models\CauhoiDoc;
+use App\Models\Loaicauhoi;
+use App\Models\Luyentap;
+use App\Models\Nguoidung;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Tests\TestCase;
-use App\Models\Nguoidung;
-use App\Models\Luyentap;
-use App\Models\Danhdau;
 
 class PracticeTest extends TestCase
 {
@@ -73,7 +76,7 @@ class PracticeTest extends TestCase
      */
     public function test_practice_page_returns_200_when_question_type_exists(): void
     {
-        if (!Schema::hasTable('loaicauhoi')) {
+        if (! Schema::hasTable('loaicauhoi')) {
             Schema::create('loaicauhoi', function (Blueprint $table) {
                 $table->id();
                 $table->string('ma')->unique();
@@ -326,6 +329,30 @@ class PracticeTest extends TestCase
     }
 
     /**
+     * Yêu cầu: Kết quả Speaking không hiển thị ô đáp án chính xác,
+     * chỉ giữ câu trả lời (bản ghi âm) và giải thích/nhận xét chi tiết.
+     */
+    public function test_speaking_session_result_hides_correct_answer_box(): void
+    {
+        $response = $this->actingAs($this->user)->post(route('practice.session.submit'), [
+            'loai_id' => 1,
+            'answers' => [
+                1 => 'storage/audio/recordings/demo-speaking.webm',
+            ],
+            'time_spent' => 20,
+        ]);
+
+        $response->assertRedirect(route('practice.session.result'));
+
+        $resultResponse = $this->actingAs($this->user)->get(route('practice.session.result'));
+        $resultResponse->assertOk();
+        $resultResponse->assertSee('CÂU TRẢ LỜI CỦA BẠN');
+        $resultResponse->assertSee('Bản ghi âm bài nói của bạn');
+        $resultResponse->assertSee('Giải thích chi tiết');
+        $resultResponse->assertDontSee('ĐÁP ÁN CHÍNH XÁC');
+    }
+
+    /**
      * Kiểm tra câu hỏi lẻ không có bộ đếm ngược thời gian
      */
     public function test_single_question_has_no_countdown_timer(): void
@@ -359,7 +386,7 @@ class PracticeTest extends TestCase
      */
     public function test_speaking_voice_evaluation_via_ai_endpoint(): void
     {
-        $fakeAudio = \Illuminate\Http\UploadedFile::fake()->create('voice_sample.webm', 50, 'audio/webm');
+        $fakeAudio = UploadedFile::fake()->create('voice_sample.webm', 50, 'audio/webm');
 
         $response = $this->actingAs($this->user)->post(route('practice.speaking.evaluate'), [
             'cauhoi_id' => 1,
@@ -455,7 +482,7 @@ class PracticeTest extends TestCase
      */
     public function test_interactive_reading_renders_passage_and_inputs(): void
     {
-        $type = \App\Models\Loaicauhoi::create([
+        $type = Loaicauhoi::create([
             'ma' => 'interactive_reading',
             'ten' => 'Interactive Reading',
             'kynang' => 'reading',
@@ -464,7 +491,7 @@ class PracticeTest extends TestCase
             'is_active' => true,
         ]);
 
-        $parentQ = \App\Models\Cauhoi::create([
+        $parentQ = Cauhoi::create([
             'loai_id' => $type->id,
             'noidung' => 'Reading passage about technology and education.',
             'dokho' => 3,
@@ -473,7 +500,7 @@ class PracticeTest extends TestCase
             'is_active' => true,
         ]);
 
-        \App\Models\CauhoiDoc::create([
+        CauhoiDoc::create([
             'cauhoi_id' => $parentQ->id,
             'noidung' => 'What is the main topic of the passage?',
             'loai' => 'complete_sentence',

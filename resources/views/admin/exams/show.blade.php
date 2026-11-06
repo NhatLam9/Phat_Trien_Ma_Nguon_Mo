@@ -27,9 +27,14 @@
                 <h2>{{ $dethi->ten }}</h2>
                 <p class="admin-muted">{{ $dethi->mota ?: 'Đề thi chưa có mô tả.' }}</p>
             </div>
-            <span class="admin-badge admin-badge--{{ $dethi->trangthai === 'published' ? 'published' : ($dethi->trangthai === 'hidden' ? 'archived' : 'draft') }}">
-                {{ $nhanTrangThai[$dethi->trangthai] ?? $dethi->trangthai }}
-            </span>
+            <div class="admin-row-actions">
+                <a href="{{ route('admin.exams.edit', $dethi) }}" class="admin-btn admin-btn--small">
+                    Chỉnh sửa đề
+                </a>
+                <span class="admin-badge admin-badge--{{ $dethi->trangthai === 'published' ? 'published' : ($dethi->trangthai === 'hidden' ? 'archived' : 'draft') }}">
+                    {{ $nhanTrangThai[$dethi->trangthai] ?? $dethi->trangthai }}
+                </span>
+            </div>
         </div>
 
         <div class="admin-table-wrap">
@@ -89,6 +94,7 @@
         @if ($dethi->dethicauhoi->isEmpty())
             <div class="admin-empty">
                 <p>Đề thi chưa có câu hỏi nào.</p>
+                <a href="{{ route('admin.exams.edit', $dethi) }}">Thêm câu hỏi vào đề</a>
             </div>
         @else
             <div class="admin-table-wrap">
