@@ -143,26 +143,16 @@
                     {{ $eval['question']->noidung }}
                 </div>
 
-                {{-- Câu trả lời của người dùng vs Đáp án đúng --}}
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+                {{-- Câu trả lời của người dùng--}}
+
                     <div style="background: var(--bento-subtle); padding: 12px 14px; border-radius: 8px; border: 1px solid var(--bento-line);">
                         <span style="font-size: 12px; font-weight: 700; color: var(--bento-muted); display: block; margin-bottom: 4px;">
                             CÂU TRẢ LỜI CỦA BẠN:
                         </span>
-                        <span style="font-weight: 700; color: {{ $eval['is_correct'] ? '#16a34a' : ($eval['has_answered'] ? '#dc2626' : '#94a3b8') }}; font-size: 14px;">
+                        <span style="font-weight: 700; color: {{ $eval['is_correct'] ? '#16a34a' : ($eval['has_answered'] ? '#dc2626' : '#94a3b8') }}; font-size: 14px; line-height: 1.5; display: block;">
                             {{ $eval['user_answer_text'] ?: '(Chưa nhập đáp án)' }}
                         </span>
                     </div>
-
-                    <div style="background: #f0fdf4; padding: 12px 14px; border-radius: 8px; border: 1px solid #bbf7d0;">
-                        <span style="font-size: 12px; font-weight: 700; color: #166534; display: block; margin-bottom: 4px;">
-                            ĐÁP ÁN CHÍNH XÁC:
-                        </span>
-                        <span style="font-weight: 700; color: #15803d; font-size: 14px;">
-                            {{ !empty($eval['correct_answers']) ? implode(', ', $eval['correct_answers']) : ($eval['question']->giaithich ?: 'Đáp án chuẩn từ ngân hàng đề thi') }}
-                        </span>
-                    </div>
-                </div>
 
                 {{-- GIẢI THÍCH CHI TIẾT --}}
                 @if(!empty($eval['giaithich']))

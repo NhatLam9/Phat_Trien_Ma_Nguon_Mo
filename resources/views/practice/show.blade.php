@@ -267,6 +267,30 @@
                     @error('noidung')
                         <div class="invalid-feedback" style="color: #dc2626; font-size: 13px; margin-top: 4px;">{{ $message }}</div>
                     @enderror
+
+                    @php
+                        $sampleAns = '';
+                        if (isset($question->dapan) && $question->dapan->count() > 0) {
+                            $sampleObj = $question->dapan->where('ladung', 1)->first() ?: $question->dapan->first();
+                            $sampleAns = $sampleObj ? $sampleObj->noidung : '';
+                        }
+                    @endphp
+                    @if(!empty($sampleAns) || !empty($question->giaithich))
+                        <details style="margin-top: 12px; margin-bottom: 16px;">
+                            <summary style="font-size: 13px; font-weight: 700; color: var(--bento-muted); cursor: pointer;">
+                                💡 Xem bài mẫu tham khảo chuẩn DET & Hướng dẫn làm bài
+                            </summary>
+                            <div style="margin-top: 8px; padding: 14px 18px; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 8px; font-size: 14px; line-height: 1.6;">
+                                @if(!empty($sampleAns))
+                                    <div style="font-weight: 800; color: #166534; margin-bottom: 4px; text-transform: uppercase; font-size: 12px;">Bài viết mẫu tham khảo (Band 120+):</div>
+                                    <div style="color: #14532d; font-weight: 600; margin-bottom: 10px; background: #ffffff; padding: 10px 14px; border-radius: 6px; border: 1px solid #bbf7d0;">{{ $sampleAns }}</div>
+                                @endif
+                                @if(!empty($question->giaithich))
+                                    <div style="font-size: 13px; color: #334155;"><strong>Tiêu chí đánh giá AI:</strong> {{ $question->giaithich }}</div>
+                                @endif
+                            </div>
+                        </details>
+                    @endif
                 </div>
             @endif
 
