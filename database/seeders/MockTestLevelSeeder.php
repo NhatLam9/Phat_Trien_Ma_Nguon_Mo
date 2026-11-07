@@ -61,7 +61,7 @@ class MockTestLevelSeeder extends Seeder
                 $examId = DB::table('dethi')->insertGetId([
                     'capdo' => $level,
                     'ten' => sprintf('DET Practice %02d – %s', $level, $name),
-                    'mota' => "Mức {$level}/8. Đề tổng hợp Nghe, Nói, Đọc, Viết.",
+                    'mota' => 'Đề tổng hợp Nghe, Nói, Đọc, Viết.',
                     'chedo' => 'full',
                     'kieu' => 'fixed',
                     'thoigian' => 900,
