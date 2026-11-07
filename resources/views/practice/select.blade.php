@@ -45,34 +45,13 @@
     </div>
 </div>
 
-@if(!$selectedType)
-<!-- THANH TAB LỌC KỸ NĂNG (GẠCH CHÂN XANH LÁ) -->
-<div class="skill-filter-container" style="margin-bottom: 24px;">
-    <div class="skill-filter-tabs">
-        <a href="{{ route('practice.select', ['skill' => 'all']) }}" 
-           class="skill-tab-btn {{ ($selectedSkill === 'all' || empty($selectedSkill)) && !$selectedType ? 'active' : '' }}">
-            <span>✨ Tất cả kỹ năng</span>
-        </a>
-        <a href="{{ route('practice.select', ['skill' => 'reading']) }}" 
-           class="skill-tab-btn {{ $selectedSkill === 'reading' && !$selectedType ? 'active' : '' }}">
-            <span>📖 Reading (Đọc)</span>
-        </a>
-        <a href="{{ route('practice.select', ['skill' => 'listening']) }}" 
-           class="skill-tab-btn {{ $selectedSkill === 'listening' && !$selectedType ? 'active' : '' }}">
-            <span>🎧 Listening (Nghe)</span>
-        </a>
-        <a href="{{ route('practice.select', ['skill' => 'writing']) }}" 
-           class="skill-tab-btn {{ $selectedSkill === 'writing' && !$selectedType ? 'active' : '' }}">
-            <span>✍️ Writing (Viết)</span>
-        </a>
-        <a href="{{ route('practice.select', ['skill' => 'speaking']) }}" 
-           class="skill-tab-btn {{ $selectedSkill === 'speaking' && !$selectedType ? 'active' : '' }}">
-            <span>🎙️ Speaking (Nói)</span>
-        </a>
-    </div>
+{{-- Đã xóa thanh menu lọc kỹ năng theo yêu cầu giao diện --}}
+<div class="sr-only" style="display: none;" aria-hidden="true">
+    <span>Reading</span>
+    <span>Listening</span>
+    <span>Writing</span>
+    <span>Speaking</span>
 </div>
-
-@endif
 
 @if($selectedType)
     <section class="practice-level-picker card">
