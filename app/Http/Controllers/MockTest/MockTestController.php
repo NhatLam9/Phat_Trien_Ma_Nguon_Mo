@@ -139,6 +139,16 @@ class MockTestController extends Controller
             ->where('loai', 'timeout')
             ->exists();
 
+        $cauChuyenDen = null;
+        if ($lanThi->trangthai === 'in_progress' && $request->query('so') !== null) {
+            $thuTu = $request->query('so');
+            abort_unless(is_string($thuTu) && ctype_digit($thuTu), 404);
+            $cauChuyenDen = $service->moCauTheoThuTu($id, $nguoiDungId, (int) $thuTu);
+            if (! $cauChuyenDen) {
+                return redirect()->route('mock-test.show', $id);
+            }
+        }
+
         $dsCauDaCap = DB::table('lanthicauhoi')
             ->where('lanthi_id', $id)
             ->orderBy('thutu')
@@ -146,8 +156,10 @@ class MockTestController extends Controller
 
         $soCauDaCap = $dsCauDaCap->count();
 
-        $soCauTrongDe = (int) DB::table('dethicauhoi')
-            ->where('dethi_id', $lanThi->dethi_id)
+        $soCauTrongDe = (int) DB::table('dethicauhoi as dc')
+            ->join('cauhoi as ch', 'ch.id', '=', 'dc.cauhoi_id')
+            ->where('dc.dethi_id', $lanThi->dethi_id)
+            ->where('ch.trangthai', 'published')
             ->count();
 
         $tongSoCau = max(
@@ -168,7 +180,7 @@ class MockTestController extends Controller
             ->values();
 
         if ($lanThi->trangthai === 'in_progress') {
-            $cauYeuCau = $request->query('cau');
+            $cauYeuCau = $cauChuyenDen ? (string) $cauChuyenDen->id : $request->query('cau');
 
             if ($cauYeuCau !== null) {
                 abort_unless(
@@ -180,11 +192,11 @@ class MockTestController extends Controller
             }
 
             $cauDuocCap = $cauYeuCau !== null
-                ? $cauChuaTraLoi->firstWhere('id', (int) $cauYeuCau)
+                ? $dsCauDaCap->firstWhere('id', (int) $cauYeuCau)
                 : $cauChuaTraLoi->last();
 
             if ($cauYeuCau !== null && ! $cauDuocCap) {
-                abort(404, 'Câu hỏi không tồn tại hoặc đã được nộp.');
+                abort(404, 'Câu hỏi không thuộc lần thi này.');
             }
 
             if ($cauDuocCap) {
@@ -243,7 +255,7 @@ class MockTestController extends Controller
             $phieuTraLoi->push([
                 'thutu' => $thuTu,
                 'status' => $trangThai,
-                'lanthicauhoi_id' => $cau && ! (bool) $cau->datraloi
+                'lanthicauhoi_id' => $cau
                     ? (int) $cau->id
                     : null,
             ]);
@@ -263,7 +275,12 @@ class MockTestController extends Controller
                 ->count()
             : 0;
 
+        $dapAnDaNop = $cauDuocCap && $cauDuocCap->datraloi
+            ? DB::table('traloi')->where('lanthicauhoi_id', $cauDuocCap->id)->first()
+            : null;
+
         return view('mock-test.question', compact(
+            'dapAnDaNop',
             'lanThi',
             'deThi',
             'cauDuocCap',

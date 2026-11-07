@@ -24,8 +24,8 @@
         </div>
 
         @auth
-            <a class="btn btn-dark" href="{{ route('mock-test.history') }}">Lịch sử thi →</a>
-            <a class="btn btn-dark" href="{{ route('learning.dashboard') }}">Thống kê học tập →</a>
+            <a class="btn btn-dark" href="{{ route('mock-test.history') }}">Lịch sử thi</a>
+            <a class="btn btn-dark" href="{{ route('learning.dashboard') }}">Thống kê học tập</a>
         @endauth
 
         <!-- Thong bao loi -->
@@ -49,7 +49,7 @@
 
                 <a class="btn btn-dark"
                    href="{{ route('mock-test.show', $lanThiDangMo->id) }}">
-                    Tiếp tục thi →
+                    Tiếp tục thi
                 </a>
             </section>
         @endif
@@ -120,7 +120,7 @@
 
                                 <button type="submit"
                                         class="btn btn-primary full-width">
-                                    Bắt đầu thi →
+                                    Bắt đầu thi
                                 </button>
                             </form>
 
@@ -130,7 +130,7 @@
                             Đăng nhập để bắt đầu thi.
 
                             <a href="{{ route('login') }}">
-                                Đăng nhập →
+                                Đăng nhập
                             </a>
                         </div>
                     @endauth

@@ -88,9 +88,6 @@
                 <!-- Đã sửa lỗi biến: Lấy đúng cột kynang từ bảng loaicauhoi trong CSDL -->
                 <span class="pc-badge">{{ ucfirst($type->kynang) }}</span>
 
-                @if (!empty($type->thoigian))
-                    <span>{{ $type->thoigian }} giây</span>
-                @endif
             </div>
 
             <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 6px;">{{ $type->ten }}</h3>

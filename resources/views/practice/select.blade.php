@@ -45,6 +45,7 @@
     </div>
 </div>
 
+@if(!$selectedType)
 <!-- THANH TAB LỌC KỸ NĂNG (GẠCH CHÂN XANH LÁ) -->
 <div class="skill-filter-container" style="margin-bottom: 24px;">
     <div class="skill-filter-tabs">
@@ -71,71 +72,30 @@
     </div>
 </div>
 
-@if($selectedType)
-    <!-- GIAO DIỆN CHỌN CẤP ĐỘ ĐỘ KHÓ CHO DẠNG BÀI ĐÃ CHỌN (VD: INTERACTIVE READING) -->
-    <div style="background: #ffffff; border: 1px solid var(--bento-line); border-radius: 16px; padding: 24px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 16px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
-            <div>
-                <h2 style="font-size: 18px; font-weight: 700; color: var(--bento-heading); margin: 0 0 4px 0;">
-                    Chọn cấp độ luyện tập cho <span style="color: var(--bento-orange);">{{ $selectedType->ten }}</span>
-                </h2>
-            </div>
-
-            <!-- GÓI TẤT CẢ ĐỘ KHÓ: LÀM TOÀN BỘ CÂU CỦA DẠNG BÀI -->
-            <a href="{{ route('practice.session', ['loai_id' => $selectedType->id]) }}" 
-               class="btn btn-primary" 
-               style="font-weight: 800; padding: 12px 24px; font-size: 15px; box-shadow: 0 4px 12px rgba(0, 184, 107, 0.25);">
-                 Luyện tập TẤT CẢ độ khó 
-            </a>
-        </div>
-
-        <div style="font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 14px; letter-spacing: 0.5px;">
-            Hoặc chọn luyện tập theo từng cấp độ cụ thể (1 - 10):
-        </div>
-
-        @if($typeDifficulties->isEmpty())
-            <div style="text-align: center; padding: 36px 20px; background: var(--bento-subtle); border-radius: 12px; border: 1px dashed var(--bento-line);">
-                <p style="color: var(--bento-muted); font-size: 14px; margin-bottom: 14px;">
-                    Hiện chưa có câu hỏi nào được gán cấp độ cho dạng bài này trong CSDL.
-                </p>
-                <a href="{{ route('practice.session', ['loai_id' => $selectedType->id]) }}" class="btn btn-outline btn-sm">
-                    Làm thử câu hỏi mặc định 
-                </a>
-            </div>
-        @else
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
-                @foreach($typeDifficulties as $diff)
-                    <div class="card" style="margin-bottom: 0; border: 1.5px solid var(--bento-line); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s ease;">
-                        <div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                <span style="font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 20px;
-                                    {{ $diff->dokho <= 3 ? 'background: #dcfce7; color: #166534;' : ($diff->dokho <= 7 ? 'background: #fef9c3; color: #854d0e;' : 'background: #fee2e2; color: #991b1b;') }}">
-                                    Cấp độ {{ $diff->dokho }}/10 • {{ $diff->mucdo }}
-                                </span>
-                                <span style="font-size: 13px; font-weight: 700; color: var(--bento-orange); background: #e6f9f0; padding: 2px 8px; border-radius: 6px;">
-                                    {{ $diff->count }} câu có sẵn
-                                </span>
-                            </div>
-
-                            <h3 style="font-size: 16px; font-weight: 700; color: var(--bento-heading); margin-bottom: 6px;">
-                                {{ $selectedType->ten }} (Cấp độ {{ $diff->dokho }})
-                            </h3>
-                        </div>
-
-                        <div style="border-top: 1px solid #f1f5f9; padding-top: 12px;">
-                            <a href="{{ route('practice.session', ['loai_id' => $selectedType->id, 'dokho' => $diff->dokho]) }}" 
-                               class="btn btn-outline" 
-                               style="width: 100%; justify-content: center; font-weight: 700; color: var(--bento-orange); border-color: var(--bento-orange);">
-                                Bắt đầu cấp độ {{ $diff->dokho }} 
-                            </a>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        @endif
-    </div>
 @endif
 
+@if($selectedType)
+    <section class="practice-level-picker card">
+        <div class="practice-level-heading">
+            <h2>Chọn độ khó</h2>
+            <a href="{{ route('practice.session', ['loai_id' => $selectedType->id]) }}" class="btn btn-primary">Luyện tập tất cả</a>
+        </div>
+        <p>Chọn một cấp độ để bắt đầu luyện tập.</p>
+        <div class="practice-level-grid">
+            @forelse($typeDifficulties as $diff)
+                <a class="practice-level-link" href="{{ route('practice.session', ['loai_id' => $selectedType->id, 'dokho' => $diff->dokho]) }}">
+                    <strong>Cấp độ {{ $diff->dokho }}/10</strong>
+                    <span>{{ $diff->mucdo }} · {{ $diff->count }} câu</span>
+                    <span class="practice-level-action">Bắt đầu →</span>
+                </a>
+            @empty
+                <p>Chưa có câu hỏi được phân độ khó.</p>
+            @endforelse
+        </div>
+    </section>
+@endif
+
+@if(!$selectedType)
 <!-- BỘ LỌC TÌM KIẾM NHANH THEO TỪ KHÓA HOẶC ĐỘ KHÓ -->
 <div class="card" style="padding: 16px 20px; margin-bottom: 24px;">
     <form method="GET" action="{{ route('practice.select') }}" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
@@ -247,6 +207,8 @@
         </div>
     @endforeach
 </div>
+
+@endif
 
 <div id="type-toast" style="position: fixed; bottom: 24px; right: 24px; background: var(--bento-heading); color: #ffffff; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 9999; display: none;"></div>
 

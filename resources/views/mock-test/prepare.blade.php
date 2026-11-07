@@ -36,25 +36,19 @@
                 nếu bạn tải lại hoặc rời trang.
             </p>
 
-            <form method="POST" action="{{ route('mock-test.start') }}">
-                @csrf
+            <div class="exam-prepare-actions">
+                <form method="POST" action="{{ route('mock-test.start') }}">
+                    @csrf
+                    <input type="hidden" name="dethi_id" value="{{ $deThi->id }}">
+                    <input type="hidden" name="xac_nhan_bat_dau" value="1">
 
-                <input type="hidden"
-                       name="dethi_id"
-                       value="{{ $deThi->id }}">
+                    <button type="submit" class="btn btn-primary">Bắt đầu làm bài</button>
+                </form>
 
-                <input type="hidden"
-                       name="xac_nhan_bat_dau"
-                       value="1">
-
-                <button type="submit" class="btn btn-primary">
-                    Bắt đầu làm bài →
-                </button>
-            </form>
-
-            <a class="btn btn-dark" href="{{ route('mock-test.index') }}">
-                Quay lại danh sách đề
-            </a>
+                <a href="{{ route('mock-test.index') }}" class="btn btn-outline">
+                    Quay lại danh sách đề
+                </a>
+            </div>
         </section>
     </div>
 @endsection

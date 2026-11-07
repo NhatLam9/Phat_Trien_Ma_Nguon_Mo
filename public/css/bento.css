@@ -50,8 +50,41 @@ textarea {
 
 .bento-topbar-layout .app-header {
     justify-content: space-between;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     position: relative;
+}
+
+.bento-topbar-layout .logo-container,
+.bento-topbar-layout .header-actions {
+    flex-shrink: 0;
+}
+
+.bento-topbar-layout .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.bento-topbar-layout .main-nav {
+    min-width: 0;
+}
+
+@media (max-width: 1200px) {
+    .bento-topbar-layout:not(.bento-focus-layout) .app-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .bento-topbar-layout .main-nav {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .bento-topbar-layout .header-actions .user-chip span { display: none; }
+    .bento-topbar-layout .app-header { gap: 12px; padding: 12px; }
 }
 
 .logo-container {
@@ -139,7 +172,7 @@ textarea {
     background: var(--bento-subtle);
 }
 
-.bento-sidebar-layout .main-nav a,
+.bento-sidebar-layout .main-nav a:not(.btn),
 .bento-topbar-layout .main-nav a:not(.btn) {
     padding: 11px 14px;
     border: 1px solid transparent;
@@ -150,14 +183,14 @@ textarea {
     text-decoration: none;
 }
 
-.bento-sidebar-layout .main-nav a:hover,
+.bento-sidebar-layout .main-nav a:not(.btn):hover,
 .bento-topbar-layout .main-nav a:not(.btn):hover {
     border-color: var(--bento-line);
     background: var(--bento-soft);
     color: var(--bento-heading);
 }
 
-.bento-sidebar-layout .main-nav a.active,
+.bento-sidebar-layout .main-nav a:not(.btn).active,
 .bento-topbar-layout .main-nav a.active:not(.btn) {
     border-color: var(--bento-orange-dark);
     background: var(--bento-orange);
@@ -203,9 +236,20 @@ textarea {
 }
 
 body .btn {
-    border-radius: 14px;
-    font-weight: 700;
-    line-height: 1.4;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 46px;
+    padding: 12px 16px;
+    border-radius: 13px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 body .btn-primary {

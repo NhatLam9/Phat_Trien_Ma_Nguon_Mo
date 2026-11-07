@@ -1,8 +1,4 @@
-
-/* ==========================================
-   DET PRACTICE - MOCK TEST
-   Green Mint Theme
-   ========================================== */
+/* DET Practice - Thi thử */
 
 /* 1. BIẾN MÀU SẮC */
 
@@ -802,30 +798,6 @@ a.sheet-item:hover {
     width: 100%;
 }
 
-.abandon-confirm summary {
-    list-style: none;
-}
-
-.abandon-confirm summary::-webkit-details-marker {
-    display: none;
-}
-
-.abandon-confirm-content {
-    margin-top: 12px;
-    padding: 15px;
-    border: 1px solid #ffc3ce;
-    border-radius: 12px;
-    background: #fff8fa;
-}
-
-.abandon-confirm-content p {
-    margin: 10px 0;
-}
-
-.abandon-confirm-content .nav-btn {
-    font-size: 12px;
-}
-
 /* 13. THẺ LƯU Ý */
 
 .note-card {
@@ -1143,23 +1115,6 @@ a.sheet-item:hover {
 }
 
 /* Nút thao tác */
-
-.app-main--mock-test .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 46px;
-    padding: 12px 16px;
-    border-radius: 13px;
-    font: inherit;
-    font-size: 12px;
-    font-weight: 800;
-    line-height: 1.5;
-    text-align: center;
-    text-decoration: none;
-    white-space: normal;
-    cursor: pointer;
-}
 
 .app-main--mock-test .btn-primary,
 .app-main--mock-test .btn-dark {
@@ -1592,3 +1547,41 @@ a.sheet-item:hover {
     .bento-focus-layout .app-footer {
         border-top-color: #e5d5c0;
     }
+
+.answer-fields { min-width: 0; margin: 0; padding: 0; border: 0; }
+
+.sheet-item[aria-current="page"] { outline: 2px solid var(--bento-orange); outline-offset: 3px; }
+
+.exam-prepare-actions,
+.abandon-dialog-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.abandon-dialog {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    width: min(420px, calc(100% - 32px));
+    box-sizing: border-box;
+    padding: 24px;
+    border: 2px solid var(--bento-line);
+    border-radius: 22px;
+    background: white;
+    color: var(--bento-ink);
+}
+
+.abandon-dialog::backdrop {
+    background: rgb(0 0 0 / 45%);
+}
+
+.abandon-dialog-actions {
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.abandon-dialog-actions form {
+    margin: 0;
+}

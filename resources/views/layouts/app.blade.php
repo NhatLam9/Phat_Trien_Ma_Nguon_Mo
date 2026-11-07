@@ -78,7 +78,7 @@
             <nav class="main-nav" aria-label="Điều hướng chính">
                 <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a>
                 <a href="{{ route('login') }}" class="{{ request()->routeIs('login') ? 'active' : '' }}">Đăng nhập</a>
-                <a href="{{ route('register') }}" class="btn btn-primary btn-sm">Đăng ký</a>
+                <a href="{{ route('register') }}" class="btn btn-primary">Đăng ký</a>
             </nav>
         @endauth
     </header>

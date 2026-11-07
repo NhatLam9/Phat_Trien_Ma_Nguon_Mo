@@ -68,7 +68,7 @@
     <div class="mr-page">
         <div class="mr-topline">
             <div class="mr-crumbs">
-                <a href="{{ route('mock-test.index') }}">← Thoát</a>
+                <a href="{{ route('mock-test.index') }}">Thoát</a>
                 <span>/</span>
                 <span>Luyện thi DET</span>
                 <span>/</span>
@@ -548,7 +548,7 @@
         <div class="mr-bottom-actions">
             <a href="{{ route('mock-test.index') }}"
                class="mr-btn mr-btn--outline">
-                ← Về danh sách đề thi
+                Về danh sách đề thi
             </a>
 
             <div>

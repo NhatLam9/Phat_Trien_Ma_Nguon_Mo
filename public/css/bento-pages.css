@@ -92,3 +92,13 @@ body.admin-body {
 .admin-body .admin-btn { border-radius: 12px; }
 body .btn-primary { background: var(--bento-orange-dark); border-color: var(--bento-orange-deep); color: #fff; }
 body .btn-primary:hover { background: var(--bento-orange-deep); }
+
+.practice-level-picker { padding: 24px; }
+.practice-level-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.practice-level-heading h2 { margin: 0; font-size: 20px; }
+.practice-level-picker > p { color: var(--bento-muted); margin: 12px 0 20px; }
+.practice-level-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 14px; }
+.practice-level-link { display: flex; flex-direction: column; gap: 10px; padding: 20px; border: 1px solid var(--bento-line); border-radius: 16px; color: var(--bento-ink); text-decoration: none; background: var(--bento-subtle); }
+.practice-level-link:hover, .practice-level-link:focus-visible { border-color: var(--bento-orange); outline: 2px solid var(--bento-orange); outline-offset: 2px; }
+.practice-level-link > span { font-size: 13px; }
+.practice-level-action { color: var(--bento-orange-dark); font-weight: 700; }

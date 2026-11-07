@@ -29,6 +29,61 @@ class MockTestIntegrationTest extends TestCase
         Storage::fake('local');
     }
 
+    public function test_fixed_exam_can_jump_ahead_and_keep_question_order_and_timer(): void
+    {
+        $user = $this->createStudent();
+        [$exam, $questions] = $this->createMockExam();
+        $service = app(TestService::class);
+        $attempt = $service->batDauThi($user->id, $exam);
+        $service->capCauHoiTiepTheo($attempt->id, $user->id);
+        $started = $attempt->batdau->toDateTimeString();
+        $this->travel(30)->seconds();
+        $this->actingAs($user)->get(route('mock-test.show', ['id' => $attempt->id, 'so' => 4]))
+            ->assertOk()->assertViewHas('cauDuocCap', fn ($q) => (int) $q->cauhoi_id === $questions[3]['id']);
+        $this->assertSame(array_column($questions, 'id'), Lanthicauhoi::where('lanthi_id', $attempt->id)->orderBy('thutu')->pluck('cauhoi_id')->all());
+        $this->assertSame($started, $attempt->fresh()->batdau->toDateTimeString());
+        $this->get(route('mock-test.show', ['id' => $attempt->id, 'so' => 4]))->assertOk();
+        $this->assertDatabaseCount('lanthicauhoi', 4);
+        $this->assertDatabaseCount('traloi', 0);
+    }
+
+    public function test_submitted_question_can_be_viewed_without_allowing_resubmission(): void
+    {
+        $user = $this->createStudent();
+        [$exam, $questions] = $this->createMockExam();
+        $service = app(TestService::class);
+        $attempt = $service->batDauThi($user->id, $exam);
+        $question = $service->capCauHoiTiepTheo($attempt->id, $user->id);
+        $service->nopCauTraLoi($attempt->id, $question->id, $user->id, $questions[0]['option'], null);
+        $this->actingAs($user)->get(route('mock-test.show', ['id' => $attempt->id, 'cau' => $question->id]))
+            ->assertOk()->assertSee('Câu này đã được nộp.')
+            ->assertViewHas('dapAnDaNop', fn ($a) => (int) $a->luachon_id === $questions[0]['option']);
+        $this->post(route('mock-test.submit', $attempt->id), [
+            'lanthicauhoi_id' => $question->id, 'luachon_id' => $questions[0]['option'],
+        ])->assertSessionHasErrors();
+        $this->assertDatabaseCount('traloi', 1);
+    }
+
+    public function test_navigation_rejects_other_attempts_invalid_numbers_and_adaptive_jumps(): void
+    {
+        $user = $this->createStudent();
+        $other = $this->createStudent('other-navigation@example.com');
+        [$exam] = $this->createMockExam();
+        $service = app(TestService::class);
+        $attempt = $service->batDauThi($user->id, $exam);
+        $foreignAttempt = $service->batDauThi($other->id, $exam);
+        $foreignQuestion = $service->capCauHoiTiepTheo($foreignAttempt->id, $other->id);
+        $this->actingAs($user)->get(route('mock-test.show', ['id' => $attempt->id, 'cau' => $foreignQuestion->id]))->assertNotFound();
+        foreach (['0', '5', 'abc', '-1'] as $number) {
+            $this->get(route('mock-test.show', ['id' => $attempt->id, 'so' => $number]))->assertNotFound();
+        }
+        $service->boDoBaiThi($attempt->id, $user->id);
+        [$adaptive] = $this->createMockExam('adaptive');
+        $adaptiveAttempt = $service->batDauThi($user->id, $adaptive);
+        $this->get(route('mock-test.show', ['id' => $adaptiveAttempt->id, 'so' => 4]))->assertNotFound();
+        $this->assertSame(0, Lanthicauhoi::where('lanthi_id', $adaptiveAttempt->id)->count());
+    }
+
     protected function usage(int $userId): int
     {
         return (int) DB::table('aisudung')->where('nguoidung_id', $userId)->sum('solan');

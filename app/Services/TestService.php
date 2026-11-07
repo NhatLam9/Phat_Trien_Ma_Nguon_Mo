@@ -109,6 +109,36 @@ class TestService
         }, 3);
     }
 
+    public function moCauTheoThuTu(int $lanThiId, int $nguoiDungId, int $thuTu): ?Lanthicauhoi
+    {
+        return DB::transaction(function () use ($lanThiId, $nguoiDungId, $thuTu) {
+            $lanThi = $this->khoaLanThi($lanThiId, $nguoiDungId);
+            if ($this->xuLyHetGio($lanThi)) {
+                return null;
+            }
+            $this->kiemTraDangThi($lanThi);
+            $kieu = DB::table('dethi')->where('id', $lanThi->dethi_id)->value('kieu');
+            $soCau = DB::table('dethicauhoi as dc')
+                ->join('cauhoi as ch', 'ch.id', '=', 'dc.cauhoi_id')
+                ->where('dc.dethi_id', $lanThi->dethi_id)
+                ->where('ch.trangthai', 'published')->count();
+            abort_unless($kieu === 'fixed' && $thuTu > 0 && $thuTu <= $soCau, 404);
+
+            // Issue in exam order so jumping ahead never changes question numbering.
+            while (true) {
+                $target = Lanthicauhoi::where('lanthi_id', $lanThiId)->where('thutu', $thuTu)->first();
+                if ($target) {
+                    return $target;
+                }
+                $last = Lanthicauhoi::where('lanthi_id', $lanThiId)->orderByDesc('thutu')->first();
+                $next = $this->capCauHoiTiepTheo($lanThiId, $nguoiDungId, $last !== null, $last?->id);
+                if (! $next) {
+                    return null;
+                }
+            }
+        }, 3);
+    }
+
     public function capCauHoiTiepTheo(
         int $lanThiId,
         int $nguoiDungId,

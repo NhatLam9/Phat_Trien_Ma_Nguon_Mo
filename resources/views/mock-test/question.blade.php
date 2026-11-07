@@ -55,7 +55,7 @@
 
         $laCauCuoi = $soCauHopLeConLai === 0 && $cauSau === null;
 
-        $payloadCu = json_decode(old('noidung', ''), true);
+        $payloadCu = json_decode(old('noidung', $dapAnDaNop->noidung ?? ''), true);
         $dapAnCu = is_array($payloadCu)
             && is_array($payloadCu['answers'] ?? null)
                 ? $payloadCu['answers']
@@ -65,7 +65,7 @@
     <div class="exam-page">
         <div class="exam-topbar">
             <a href="{{ route('mock-test.index') }}" class="back-link">
-                ← Danh sách đề thi
+                Danh sách đề thi
             </a>
 
             <div class="exam-breadcrumb">
@@ -136,12 +136,12 @@
                             @if ($lanThi->trangthai === 'completed')
                                 <a href="{{ route('mock-test.result', ['id' => $lanThi->id]) }}"
                                    class="nav-btn nav-btn-primary">
-                                    Xem kết quả →
+                                    Xem kết quả
                                 </a>
                             @else
                                 <a href="{{ route('mock-test.index') }}"
                                    class="nav-btn nav-btn-primary">
-                                    Chọn đề thi khác →
+                                    Chọn đề thi khác
                                 </a>
                             @endif
                         </div>
@@ -157,9 +157,7 @@
                         </div>
 
                         <div class="question-content">
-                            <div class="question-content-box">
-                                {{ $cauHoi->noidung }}
-                            </div>
+                            <div class="question-content-box">{{ trim($cauHoi->noidung) }}</div>
 
                             @if ($cauHoi->anh)
                                 <img src="{{ asset(ltrim($cauHoi->anh, '/')) }}"
@@ -187,6 +185,10 @@
                                    name="lanthicauhoi_id"
                                    value="{{ $cauDuocCap->id }}">
 
+                            @if ($cauDuocCap->datraloi)
+                                <p class="exam-notification">Câu này đã được nộp. Bạn có thể xem lại đáp án, không thể nộp lại.</p>
+                            @endif
+                            <fieldset class="answer-fields" @disabled($cauDuocCap->datraloi)>
                             @if ($laInteractive)
                                 <noscript>
                                     <p role="alert">
@@ -197,7 +199,7 @@
                                 <input type="hidden"
                                        name="noidung"
                                        class="interactive-payload"
-                                       value="{{ old('noidung') }}">
+                                       value="{{ old('noidung', $dapAnDaNop->noidung ?? '') }}">
 
                                 @forelse ($cauHoiCon as $con)
                                     @php
@@ -255,7 +257,7 @@
                                             <input type="radio"
                                                    name="luachon_id"
                                                    value="{{ $item->id }}"
-                                                   @checked(old('luachon_id') == $item->id)>
+                                                   @checked(old('luachon_id', $dapAnDaNop->luachon_id ?? null) == $item->id)>
 
                                             <span class="answer-item-inner">
                                                 <span class="answer-letter">
@@ -272,6 +274,9 @@
                             @elseif ($cauHoi->kynang === 'speaking')
                                 <div class="text-answer-box">
                                     <label for="audio" class="field-label">FILE GHI ÂM CÂU TRẢ LỜI</label>
+                                    @if (!empty($dapAnDaNop->audio))
+                                        <audio controls preload="metadata" src="{{ route('practice.ai.audio', $dapAnDaNop->id) }}"></audio>
+                                    @endif
                                     <input type="file" id="audio" name="audio"
                                            accept=".mp3,.wav,.m4a,.ogg,.webm,audio/*">
                                     <p>MP3, WAV, M4A, OGG hoặc WebM, tối đa 10 MB.</p>
@@ -285,7 +290,7 @@
                                               name="noidung"
                                               rows="6"
                                               maxlength="10000"
-                                              placeholder="Nhập câu trả lời...">{{ old('noidung') }}</textarea>
+                                              placeholder="Nhập câu trả lời...">{{ old('noidung', $dapAnDaNop->noidung ?? '') }}</textarea>
                                 </div>
                             @endif
 
@@ -297,13 +302,13 @@
                                                 'cau' => $cauTruoc->id,
                                             ]) }}"
                                            class="nav-btn nav-btn-secondary">
-                                            ← Câu trước
+                                            Câu trước
                                         </a>
                                     @else
                                         <button type="button"
                                                 class="nav-btn nav-btn-disabled"
                                                 disabled>
-                                            ← Câu trước
+                                            Câu trước
                                         </button>
                                     @endif
                                 </div>
@@ -317,12 +322,16 @@
                                     @else
                                         <button type="submit"
                                                 class="nav-btn nav-btn-primary">
-                                            Câu sau →
+                                            Câu sau
                                         </button>
                                     @endif
                                 </div>
                             </div>
+                            </fieldset>
                         </form>
+                        @if ($cauDuocCap->datraloi)
+                            <a class="nav-btn" href="{{ route('mock-test.show', $lanThi->id) }}">Tiếp tục làm bài</a>
+                        @endif
 
                     @elseif ($soCauHopLeConLai === 0)
                         <div class="ready-state-box">
@@ -345,7 +354,7 @@
                                   action="{{ route('mock-test.question.next', $lanThi->id) }}">
                                 @csrf
                                 <button type="submit" class="start-btn">
-                                    Bắt đầu làm bài →
+                                    Bắt đầu làm bài
                                 </button>
                             </form>
                         </div>
@@ -365,25 +374,28 @@
                                 Xác nhận nộp bài
                             </a>
 
-                            <details class="abandon-confirm">
-                                <summary class="nav-btn nav-btn-danger-outline">
-                                    Bỏ dở bài thi
-                                </summary>
+                            <button type="button" class="nav-btn nav-btn-danger-outline"
+                                    aria-haspopup="dialog"
+                                    onclick="document.getElementById('abandon-dialog').showModal()">
+                                Bỏ dở bài thi
+                            </button>
 
-                                <div class="abandon-confirm-content">
-                                    <strong>Xác nhận bỏ dở bài thi?</strong>
-                                    <p>Lần thi sẽ kết thúc và không được tính điểm.</p>
+                            <dialog id="abandon-dialog" class="abandon-dialog"
+                                    aria-labelledby="abandon-title" aria-describedby="abandon-message">
+                                <h2 id="abandon-title">Bỏ dở bài thi?</h2>
+                                <p id="abandon-message">Lần thi sẽ kết thúc và không được tính điểm.</p>
 
-                                    <form method="POST"
-                                          action="{{ route('mock-test.abandon', $lanThi->id) }}">
+                                <div class="abandon-dialog-actions">
+                                    <form method="dialog">
+                                        <button type="submit" class="btn btn-outline" autofocus>Quay lại</button>
+                                    </form>
+
+                                    <form method="POST" action="{{ route('mock-test.abandon', $lanThi->id) }}">
                                         @csrf
-                                        <button type="submit"
-                                                class="nav-btn nav-btn-danger-outline">
-                                            Xác nhận bỏ dở
-                                        </button>
+                                        <button type="submit" class="btn btn-danger">Xác nhận bỏ dở</button>
                                     </form>
                                 </div>
-                            </details>
+                            </dialog>
                         @else
                             <a href="{{ route('mock-test.index') }}"
                                class="nav-btn nav-btn-secondary">
@@ -442,12 +454,14 @@
 
                     <div class="sheet-grid">
                         @foreach ($phieuTraLoi as $item)
-                            @if ($dangThi && $item['lanthicauhoi_id'])
+                            @if ($dangThi && ($item['lanthicauhoi_id'] || $deThi->kieu === 'fixed'))
                                 <a href="{{ route('mock-test.show', [
                                         'id' => $lanThi->id,
                                         'cau' => $item['lanthicauhoi_id'],
+                                        'so' => $item['lanthicauhoi_id'] ? null : $item['thutu'],
                                     ]) }}"
                                    class="sheet-item {{ $item['status'] }}"
+                                   @if ($cauDuocCap && (int) $cauDuocCap->thutu === $item['thutu']) aria-current="page" @endif
                                    title="Câu {{ $item['thutu'] }}">
                                     {{ $item['thutu'] }}
                                 </a>
