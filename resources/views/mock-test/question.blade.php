@@ -150,7 +150,7 @@
                         <div class="question-top-meta">
                             <div class="question-code-group">
                                 <span class="small-pill">
-                                    CÂU {{ str_pad($cauDuocCap->thutu, 2, '0', STR_PAD_LEFT) }}
+                                    Question {{ $cauDuocCap->thutu }}
                                 </span>
                                 <span class="small-pill">{{ $cauHoi->tenloai }}</span>
                             </div>
@@ -209,7 +209,7 @@
 
                                     <fieldset class="interactive-child"
                                               data-interactive-child="{{ $con->id }}">
-                                        <legend>Câu con {{ $loop->iteration }}</legend>
+                                        <legend>Subquestion {{ $loop->iteration }}</legend>
                                         <p>{{ $con->noidung }}</p>
 
                                         @if ($cacLuaChon->isNotEmpty())
@@ -277,9 +277,10 @@
                                     @if (!empty($dapAnDaNop->audio))
                                         <audio controls preload="metadata" src="{{ route('practice.ai.audio', $dapAnDaNop->id) }}"></audio>
                                     @endif
-                                    <input type="file" id="audio" name="audio"
+                                    <input type="file" id="audio" name="audio" class="mock-audio-upload"
+                                           aria-describedby="mock-audio-upload-help"
                                            accept=".mp3,.wav,.m4a,.ogg,.webm,audio/*">
-                                    <p>MP3, WAV, M4A, OGG hoặc WebM, tối đa 10 MB.</p>
+                                    <p id="mock-audio-upload-help">MP3, WAV, M4A, OGG hoặc WebM, tối đa 10 MB.</p>
                                 </div>
                             @else
                                 <div class="text-answer-box">
@@ -462,12 +463,12 @@
                                     ]) }}"
                                    class="sheet-item {{ $item['status'] }}"
                                    @if ($cauDuocCap && (int) $cauDuocCap->thutu === $item['thutu']) aria-current="page" @endif
-                                   title="Câu {{ $item['thutu'] }}">
+                                   title="Question {{ $item['thutu'] }}">
                                     {{ $item['thutu'] }}
                                 </a>
                             @else
                                 <span class="sheet-item {{ $item['status'] }}"
-                                      title="Câu {{ $item['thutu'] }}">
+                                      title="Question {{ $item['thutu'] }}">
                                     {{ $item['thutu'] }}
                                 </span>
                             @endif

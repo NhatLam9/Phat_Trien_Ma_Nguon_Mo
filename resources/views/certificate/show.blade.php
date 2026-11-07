@@ -27,7 +27,6 @@
         <article class="certificate-card">
             <span class="certificate-kicker">DET PRACTICE · MOCK TEST</span>
             <h1>{{ $tieude }}</h1>
-            <p>Chứng nhận lượt thi thử #{{ $chungChi->lanthi_id }} đã hoàn tất.</p>
 
             <p class="certificate-code">Mã chứng chỉ: {{ $chungChi->ma }}</p>
 

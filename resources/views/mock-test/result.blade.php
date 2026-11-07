@@ -72,7 +72,7 @@
                 <span>/</span>
                 <span>Luyện thi DET</span>
                 <span>/</span>
-                <strong>Kết quả #{{ $lanThi->id }}</strong>
+                <strong>Kết quả</strong>
             </div>
 
             <div class="mr-statuses">
@@ -88,7 +88,7 @@
         <div class="mr-heading">
             <div>
                 <p class="mr-kicker">
-                    BÀI THI THỬ · #{{ $lanThi->id }}
+                    BÀI THI THỬ
                     <span>
                         · {{ $deThi->kieu === 'adaptive' ? 'Thích ứng' : 'Cố định' }}
                     </span>
@@ -109,12 +109,6 @@
             </div>
 
             <div class="mr-heading-actions">
-                <button type="button"
-                        class="mr-btn mr-btn--outline"
-                        onclick="window.print()">
-                    ⤓ In / Lưu PDF
-                </button>
-
                 <button type="button"
                         class="mr-btn mr-btn--outline"
                         id="mr-share">
@@ -286,7 +280,7 @@
                         <h2>
                             {{ $xemTatCa
                                 ? 'Toàn bộ lời giải'
-                                : sprintf('Câu %02d / %02d', $cauSo, $tongSoCau) }}
+                                : sprintf('Question %d / %d', $cauSo, $tongSoCau) }}
                         </h2>
                         <span>
                             {{ $xemTatCa ? 'Tất cả câu đã cấp' : 'Xem lại câu hỏi' }}
@@ -302,7 +296,7 @@
                         <article class="mr-review-item" id="cau-{{ $cau->thutu }}">
                             <div class="mr-review-header">
                                 <strong>
-                                    Câu {{ $cau->thutu }} · {{ $cau->tenloai }}
+                                    Question {{ $cau->thutu }} · {{ $cau->tenloai }}
                                 </strong>
 
                                 <span class="mr-result-status mr-result-status--{{ $cau->trangthai }}">
@@ -351,7 +345,7 @@
 
                                     @forelse ($cau->chi_tiet_interactive as $con)
                                         <article>
-                                            <strong>Câu con {{ $loop->iteration }}</strong>
+                                            <strong>Subquestion {{ $loop->iteration }}</strong>
                                             <p>{{ $con['noidung'] }}</p>
 
                                             @if ($cau->dap_an_interactive_hop_le || !$cau->datraloi)
@@ -529,7 +523,7 @@
                                     'cau' => $cau['thutu'],
                                 ]) }}#review"
                                class="mr-q-btn mr-q-btn--{{ $cau['trangthai'] }} {{ !$xemTatCa && $cauSo === $cau['thutu'] ? 'mr-q-btn--active' : '' }}"
-                               aria-label="Câu {{ $cau['thutu'] }}: {{ $cau['nhan_trangthai'] }}"
+                               aria-label="Question {{ $cau['thutu'] }}: {{ $cau['nhan_trangthai'] }}"
                                title="{{ $cau['nhan_trangthai'] }}">
                                 {{ $cau['thutu'] }}
                             </a>

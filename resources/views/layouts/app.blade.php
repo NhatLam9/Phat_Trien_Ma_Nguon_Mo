@@ -25,6 +25,8 @@
     $isAccountPage = request()->routeIs(
         'login', 'register', 'password.*', 'verification.*'
     );
+    $fullName = trim(auth()->user()?->hoten ?? '');
+    $shortName = \Illuminate\Support\Str::limit(\Illuminate\Support\Str::afterLast(preg_replace('/\s+/u', ' ', $fullName), ' '), 16);
     $useSidebar = auth()->check()
         && !request()->is('/') && !$isAccountPage && !$isFocusPage;
 @endphp
@@ -37,22 +39,32 @@
         @auth
             @if (!$isFocusPage)
                 @if ($useSidebar)
-                    <a href="{{ route('profile.edit') }}" class="bento-account">
+                    <a href="{{ route('profile.edit') }}" class="bento-account" title="{{ $fullName }}">
                         <img src="{{ auth()->user()->avatar_url }}" alt="" class="bento-account__avatar">
                         <span class="bento-account__info">
-                            <strong>{{ auth()->user()->hoten }}</strong>
+                            <strong>{{ $shortName }}</strong>
                             <small>{{ auth()->user()->vaitro === 'admin' || auth()->user()->isAdmin() ? 'Quản trị viên' : 'Người học' }}</small>
                         </span>
                     </a>
                 @endif
                 <nav class="main-nav" aria-label="Điều hướng chính">
                     <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a>
-                    <a href="{{ route('practice.index') }}" class="{{ request()->is('practice*') && !request()->is('practice/bookmarks*') && !request()->is('practice/history*') ? 'active' : '' }}">Luyện tập</a>
-                    <a href="{{ route('practice.bookmarks') }}" class="{{ request()->is('practice/bookmarks*') ? 'active' : '' }}">Câu hỏi đã lưu</a>
-                    <a href="{{ route('practice.history') }}" class="{{ request()->routeIs('practice.history') ? 'active' : '' }}">Lịch sử luyện tập</a>
-                    <a href="{{ route('mock-test.index') }}" class="{{ request()->routeIs('mock-test.*') && !request()->routeIs('mock-test.history') ? 'active' : '' }}">Thi thử</a>
-                    <a href="{{ route('mock-test.history') }}" class="{{ request()->routeIs('mock-test.history') ? 'active' : '' }}">Lịch sử thi</a>
-                    <a href="{{ route('learning.dashboard') }}" class="{{ request()->routeIs('learning.dashboard') ? 'active' : '' }}">Thống kê</a>
+                    <details class="bento-nav-group" name="bento-main-nav" @if ($useSidebar && request()->routeIs('practice.*')) open @endif>
+                        <summary class="bento-nav-toggle {{ request()->routeIs('practice.*') ? 'active' : '' }}">Luyện tập</summary>
+                        <div class="bento-nav-children">
+                            <a href="{{ route('practice.index') }}" class="{{ request()->routeIs('practice.*') && !request()->routeIs('practice.bookmarks*', 'practice.history') ? 'active' : '' }}">Vào luyện tập</a>
+                            <a href="{{ route('practice.bookmarks') }}" class="{{ request()->routeIs('practice.bookmarks*') ? 'active' : '' }}">Câu hỏi đã lưu</a>
+                            <a href="{{ route('practice.history') }}" class="{{ request()->routeIs('practice.history') ? 'active' : '' }}">Lịch sử luyện tập</a>
+                        </div>
+                    </details>
+                    <details class="bento-nav-group" name="bento-main-nav" @if ($useSidebar && request()->routeIs('mock-test.*', 'learning.dashboard')) open @endif>
+                        <summary class="bento-nav-toggle {{ request()->routeIs('mock-test.*', 'learning.dashboard') ? 'active' : '' }}">Thi thử</summary>
+                        <div class="bento-nav-children">
+                            <a href="{{ route('mock-test.index') }}" class="{{ request()->routeIs('mock-test.*') && !request()->routeIs('mock-test.history') ? 'active' : '' }}">Danh sách đề thi</a>
+                            <a href="{{ route('mock-test.history') }}" class="{{ request()->routeIs('mock-test.history') ? 'active' : '' }}">Lịch sử thi</a>
+                            <a href="{{ route('learning.dashboard') }}" class="{{ request()->routeIs('learning.dashboard') ? 'active' : '' }}">Thống kê</a>
+                        </div>
+                    </details>
                     <a href="{{ route('tutor.index') }}" class="{{ request()->is('tutor*') ? 'active' : '' }}">AI Tutor</a>
                     <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.*') ? 'active' : '' }}">Hồ sơ</a>
                     @if (auth()->user()->vaitro === 'admin' || auth()->user()->isAdmin())
@@ -61,9 +73,9 @@
                 </nav>
                 <div class="header-actions">
                     @if (!$useSidebar)
-                        <a href="{{ route('profile.edit') }}" class="user-chip">
+                        <a href="{{ route('profile.edit') }}" class="user-chip" title="{{ $fullName }}">
                             <img src="{{ auth()->user()->avatar_url }}" alt="">
-                            <span>{{ auth()->user()->hoten }}</span>
+                            <span>{{ $shortName }}</span>
                         </a>
                     @endif
                     <form method="POST" action="{{ route('logout') }}">

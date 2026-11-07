@@ -172,6 +172,7 @@ textarea {
     background: var(--bento-subtle);
 }
 
+.main-nav .bento-nav-toggle,
 .bento-sidebar-layout .main-nav a:not(.btn),
 .bento-topbar-layout .main-nav a:not(.btn) {
     padding: 11px 14px;
@@ -183,6 +184,7 @@ textarea {
     text-decoration: none;
 }
 
+.main-nav .bento-nav-toggle:hover,
 .bento-sidebar-layout .main-nav a:not(.btn):hover,
 .bento-topbar-layout .main-nav a:not(.btn):hover {
     border-color: var(--bento-line);
@@ -190,12 +192,63 @@ textarea {
     color: var(--bento-heading);
 }
 
+.main-nav .bento-nav-toggle.active,
 .bento-sidebar-layout .main-nav a:not(.btn).active,
 .bento-topbar-layout .main-nav a.active:not(.btn) {
     border-color: var(--bento-orange-dark);
     background: var(--bento-orange);
     box-shadow: 0 3px 0 var(--bento-orange-deep);
     color: white;
+}
+
+.bento-nav-group {
+    position: relative;
+}
+
+.bento-nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    list-style: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.bento-nav-toggle::-webkit-details-marker {
+    display: none;
+}
+
+.bento-nav-toggle::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+}
+
+.bento-nav-group[open] > .bento-nav-toggle::after {
+    transform: rotate(225deg);
+}
+
+.bento-nav-children {
+    display: grid;
+    gap: 6px;
+    margin-top: 6px;
+    padding: 6px;
+}
+
+.bento-topbar-layout .bento-nav-children {
+    position: absolute;
+    z-index: 10;
+    top: 100%;
+    inset-inline-start: 0;
+    width: max-content;
+    min-width: 100%;
+    border: 1px solid var(--bento-line);
+    border-radius: 14px;
+    background: var(--bento-subtle);
 }
 
 .bento-sidebar-layout .header-actions {
@@ -384,6 +437,7 @@ body .app-footer {
         flex-wrap: wrap;
     }
 
+    .bento-sidebar-layout .bento-nav-group,
     .bento-sidebar-layout .main-nav a {
         flex: 1 1 140px;
         text-align: center;
@@ -1455,5 +1509,26 @@ body.bento-topbar-layout:not(.bento-focus-layout) > .app-header {
         flex: none;
         width: 160px;
         max-width: 60%;
+    }
+}
+@media (min-width: 1201px) {
+    .bento-topbar-layout:not(.bento-focus-layout)
+    > .app-header:has(> .main-nav):has(> .header-actions) {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+    }
+
+    .bento-topbar-layout > .app-header > .logo-container {
+        justify-self: start;
+    }
+
+    .bento-topbar-layout > .app-header > .main-nav {
+        justify-content: center;
+    }
+
+    .bento-topbar-layout > .app-header > .header-actions {
+        justify-self: end;
+        margin-left: 0;
     }
 }
