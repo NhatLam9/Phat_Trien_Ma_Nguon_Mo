@@ -42,9 +42,8 @@
                 <div class="certificate-skill"><span>Production</span><strong>{{ $chungChi->production }}</strong></div>
             </section>
 
-            <p><strong>Cấp độ:</strong> {{ $chungChi->trinhdo ?: 'Chưa xác định' }}</p>
             <p><strong>Ngày cấp:</strong> {{ $chungChi->ngaycap?->format('d/m/Y') ?? 'Chưa ghi nhận' }}</p>
-            <p class="certificate-note">Đây là chứng nhận kết quả thi thử do DET Practice cấp, không thay thế chứng chỉ Duolingo English Test chính thức. Cấp độ chỉ hiển thị khi dự án xác nhận quy tắc quy đổi.</p>
+            <p class="certificate-note">Đây là chứng nhận kết quả thi thử do DET Practice cấp, không thay thế chứng chỉ Duolingo English Test chính thức.</p>
 
             <div class="certificate-actions">
                 <button class="certificate-button" type="button" onclick="window.print()">In / Lưu PDF</button>
