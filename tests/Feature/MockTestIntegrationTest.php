@@ -8,6 +8,7 @@ use App\Models\Lanthicauhoi;
 use App\Models\Traloi;
 use App\Services\AIService;
 use App\Services\TestService;
+use Database\Seeders\MockTestLevelSeeder;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -32,6 +33,56 @@ class MockTestIntegrationTest extends TestCase
     protected function usage(int $userId): int
     {
         return (int) DB::table('aisudung')->where('nguoidung_id', $userId)->sum('solan');
+    }
+
+    public function test_replacement_exams_cover_all_skills_and_issue_completion_certificates(): void
+    {
+        $user = $this->createStudent();
+        [$oldExam] = $this->createMockExam(withAi: false);
+        $service = app(TestService::class);
+        $oldAttempt = $service->batDauThi($user->id, $oldExam);
+        $service->boDoBaiThi($oldAttempt->id, $user->id);
+        [$unusedExam] = $this->createMockExam(withAi: false);
+
+        $this->seed(MockTestLevelSeeder::class);
+        $this->seed(MockTestLevelSeeder::class);
+
+        $this->assertDatabaseHas('dethi', ['id' => $oldExam, 'trangthai' => 'hidden']);
+        $this->assertDatabaseMissing('dethi', ['id' => $unusedExam]);
+        $exams = DB::table('dethi')->where('trangthai', 'published')->orderBy('capdo')->get();
+        $this->assertEquals(range(1, 8), $exams->pluck('capdo')->all());
+
+        foreach ($exams as $exam) {
+            $questions = DB::table('dethicauhoi as dc')
+                ->join('cauhoi as ch', 'ch.id', '=', 'dc.cauhoi_id')
+                ->join('loaicauhoi as lc', 'lc.id', '=', 'ch.loai_id')
+                ->where('dc.dethi_id', $exam->id)
+                ->orderBy('dc.thutu')
+                ->get(['ch.dokho', 'lc.kynang']);
+
+            $this->assertSame(['reading', 'listening', 'writing', 'speaking'], $questions->pluck('kynang')->all());
+            $this->assertEquals([$exam->capdo], $questions->pluck('dokho')->unique()->values()->all());
+        }
+
+        $attempt = $service->batDauThi($user->id, $exams->first()->id);
+        $this->actingAs($user)->post(route('mock-test.finish', $attempt->id), [
+            'xac_nhan_bo_trong' => '1',
+        ])->assertRedirect(route('mock-test.result', $attempt->id));
+        $service->chotBaiThi($attempt->id, $user->id, true);
+        $this->assertDatabaseCount('chungchi', 1);
+        $certificate = $attempt->chungChi()->firstOrFail();
+        $this->assertNull($certificate->tongdiem);
+        $this->assertSame('Chứng nhận hoàn thành – '.$exams->first()->ten, $certificate->tieude);
+        $this->actingAs($user)->get(route('certificate.show', $certificate->id))
+            ->assertOk()->assertSee($certificate->tieude);
+
+        $timedAttempt = $service->batDauThi($user->id, $exams->last()->id);
+        $this->travel(901)->seconds();
+        $service->kiemTraHetHan($timedAttempt->id, $user->id);
+        $this->assertDatabaseHas('chungchi', [
+            'lanthi_id' => $timedAttempt->id,
+            'tieude' => 'Chứng nhận hoàn thành – '.$exams->last()->ten,
+        ]);
     }
 
     public function test_preparation_does_not_create_attempt_or_consume_quota(): void

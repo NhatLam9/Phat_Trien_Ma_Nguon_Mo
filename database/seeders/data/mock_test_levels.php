@@ -1,0 +1,88 @@
+<?php
+
+return [
+    [
+        'Làm quen tiếng Anh',
+        3,
+        'The library opens at nine. Anna arrives at eight. Can she go in now?',
+        ['No, it is still closed.', 'Yes, it is already open.', 'Yes, it closes at nine.', 'No, it never opens.'],
+        'Write three simple sentences about the image. Name two things you can see.',
+        'Read aloud: My name is Sam. I live near a park. I walk there after school.',
+        null,
+    ],
+    [
+        'Giao tiếp hằng ngày',
+        1,
+        'Mia planned to walk to the market, but it started raining. She took the bus instead. How did she get to the market?',
+        ['By bus.', 'On foot.', 'By train.', 'By car.'],
+        'Describe the scene in four or five sentences. Say where it might be and what someone is doing.',
+        'Read aloud: On Saturday, my friends and I are going to the market. We need fresh fruit, a loaf of bread, and something to drink.',
+        null,
+    ],
+    [
+        'Sinh hoạt và di chuyển',
+        9,
+        'The train leaves at 10:15. The station asks passengers to arrive 20 minutes early. What is the latest recommended arrival time?',
+        ['9:55.', '10:05.', '10:15.', '10:35.'],
+        'Describe what is happening in the image and predict what might happen next. Explain one clue.',
+        'Your train is cancelled and you must arrive before noon. Explain what you would do first and what you would do if that plan failed.',
+        null,
+    ],
+    [
+        'Tình huống thực tế',
+        4,
+        'The clinic can see Leo on Tuesday if he confirms by Monday noon. Otherwise, the slot will be offered to another patient. What must Leo do to keep the slot?',
+        ['Confirm by Monday noon.', 'Arrive at the clinic by Monday noon.', 'Call on Tuesday morning.', 'Wait for the other patient to cancel.'],
+        'Describe the scene, then write a short message to a friend explaining why the scene matters to you.',
+        'A clinic can move your appointment to a time that conflicts with class. Explain the conflict and propose two alternatives politely.',
+        null,
+    ],
+    [
+        'Giải thích và so sánh',
+        7,
+        'An evening course is cheaper than a weekend course, but it runs twice a week and requires a long commute. The weekend course is online. Which advantage does the evening course clearly offer?',
+        ['A lower course fee.', 'Less travel.', 'Fewer sessions per week.', 'Online attendance.'],
+        'Use details from the image to compare two plausible explanations for what is happening. Say which is better supported.',
+        'Compare an online course with an in-person course for someone who works irregular hours. Recommend one and explain a drawback.',
+        [
+            "Which plan would let the student register and complete the placement test?",
+            ["Attend class on Tuesday and Thursday evenings and take the test online.", "Attend class on Tuesday only and sit the test at the school.", "Attend a weekend class and wait twelve weeks to take the test.", "Skip the test because the course meets in the evening."],
+        ],
+    ],
+    [
+        'Phân tích và đề xuất',
+        10,
+        'A shop replaced damaged items faster after simplifying its returns form. During the same period it also hired more staff. What can the shop reasonably conclude?',
+        ['The faster service may reflect either or both changes.', 'The form alone caused the improvement.', 'Hiring staff made the form simpler.', 'The number of damaged items must have fallen.'],
+        'Describe two details from the image. Identify a plausible problem suggested by those details and propose a practical improvement.',
+        'A company must choose between offering immediate refunds and investigating every complaint first. Propose a policy that balances speed and fairness, and explain an exception.',
+        [
+            "Which sequence accurately reflects the agreement?",
+            ["The shop sends a replacement that day and the customer can return the damaged item at no cost.", "The customer returns the damaged item at their expense before the shop considers a refund.", "The shop refunds the order and asks the customer to keep the lamp.", "The shop sends a replacement only after charging for a second order."],
+        ],
+    ],
+    [
+        'Lập luận và phản biện',
+        8,
+        'A landlord argues that a proposed rent increase is fair because comparable apartments advertise higher rents. A tenant replies that those apartments include utilities and this one does not. What assumption does the reply challenge?',
+        ['That advertised rents can be compared without adjusting for what they include.', 'That apartments can ever have different advertised rents.', 'That the tenant knows the proposed increase.', 'That utilities add to the cost of housing.'],
+        'Separate observations from inferences about the scene. Develop one interpretation, then explain what evidence would weaken it.',
+        'A city wants to require landlords to disclose total monthly housing costs. Defend a position, respond to the strongest objection, and explain how you would judge the policy.',
+        [
+            "Why would budgeting exactly nine hundred dollars for monthly housing be incomplete?",
+            ["Electricity is billed separately, even though water is included.", "Both electricity and water are billed separately.", "The rent increases after the first month.", "The advertised price applies only to the first week."],
+        ],
+    ],
+    [
+        'Đánh giá và tổng hợp',
+        2,
+        'A hiring trial reports higher retention among applicants selected by interview. Only the interview group, however, was offered flexible schedules. Which follow-up would best isolate the effect of the selection method?',
+        ['Randomly assign comparable applicants to selection methods and offer both groups identical scheduling terms.', 'Interview more applicants while keeping flexible schedules exclusive to the interview group.', 'Compare first-month retention with last year without accounting for scheduling.', 'Ask retained interview hires whether they liked their schedules.'],
+        'Write a balanced interpretation of the scene. Support it with visible details, address an alternative interpretation, and identify evidence needed to decide between them.',
+        'An employer finds that a new interview predicts retention but disadvantages applicants with limited preparation time. Recommend a selection process, address a competing priority, and specify how to evaluate the result.',
+        [
+            "What can the applicant safely conclude when the conversation ends?",
+            ["The employer plans to call by Friday, but the interview contains no job offer.", "The job is confirmed because the applicant gave a start date.", "The applicant should report to work on Friday.", "The employer has ruled out anyone who cannot start immediately."],
+        ],
+    ],
+];

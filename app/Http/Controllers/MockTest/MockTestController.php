@@ -19,6 +19,7 @@ class MockTestController extends Controller
     {
         $deThi = DB::table('dethi')
             ->where('trangthai', 'published')
+            ->orderBy('capdo')
             ->orderBy('id')
             ->get();
 

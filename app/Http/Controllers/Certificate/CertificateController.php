@@ -102,6 +102,10 @@ class CertificateController extends Controller
             ->where('nguoidung_id', $nguoiDungId)
             ->firstOrFail();
 
-        return view('certificate.show', compact('chungChi'));
+        $tenDe = DB::table('dethi')
+            ->where('id', $chungChi->lanThi->dethi_id)
+            ->value('ten');
+
+        return view('certificate.show', compact('chungChi', 'tenDe'));
     }
 }

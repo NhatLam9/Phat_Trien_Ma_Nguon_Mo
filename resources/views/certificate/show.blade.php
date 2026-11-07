@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Chứng chỉ thi thử | DET Practice')
+@php($tieude = $chungChi->tieude ?? ($tenDe ? 'Chứng nhận hoàn thành – '.$tenDe : 'Chứng nhận hoàn thành bài thi thử'))
+@section('title', $tieude.' | DET Practice')
 
 @section('content')
     <main class="certificate-page">
@@ -25,25 +26,27 @@
 
         <article class="certificate-card">
             <span class="certificate-kicker">DET PRACTICE · MOCK TEST</span>
-            <h1>Chứng nhận hoàn thành bài thi thử</h1>
+            <h1>{{ $tieude }}</h1>
             <p>Chứng nhận lượt thi thử #{{ $chungChi->lanthi_id }} đã hoàn tất.</p>
 
             <p class="certificate-code">Mã chứng chỉ: {{ $chungChi->ma }}</p>
 
-            <div class="certificate-score">
-                {{ $chungChi->tongdiem }} / 160
-                <small>Điểm DET đã được lưu cho lượt thi</small>
-            </div>
+            @if ($chungChi->tongdiem !== null)
+                <div class="certificate-score">
+                    {{ $chungChi->tongdiem }} / 160
+                    <small>Điểm DET đã được lưu cho lượt thi</small>
+                </div>
 
-            <section class="certificate-skills" aria-label="Điểm kỹ năng">
-                <div class="certificate-skill"><span>Literacy</span><strong>{{ $chungChi->literacy }}</strong></div>
-                <div class="certificate-skill"><span>Comprehension</span><strong>{{ $chungChi->comprehension }}</strong></div>
-                <div class="certificate-skill"><span>Conversation</span><strong>{{ $chungChi->conversation }}</strong></div>
-                <div class="certificate-skill"><span>Production</span><strong>{{ $chungChi->production }}</strong></div>
-            </section>
+                <section class="certificate-skills" aria-label="Điểm kỹ năng">
+                    <div class="certificate-skill"><span>Literacy</span><strong>{{ $chungChi->literacy }}</strong></div>
+                    <div class="certificate-skill"><span>Comprehension</span><strong>{{ $chungChi->comprehension }}</strong></div>
+                    <div class="certificate-skill"><span>Conversation</span><strong>{{ $chungChi->conversation }}</strong></div>
+                    <div class="certificate-skill"><span>Production</span><strong>{{ $chungChi->production }}</strong></div>
+                </section>
+            @endif
 
             <p><strong>Ngày cấp:</strong> {{ $chungChi->ngaycap?->format('d/m/Y') ?? 'Chưa ghi nhận' }}</p>
-            <p class="certificate-note">Đây là chứng nhận kết quả thi thử do DET Practice cấp, không thay thế chứng chỉ Duolingo English Test chính thức.</p>
+            <p class="certificate-note">Chứng nhận nội bộ do DET Practice cấp cho lượt thi thử này.</p>
 
             <div class="certificate-actions">
                 <button class="certificate-button" type="button" onclick="window.print()">In / Lưu PDF</button>

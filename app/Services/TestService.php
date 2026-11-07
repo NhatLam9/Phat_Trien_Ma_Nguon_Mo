@@ -15,6 +15,7 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
@@ -50,6 +51,7 @@ class TestService
             $deThi = DB::table('dethi')
                 ->where('id', $deThiId)
                 ->where('trangthai', 'published')
+                ->lockForUpdate()
                 ->first();
 
             if (! $deThi || (int) $deThi->thoigian <= 0) {
@@ -518,6 +520,7 @@ class TestService
             $lanThi->trangthai = 'completed';
             $lanThi->setAttribute('ketthuc', now());
             $lanThi->save();
+            $this->capChungNhanHoanThanh($lanThi);
 
             return $lanThi->refresh();
         }, 3);
@@ -631,6 +634,7 @@ class TestService
         $lanThi->trangthai = 'completed';
         $lanThi->setAttribute('ketthuc', $hanThi);
         $lanThi->save();
+        $this->capChungNhanHoanThanh($lanThi);
 
         Vipham::create([
             'lanthi_id' => $lanThi->id,
@@ -641,6 +645,24 @@ class TestService
         ]);
 
         return true;
+    }
+
+    private function capChungNhanHoanThanh(Lanthi $lanThi): void
+    {
+        $tenDe = DB::table('dethi')->where('id', $lanThi->dethi_id)
+            ->whereNotNull('capdo')
+            ->value('ten');
+
+        if ($tenDe === null) {
+            return;
+        }
+
+        $lanThi->chungChi()->firstOrCreate([], [
+            'nguoidung_id' => $lanThi->nguoidung_id,
+            'ma' => 'DET-'.now()->format('Ymd').'-'.Str::upper(Str::random(10)),
+            'tieude' => 'Chứng nhận hoàn thành – '.$tenDe,
+            'ngaycap' => now(),
+        ]);
     }
 
     private function chamInteractive(
@@ -1023,7 +1045,7 @@ class TestService
                 );
             }
 
-            if ($lanThi->chungChi()->exists()) {
+            if ($lanThi->chungChi()->whereNull('tieude')->exists()) {
                 $this->baoLoi('certificate', 'Không đổi điểm của lượt thi đã cấp chứng chỉ.');
             }
 

@@ -104,6 +104,8 @@ class MockTestResultController extends Controller
             })
             ->values();
 
+        $chungChi = $lanThi->chungChi()->first();
+
         $coTheCapChungChi = $ketQua['da_cham_xong']
             && $this->coDuDiemHopLe($lanThi);
 
@@ -155,6 +157,7 @@ class MockTestResultController extends Controller
             'phieuTraLoi',
             'phanTichKyNang',
             'coTheCapChungChi',
+            'chungChi',
             'dsHienThi',
             'luaChonTheoCau',
             'dapAnChuanTheoCau',
