@@ -92,19 +92,54 @@
                     {{ $attempt->noidung ?? '(Không có nội dung)' }}
                 @endif
             </div>
+            @if(!empty($attempt->audio))
+                <div style="margin-top: 10px;">
+                    <audio controls style="height: 36px; max-width: 100%;">
+                        <source src="{{ asset($attempt->audio) }}">
+                    </audio>
+                </div>
+            @endif
         </div>
+
+        @if(!empty($attempt->nhanxet_ai))
+            <!-- Nhận xét chi tiết từ AI (AIService) -->
+            <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 10px; padding: 16px 20px; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                    <div style="font-size: 14px; font-weight: 800; color: #1d4ed8; display: flex; align-items: center; gap: 6px;">
+                        🤖 NHẬN XÉT & ĐÁNH GIÁ TỪ TRỢ LÝ AI (AI GRADER):
+                    </div>
+                    @if(!empty($attempt->diem_ai))
+                        <span style="background: #2563eb; color: #ffffff; font-size: 13px; font-weight: 800; padding: 3px 12px; border-radius: 20px;">
+                            Ước lượng DET: {{ $attempt->diem_ai }}/160
+                        </span>
+                    @endif
+                </div>
+                <div style="font-size: 14px; color: #1e3a8a; line-height: 1.7; white-space: pre-line;">
+                    {{ $attempt->nhanxet_ai }}
+                </div>
+            </div>
+        @endif
 
         <!-- Đáp án đúng & Giải thích -->
         <div style="background: #eefcf5; padding: 16px 20px; border-radius: 8px; border: 1px solid #c8f3dc; margin-bottom: 24px;">
             <div style="font-size: 13px; font-weight: 700; color: #166534; margin-bottom: 6px;">💡 ĐÁP ÁN CHUẨN & GIẢI THÍCH:</div>
-            
-            @if(isset($cauhoi->luachon))
+
+            @if(isset($cauhoi->luachon) && count($cauhoi->luachon) > 0)
                 <div style="margin-bottom: 8px; font-size: 14px; color: #14532d;">
-                    <strong>Đáp án đúng:</strong> 
+                    <strong>Đáp án đúng:</strong>
                     @foreach(collect($cauhoi->luachon)->where('ladung', 1) as $c)
                         <span style="background: #ffffff; padding: 2px 8px; border-radius: 4px; font-weight: 600; margin-right: 6px; border: 1px solid #86efac;">
                             {{ $c->noidung }}
                         </span>
+                    @endforeach
+                </div>
+            @elseif(isset($cauhoi->dapan) && count($cauhoi->dapan) > 0)
+                <div style="margin-bottom: 8px; font-size: 14px; color: #14532d;">
+                    <strong>Bài mẫu chuẩn / Đáp án đúng:</strong>
+                    @foreach(collect($cauhoi->dapan)->where('ladung', 1) as $c)
+                        <div style="background: #ffffff; padding: 8px 12px; border-radius: 6px; font-weight: 600; margin-top: 6px; border: 1px solid #86efac; line-height: 1.6;">
+                            {{ $c->noidung }}
+                        </div>
                     @endforeach
                 </div>
             @endif

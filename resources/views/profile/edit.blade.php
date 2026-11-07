@@ -59,11 +59,8 @@
 
             <div class="profile-hero-actions">
                 <button type="button" id="btn-switch-edit" class="btn btn-primary" onclick="toggleEditMode(true)">
-                    ✏️ Sửa đổi thông tin
-                </button>
-                <button type="button" class="btn btn-outline" onclick="toggleEditMode(true, true)">
-                    🔒 Đổi mật khẩu
-                </button>
+                    Sửa đổi thông tin
+                </button>   
             </div>
         </div>
     </div>
@@ -138,7 +135,7 @@
                         <span class="badge badge-speaking" style="font-size: 11px;">✓ Đã xác minh</span>
                     @else
                         <a href="{{ route('verification.notice') }}" class="badge badge-listening" style="font-size: 11px; text-decoration: none;">
-                            Xác minh ngay →
+                            Xác minh ngay 
                         </a>
                     @endif
                 </div>
@@ -195,9 +192,6 @@
                 <h2 class="card-title" style="margin-bottom: 2px;">Chỉnh sửa thông tin hồ sơ & Đổi mật khẩu</h2>
                 <p style="color: var(--bento-muted); font-size: 13px; margin: 0;">Cập nhật ảnh đại diện, họ tên, mục tiêu điểm thi và đổi mật khẩu tài khoản.</p>
             </div>
-            <button type="button" class="btn btn-outline btn-sm" onclick="toggleEditMode(false)">
-                ✕ Hủy bỏ
-            </button>
         </div>
 
         <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" id="profile-edit-form">
@@ -220,7 +214,7 @@
                         <input type="file" id="anh" name="anh" accept="image/jpeg,image/png,image/jpg,image/webp,image/svg+xml" class="form-control" style="font-size: 13px; max-width: 340px;" onchange="previewSelectedAvatar(this)">
                         
                         <button type="button" id="btn-remove-avatar" class="btn btn-sm" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 7px 14px; font-weight: 700;" onclick="triggerRemoveAvatar()">
-                            🗑️ Gỡ ảnh đại diện
+                         Gỡ ảnh đại diện
                         </button>
                     </div>
 
@@ -278,7 +272,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--bento-line); padding-bottom: 10px;">
                     <div>
                         <h3 style="font-size: 16px; font-weight: 800; color: var(--bento-heading); margin: 0;">
-                            🔑 Cài lại / Đổi mật khẩu tài khoản
+                             Cài lại / Đổi mật khẩu tài khoản
                         </h3>
                         <p style="color: var(--bento-muted); font-size: 12px; margin: 3px 0 0;">
                             Để trống các ô bên dưới nếu bạn không có nhu cầu đổi mật khẩu.

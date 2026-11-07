@@ -4,11 +4,14 @@
 
 @section('content')
 <div style="margin-bottom: 24px;">
-    <a href="{{ route('practice.index') }}" style="color: var(--bento-muted); text-decoration: none; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;">
-        ← Quay lại danh mục 4 kỹ năng
+    <a href="{{ route('practice.index') }}"
+       class="btn btn-outline btn-sm"
+       style="display: inline-flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 14px;">
+        <span>←</span>
+        <span>Quay lại danh mục 4 kỹ năng</span>
     </a>
 
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 14px; margin-top: 10px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 14px; margin-top: 6px;">
         <div>
             @if($selectedType)
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
@@ -19,14 +22,14 @@
                     <span style="font-size: 14px; font-weight: 700; color: var(--bento-orange);">Dạng bài chuyên sâu</span>
                 </div>
                 <h1 style="font-size: 28px; font-weight: 800; color: var(--bento-heading); margin: 0;">
-                    🎯 {{ $selectedType->ten }}
+                    {{ $selectedType->ten }}
                 </h1>
                 <p style="color: var(--bento-muted); font-size: 14px; margin-top: 6px;">
                     {{ $selectedType->mota ?? 'Rèn luyện các câu hỏi chuẩn định dạng Duolingo English Test có sẵn trong cơ sở dữ liệu.' }}
                 </p>
             @else
                 <h1 style="font-size: 26px; font-weight: 800; color: var(--bento-heading); margin-bottom: 4px;">
-                    🎯 Chọn câu hỏi luyện tập theo kỹ năng & độ khó (1 - 10)
+                    Chọn câu hỏi luyện tập theo kỹ năng & độ khó (1 - 10)
                 </h1>
                 <p style="color: var(--bento-muted); font-size: 14px; margin-top: 4px;">
                     Chọn câu hỏi luyện tập theo từng kỹ năng và mức độ để rèn luyện liên tiếp và nộp bài bất cứ lúc nào.
@@ -36,10 +39,10 @@
 
         <div style="display: flex; gap: 10px;">
             <a href="{{ route('practice.history') }}" class="btn btn-outline btn-sm">
-                ⏱️ Lịch sử luyện tập
+                Lịch sử luyện tập
             </a>
             <a href="{{ route('practice.bookmarks') }}" class="btn btn-outline btn-sm">
-                ⭐ Câu hỏi đã lưu
+                Câu hỏi đã lưu
             </a>
         </div>
     </div>
@@ -89,10 +92,10 @@
             <label style="font-size: 12px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">Kỹ năng</label>
             <select name="skill" class="form-control" style="font-size: 13px; height: 38px;" onchange="this.form.submit()">
                 <option value="all" {{ ($selectedSkill === 'all' || empty($selectedSkill)) ? 'selected' : '' }}>-- Tất cả kỹ năng --</option>
-                <option value="reading" {{ $selectedSkill === 'reading' ? 'selected' : '' }}>📖 Reading (Đọc)</option>
-                <option value="listening" {{ $selectedSkill === 'listening' ? 'selected' : '' }}>🎧 Listening (Nghe)</option>
-                <option value="writing" {{ $selectedSkill === 'writing' ? 'selected' : '' }}>✍️ Writing (Viết)</option>
-                <option value="speaking" {{ $selectedSkill === 'speaking' ? 'selected' : '' }}>🎙️ Speaking (Nói)</option>
+                <option value="reading" {{ $selectedSkill === 'reading' ? 'selected' : '' }}>Reading (Đọc)</option>
+                <option value="listening" {{ $selectedSkill === 'listening' ? 'selected' : '' }}>Listening (Nghe)</option>
+                <option value="writing" {{ $selectedSkill === 'writing' ? 'selected' : '' }}>Writing (Viết)</option>
+                <option value="speaking" {{ $selectedSkill === 'speaking' ? 'selected' : '' }}>Speaking (Nói)</option>
             </select>
         </div>
 
@@ -133,19 +136,23 @@
             <div>
                 <!-- Header Card: Badge Kỹ năng + Nút lưu dạng bài -->
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <span class="badge {{ $card->badge }}" style="font-weight: 700; font-size: 11px; text-transform: uppercase;">
-                        {{ $card->skill_name }}
-                    </span>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span class="badge {{ $card->badge }}" style="font-weight: 700; font-size: 11px; text-transform: uppercase;">
+                            {{ $card->skill_name }}
+                        </span>
+                    </div>
                     @php $isTypeSaved = in_array((int)$card->id, $savedTypeIds ?? []); @endphp
-                    <button type="button" 
-                            class="btn-save-type btn btn-sm" 
-                            id="btn-save-type-{{ $card->id }}" 
-                            onclick="toggleTypeBookmark({{ $card->id }})"
-                            title="{{ $isTypeSaved ? 'Bỏ lưu dạng bài này' : 'Lưu dạng bài này vào danh sách quan tâm' }}"
-                            style="padding: 3px 9px; font-size: 12px; font-weight: 700; border-radius: 6px; {{ $isTypeSaved ? 'background: #fef3c7; color: #b45309; border: 1px solid #fcd34d;' : 'background: var(--bento-subtle); color: var(--bento-muted); border: 1px solid var(--bento-line);' }}">
-                        <span id="star-type-{{ $card->id }}">{{ $isTypeSaved ? '⭐' : '☆' }}</span>
-                        <span id="label-type-{{ $card->id }}" style="font-size: 11px;">{{ $isTypeSaved ? 'Đã lưu' : 'Lưu dạng' }}</span>
-                    </button>
+                    <form method="POST" action="{{ route('practice.bookmark.type.toggle', $card->id) }}" style="display: inline; margin: 0;">
+                        @csrf
+                        <button type="submit"
+                                class="btn-save-type btn btn-sm"
+                                id="btn-save-type-{{ $card->id }}"
+                                title="{{ $isTypeSaved ? 'Bỏ lưu dạng bài này' : 'Lưu dạng bài này vào danh sách quan tâm' }}"
+                                style="padding: 3px 9px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; {{ $isTypeSaved ? 'background: #fef3c7; color: #b45309; border: 1px solid #fcd34d;' : 'background: var(--bento-subtle); color: var(--bento-muted); border: 1px solid var(--bento-line);' }}">
+                            <span id="star-type-{{ $card->id }}">{{ $isTypeSaved ? '⭐' : '☆' }}</span>
+                            <span id="label-type-{{ $card->id }}" style="font-size: 11px;">{{ $isTypeSaved ? 'Đã lưu' : 'Lưu dạng' }}</span>
+                        </button>
+                    </form>
                 </div>
 
                 <h3 style="font-size: 18px; font-weight: 800; color: var(--bento-heading); margin-bottom: 6px;">
@@ -164,7 +171,7 @@
                         </span>
                         <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                             @foreach($card->difficulties as $d)
-                                <a href="{{ route('practice.session', ['loai_id' => $card->id, 'dokho' => $d->dokho]) }}" 
+                                <a href="{{ route('practice.session', ['loai_id' => $card->id, 'dokho' => $d->dokho]) }}"
                                    style="font-size: 12px; font-weight: 700; text-decoration: none; padding: 3px 8px; border-radius: 6px;
                                    {{ $d->dokho <= 3 ? 'background: #dcfce7; color: #166534;' : ($d->dokho <= 7 ? 'background: #fef9c3; color: #854d0e;' : 'background: #fee2e2; color: #991b1b;') }}">
                                     Cấp {{ $d->dokho }} ({{ $d->count }})
@@ -177,10 +184,10 @@
 
             <!-- Nút hành động -->
             <div style="border-top: 1px solid #f1f5f9; padding-top: 14px; display: flex; gap: 8px;">
-                <a href="{{ route('practice.session', ['loai_id' => $card->id, 'dokho' => $dokho]) }}" 
-                   class="btn btn-primary btn-sm" 
-                   style="flex: 1.3; justify-content: center; font-weight: 700;">
-                    Luyện tập ngay 
+                <a href="{{ route('practice.session', ['loai_id' => $card->id, 'dokho' => $dokho]) }}"
+                   class="btn btn-primary btn-sm"
+                   style="flex: 1; justify-content: center; font-weight: 700;">
+                    Luyện tập ngay
                 </a>
             </div>
         </div>

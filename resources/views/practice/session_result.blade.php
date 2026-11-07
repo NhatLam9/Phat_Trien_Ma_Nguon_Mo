@@ -15,7 +15,7 @@
                 <span style="font-size: 13px; color: var(--bento-muted);">• {{ $result['created_at'] }}</span>
             </div>
             <h1 style="font-size: 26px; font-weight: 800; color: var(--bento-heading); margin: 0;">
-                🎉 Hoàn thành bài luyện tập
+                Hoàn thành bài luyện tập
             </h1>
             <p style="color: var(--bento-muted); font-size: 15px; margin: 4px 0 0 0;">
                 {{ $result['session_title'] }}
@@ -88,7 +88,7 @@
     {{-- DANH SÁCH CHI TIẾT TỪNG CÂU HỎI, ĐÁP ÁN VÀ GIẢI THÍCH --}}
     <div style="margin-bottom: 20px;">
         <h2 style="font-size: 20px; font-weight: 800; color: var(--bento-heading); margin-bottom: 16px;">
-            📋 Chi tiết từng câu hỏi & Đáp án giải thích:
+            {{ ($result['kynang'] ?? '') === 'speaking' ? 'Chi tiết từng câu hỏi & Nhận xét:' : 'Chi tiết từng câu hỏi & Đáp án giải thích:' }}
         </h2>
 
         @foreach($result['evaluations'] as $qid => $eval)
@@ -129,6 +129,12 @@
                                 — Chưa làm
                             </span>
                         @endif
+
+                        @if(!empty($eval['diem_ai']))
+                            <span style="background: #2563eb; color: #ffffff; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 12px; margin-left: 6px;">
+                                Ước lượng DET: {{ $eval['diem_ai'] }}/160
+                            </span>
+                        @endif
                     </div>
                 </div>
 
@@ -137,25 +143,60 @@
                     {{ $eval['question']->noidung }}
                 </div>
 
-                {{-- Câu trả lời của người dùng vs Đáp án đúng --}}
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+                {{-- Câu trả lời của người dùng; Speaking chỉ hiển thị bài nói, không hiện đáp án mẫu --}}
+                @php
+                    $laSpeaking = ($result['kynang'] ?? '') === 'speaking';
+                @endphp
+                <div style="display: grid; grid-template-columns: {{ $laSpeaking ? '1fr' : '1fr 1fr' }}; gap: 12px; margin-bottom: 14px;">
                     <div style="background: var(--bento-subtle); padding: 12px 14px; border-radius: 8px; border: 1px solid var(--bento-line);">
                         <span style="font-size: 12px; font-weight: 700; color: var(--bento-muted); display: block; margin-bottom: 4px;">
                             CÂU TRẢ LỜI CỦA BẠN:
                         </span>
-                        <span style="font-weight: 700; color: {{ $eval['is_correct'] ? '#16a34a' : ($eval['has_answered'] ? '#dc2626' : '#94a3b8') }}; font-size: 14px;">
-                            {{ $eval['user_answer_text'] ?: '(Chưa nhập đáp án)' }}
-                        </span>
+
+                        @if ($laSpeaking)
+                            @php
+                                $traLoi = (string) ($eval['user_answer_text'] ?? '');
+                                $laDuongDanAudio = $traLoi !== '' && (
+                                    str_starts_with($traLoi, 'storage/')
+                                    || str_starts_with($traLoi, '/storage/')
+                                    || str_starts_with($traLoi, 'http://')
+                                    || str_starts_with($traLoi, 'https://')
+                                );
+                                $nguonAudio = str_starts_with($traLoi, 'http://') || str_starts_with($traLoi, 'https://')
+                                    ? $traLoi
+                                    : asset(ltrim($traLoi, '/'));
+                            @endphp
+
+                            @if ($laDuongDanAudio)
+                                <audio controls preload="none" style="width: 100%; margin-top: 4px;">
+                                    <source src="{{ $nguonAudio }}">
+                                    Trình duyệt của bạn không hỗ trợ phát âm thanh.
+                                </audio>
+                                <span style="display: block; margin-top: 6px; font-size: 12px; color: var(--bento-muted);">
+                                    Bản ghi âm bài nói của bạn
+                                </span>
+                            @else
+                                <span style="font-weight: 700; color: {{ $eval['has_answered'] ? 'var(--bento-heading)' : '#94a3b8' }}; font-size: 14px;">
+                                    {{ $traLoi ?: '(Chưa ghi âm câu trả lời)' }}
+                                </span>
+                            @endif
+                        @else
+                            <span style="font-weight: 700; color: {{ $eval['is_correct'] ? '#16a34a' : ($eval['has_answered'] ? '#dc2626' : '#94a3b8') }}; font-size: 14px;">
+                                {{ $eval['user_answer_text'] ?: '(Chưa nhập đáp án)' }}
+                            </span>
+                        @endif
                     </div>
 
-                    <div style="background: #f0fdf4; padding: 12px 14px; border-radius: 8px; border: 1px solid #bbf7d0;">
-                        <span style="font-size: 12px; font-weight: 700; color: #166534; display: block; margin-bottom: 4px;">
-                            ĐÁP ÁN CHÍNH XÁC:
-                        </span>
-                        <span style="font-weight: 700; color: #15803d; font-size: 14px;">
-                            {{ !empty($eval['correct_answers']) ? implode(', ', $eval['correct_answers']) : ($eval['question']->giaithich ?: 'Đáp án chuẩn từ ngân hàng đề thi') }}
-                        </span>
-                    </div>
+                    @if (! $laSpeaking)
+                        <div style="background: #f0fdf4; padding: 12px 14px; border-radius: 8px; border: 1px solid #bbf7d0;">
+                            <span style="font-size: 12px; font-weight: 700; color: #166534; display: block; margin-bottom: 4px;">
+                                ĐÁP ÁN CHÍNH XÁC:
+                            </span>
+                            <span style="font-weight: 700; color: #15803d; font-size: 14px;">
+                                {{ !empty($eval['correct_answers']) ? implode(', ', $eval['correct_answers']) : ($eval['question']->giaithich ?: 'Đáp án chuẩn từ ngân hàng đề thi') }}
+                            </span>
+                        </div>
+                    @endif
                 </div>
 
                 {{-- GIẢI THÍCH CHI TIẾT --}}

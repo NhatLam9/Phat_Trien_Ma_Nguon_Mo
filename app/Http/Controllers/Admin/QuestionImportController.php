@@ -24,13 +24,12 @@ class QuestionImportController extends Controller
     {
         $path = public_path('downloads/import-cau-hoi-template.json');
 
-        abort_unless(is_file($path), 404);
+        abort_unless(file_exists($path), 404);
 
-        return response()->download(
-            $path,
-            'import-cau-hoi-template.json',
-            ['Content-Type' => 'application/json; charset=UTF-8']
-        );
+        return response(file_get_contents($path), 200, [
+            'Content-Type' => 'application/json; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="import-cau-hoi-template.json"',
+        ]);
     }
 
     public function preview(Request $request, QuestionImportService $service)

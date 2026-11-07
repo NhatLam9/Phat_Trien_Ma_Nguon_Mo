@@ -12,7 +12,7 @@
         @forelse ($dsDangBai as $item)
             <li class="practice-list__item">
                 <strong>{{ $item->ten ?? $item->ten_loai ?? 'Dạng bài luyện tập' }}</strong>
-                <a class="btn-secondary" href="#">Luyện tập ngay</a>
+                <a class="btn btn-primary btn-sm" href="{{ route('practice.session', ['loai_id' => $item->id ?? 1]) }}">Luyện tập ngay</a>
             </li>
         @empty
             <li class="practice-list__empty">Chưa có dạng bài nào được cập nhật.</li>
