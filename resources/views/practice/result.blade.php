@@ -123,10 +123,10 @@
         <!-- Đáp án đúng & Giải thích -->
         <div style="background: #eefcf5; padding: 16px 20px; border-radius: 8px; border: 1px solid #c8f3dc; margin-bottom: 24px;">
             <div style="font-size: 13px; font-weight: 700; color: #166534; margin-bottom: 6px;">💡 ĐÁP ÁN CHUẨN & GIẢI THÍCH:</div>
-            
+
             @if(isset($cauhoi->luachon) && count($cauhoi->luachon) > 0)
                 <div style="margin-bottom: 8px; font-size: 14px; color: #14532d;">
-                    <strong>Đáp án đúng:</strong> 
+                    <strong>Đáp án đúng:</strong>
                     @foreach(collect($cauhoi->luachon)->where('ladung', 1) as $c)
                         <span style="background: #ffffff; padding: 2px 8px; border-radius: 4px; font-weight: 600; margin-right: 6px; border: 1px solid #86efac;">
                             {{ $c->noidung }}
@@ -135,7 +135,7 @@
                 </div>
             @elseif(isset($cauhoi->dapan) && count($cauhoi->dapan) > 0)
                 <div style="margin-bottom: 8px; font-size: 14px; color: #14532d;">
-                    <strong>Bài mẫu chuẩn / Đáp án đúng:</strong> 
+                    <strong>Bài mẫu chuẩn / Đáp án đúng:</strong>
                     @foreach(collect($cauhoi->dapan)->where('ladung', 1) as $c)
                         <div style="background: #ffffff; padding: 8px 12px; border-radius: 6px; font-weight: 600; margin-top: 6px; border: 1px solid #86efac; line-height: 1.6;">
                             {{ $c->noidung }}

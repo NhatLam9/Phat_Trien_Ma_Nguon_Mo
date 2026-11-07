@@ -21,8 +21,8 @@
                     Tự động tìm lỗi sai thì, mạo từ, cấu trúc câu, đưa ra bản sửa hoàn chỉnh và giải thích chi tiết bằng tiếng Việt.
                 </p>
             </div>
-            <a href="{{ route('tutor.grammar') }}" style="display: block; text-align: center; background: var(--bento-orange); color: #fff; padding: 0.75rem 1rem; border-radius: 8px; text-decoration: none; font-weight: 700;">
-                Mở công cụ sửa ngữ pháp &rarr;
+            <a href="{{ route('tutor.grammar') }}" class="btn btn-primary">
+                Mở công cụ sửa ngữ pháp
             </a>
         </div>
 
@@ -37,8 +37,8 @@
                     Dịch chuẩn xác ngữ cảnh Anh - Việt và Việt - Anh, bóc tách từ vựng học thuật quan trọng cho bài thi DET.
                 </p>
             </div>
-            <a href="{{ route('tutor.translate') }}" style="display: block; text-align: center; background: var(--bento-orange-dark); color: #fff; padding: 0.75rem 1rem; border-radius: 8px; text-decoration: none; font-weight: 700;">
-                Mở công cụ dịch thuật &rarr;
+            <a href="{{ route('tutor.translate') }}" class="btn btn-primary">
+                Mở công cụ dịch thuật
             </a>
         </div>
 
@@ -53,8 +53,8 @@
                     Biến câu văn đơn giản thành câu học thuật (Academic), tự nhiên (Natural) hoặc chuẩn mực band điểm DET 120+.
                 </p>
             </div>
-            <a href="{{ route('tutor.rewrite') }}" style="display: block; text-align: center; background: var(--bento-orange-dark); color: #fff; padding: 0.75rem 1rem; border-radius: 8px; text-decoration: none; font-weight: 700;">
-                Mở công cụ viết lại câu &rarr;
+            <a href="{{ route('tutor.rewrite') }}" class="btn btn-primary">
+                Mở công cụ viết lại câu
             </a>
         </div>
     </div>
@@ -65,8 +65,8 @@
             <strong style="color: var(--bento-ink);">Lịch sử hỏi đáp AI Tutor:</strong>
             <span style="color: var(--bento-muted); font-size: 0.95rem; margin-left: 0.5rem;">Xem lại tất cả các đoạn văn, bản dịch và lời khuyên AI đã cung cấp cho bạn.</span>
         </div>
-        <a href="{{ route('tutor.history') }}" style="background: #ffffff; border: 1px solid #94a3b8; color: var(--bento-ink); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600;">
-            Xem lịch sử tương tác &rarr;
+        <a href="{{ route('tutor.history') }}" class="btn btn-outline">
+            Xem lịch sử tương tác
         </a>
     </div>
 </div>

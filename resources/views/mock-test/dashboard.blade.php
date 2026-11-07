@@ -281,7 +281,7 @@
                     </ul>
 
                     <a class="study-link" href="{{ route('practice.index') }}">
-                        Mở khu luyện tập →
+                        Mở khu luyện tập
                     </a>
                 @endif
             </section>
@@ -338,10 +338,10 @@
 
         <nav class="study-links" aria-label="Điều hướng thi thử">
             <a class="study-link" href="{{ route('mock-test.index') }}">
-                Danh sách đề thi →
+                Danh sách đề thi
             </a>
             <a class="study-link" href="{{ route('mock-test.history') }}">
-                Lịch sử thi →
+                Lịch sử thi
             </a>
         </nav>
     </section>
