@@ -15,6 +15,7 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
@@ -50,6 +51,7 @@ class TestService
             $deThi = DB::table('dethi')
                 ->where('id', $deThiId)
                 ->where('trangthai', 'published')
+                ->lockForUpdate()
                 ->first();
 
             if (! $deThi || (int) $deThi->thoigian <= 0) {
@@ -548,6 +550,7 @@ class TestService
             $lanThi->trangthai = 'completed';
             $lanThi->setAttribute('ketthuc', now());
             $lanThi->save();
+            $this->capChungNhanHoanThanh($lanThi);
 
             return $lanThi->refresh();
         }, 3);
@@ -569,6 +572,7 @@ class TestService
 
             $this->ganDiemBaiThi($lanThi);
             $lanThi->save();
+            $this->capChungNhanHoanThanh($lanThi);
 
             return $lanThi->refresh();
         }, 3);
@@ -661,6 +665,7 @@ class TestService
         $lanThi->trangthai = 'completed';
         $lanThi->setAttribute('ketthuc', $hanThi);
         $lanThi->save();
+        $this->capChungNhanHoanThanh($lanThi);
 
         Vipham::create([
             'lanthi_id' => $lanThi->id,
@@ -671,6 +676,36 @@ class TestService
         ]);
 
         return true;
+    }
+
+    private function laDeCoChungNhanHoanThanh(Lanthi $lanThi): bool
+    {
+        return DB::table('dethicauhoi as dc')
+            ->join('cauhoi as ch', 'ch.id', '=', 'dc.cauhoi_id')
+            ->where('dc.dethi_id', $lanThi->dethi_id)
+            ->whereIn('ch.ma', array_map(fn ($level) => "det-level-{$level}-reading", range(1, 8)))
+            ->exists();
+    }
+
+    private function capChungNhanHoanThanh(Lanthi $lanThi): void
+    {
+        if (! $this->laDeCoChungNhanHoanThanh($lanThi)) {
+            return;
+        }
+
+        $chungChi = $lanThi->chungChi()->firstOrNew([], [
+            'nguoidung_id' => $lanThi->nguoidung_id,
+            'ma' => 'DET-'.now()->format('Ymd').'-'.Str::upper(Str::random(10)),
+            'ngaycap' => now(),
+        ]);
+
+        $chungChi->fill([
+            'tongdiem' => $lanThi->tongdiem ?? 0,
+            'literacy' => $lanThi->literacy,
+            'comprehension' => $lanThi->comprehension,
+            'conversation' => $lanThi->conversation,
+            'production' => $lanThi->production,
+        ])->save();
     }
 
     private function chamInteractive(
@@ -1053,7 +1088,7 @@ class TestService
                 );
             }
 
-            if ($lanThi->chungChi()->exists()) {
+            if ($lanThi->chungChi()->exists() && ! $this->laDeCoChungNhanHoanThanh($lanThi)) {
                 $this->baoLoi('certificate', 'Không đổi điểm của lượt thi đã cấp chứng chỉ.');
             }
 
@@ -1077,6 +1112,7 @@ class TestService
             if ($lanThi->trangthai === 'completed') {
                 $this->ganDiemBaiThi($lanThi);
                 $lanThi->save();
+                $this->capChungNhanHoanThanh($lanThi);
             }
 
             return $lanThi->refresh();

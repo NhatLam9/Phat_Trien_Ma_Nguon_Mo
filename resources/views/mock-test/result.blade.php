@@ -121,7 +121,11 @@
                     Chia sẻ
                 </button>
 
-                @if ($coTheCapChungChi)
+                @if ($chungChi)
+                    <a class="mr-btn mr-btn--primary" href="{{ route('certificate.show', ['id' => $chungChi->id]) }}">
+                        Xem chứng chỉ
+                    </a>
+                @elseif ($coTheCapChungChi)
                     <form method="POST"
                           action="{{ route('certificate.issue', ['id' => $lanThi->id]) }}">
                         @csrf
