@@ -393,6 +393,7 @@
                                                                class="form-control" 
                                                                placeholder="Nhập câu trả lời của bạn..." 
                                                                data-correct-answer="{{ $subQ->dapandung ?? '' }}"
+                                                               oninput="handleSubTextInputChange({{ $qIndex }}, {{ $q->id }}, {{ $subQ->id }}, this)"
                                                                style="flex: 1; min-width: 220px; font-size: 15px; padding: 10px 14px; border: 1.5px solid var(--bento-line); border-radius: 8px;">
                                                         <button type="button" 
                                                                 class="btn btn-primary" 
@@ -446,7 +447,11 @@
                                                    name="audio_files[{{ $q->id }}]" 
                                                    accept="audio/*" 
                                                    class="form-control" 
+                                                   onchange="handleAudioFileChange({{ $qIndex }}, {{ $q->id }}, this)"
                                                    style="font-size: 14px; padding: 8px; width: 100%; box-sizing: border-box;">
+                                            <div id="file-info-{{ $q->id }}" style="display: none; margin-top: 8px; font-size: 13px; color: #166534; font-weight: 700;">
+                                                ✓ Đã chọn file: <span id="file-name-{{ $q->id }}"></span>
+                                            </div>
                                             <span style="display: block; font-size: 12px; color: var(--bento-muted); margin-top: 6px;">
                                                 Hỗ trợ các định dạng: MP3, WAV, M4A, OGG, WEBM (Tối đa 10MB)
                                             </span>
@@ -457,6 +462,7 @@
                             {{-- TRƯỜNG HỢP 4: DẠNG ĐIỀN TỪ / GÕ VĂN BẢN / NGHE VÀ GÕ LẠI (LISTENING & WRITING) --}}
                             @else
                                 @php
+                                    $isWritingQ = (!empty($type->kynang) && $type->kynang === 'writing') || in_array($q->loai_id ?? 0, [2, 6]);
                                     $correctText = '';
                                     if (isset($q->dapan) && $q->dapan->count() > 0) {
                                         $dungDapAn = $q->dapan->where('ladung', 1)->first();
@@ -467,35 +473,35 @@
                                 @endphp
                                 <div style="margin-top: 20px;">
                                     <label for="text-ans-{{ $q->id }}" style="font-size: 13px; font-weight: 700; color: var(--bento-ink); margin-bottom: 8px; display: block;">
-                                        NHẬP CÂU TRẢ LỜI CỦA BẠN:
+                                        {{ $isWritingQ ? 'NHẬP BÀI VIẾT CỦA BẠN (WRITING RESPONSE):' : 'NHẬP CÂU TRẢ LỜI CỦA BẠN:' }}
                                     </label>
                                     <textarea name="answers[{{ $q->id }}]" 
                                               id="text-ans-{{ $q->id }}" 
                                               rows="4" 
                                               class="form-control" 
-                                              placeholder="Nhập câu trả lời bằng tiếng Anh tại đây..."
+                                              oninput="handleTextInputChange({{ $qIndex }}, {{ $q->id }}, this)"
+                                              placeholder="{{ $isWritingQ ? 'Viết bài mô tả/luận bằng tiếng Anh (2-3 câu)...' : 'Nhập câu trả lời bằng tiếng Anh tại đây...' }}"
                                               style="font-size: 15px; line-height: 1.6; margin-bottom: 12px;"></textarea>
-
-                                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                                        <button type="button" class="btn btn-primary btn-sm" onclick="checkTextAnswer({{ $qIndex }}, {{ $q->id }}, '{{ addslashes($correctText) }}')" style="font-weight: 700; padding: 9px 18px;">
-                                            Kiểm tra đáp án ngay
-                                        </button>
-                                    </div>
 
                                     <div class="feedback-box" id="feedback-box-{{ $q->id }}" style="display: none; margin-top: 14px;">
                                         <div class="feedback-header" style="font-size: 15px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
                                             <span class="fb-icon"></span>
                                             <span class="fb-text"></span>
                                         </div>
-                                        <div class="feedback-desc" style="font-size: 14px; line-height: 1.6; background: #ffffff; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--bento-line); color: var(--bento-ink);">
+                                        <div class="feedback-desc" style="font-size: 14px; line-height: 1.6; background: #ffffff; padding: 14px 18px; border-radius: 8px; border: 1px solid var(--bento-line); color: var(--bento-ink);">
                                             @if(!empty($correctText))
-                                                <div style="margin-bottom: 6px; color: #166534; font-weight: 700;">
-                                                    Đáp án chuẩn: <span class="correct-val-display" style="background: #eefcf5; padding: 2px 8px; border-radius: 4px; border: 1px solid #86efac;">{{ $correctText }}</span>
+                                                <div style="margin-bottom: 10px;">
+                                                    <span style="color: #166534; font-weight: 800; font-size: 13px; text-transform: uppercase;">
+                                                        {{ $isWritingQ ? 'Bài mẫu tham khảo chuẩn DET (120+ Score):' : 'Đáp án chuẩn:' }}
+                                                    </span>
+                                                    <div class="correct-val-display" style="background: #eefcf5; padding: 12px 14px; border-radius: 6px; border: 1.5px solid #86efac; margin-top: 6px; font-weight: 600; line-height: 1.6; color: #14532d; font-size: 14px;">
+                                                        {{ $correctText }}
+                                                    </div>
                                                 </div>
                                             @endif
-                                            <strong>💡 Hướng dẫn & Giải thích:</strong>
-                                            <div style="margin-top: 4px;">
-                                                {{ $q->giaithich ?: 'Hãy kiểm tra lại chính tả, từ vựng và ngữ pháp cho chuẩn format bài thi DET.' }}
+                                            <strong>Tiêu chí chấm điểm :</strong>
+                                            <div style="margin-top: 4px; color: #475569;">
+                                                {{ $q->giaithich ?: 'Hãy kiểm tra lại chính tả, từ vựng và cấu trúc ngữ pháp cho chuẩn format bài thi DET.' }}
                                             </div>
                                         </div>
                                     </div>
@@ -507,7 +513,7 @@
                         {{-- NÚT ĐIỀU HƯỚNG CÂU HỎI (CÂU TRƯỚC / CÂU SAU / NỘP BÀI) --}}
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
                             @if($qIndex > 0)
-                                <button type="button" class="btn btn-outline" onclick="goToQuestion({{ $qIndex - 1 }})" style="padding: 10px 22px; font-weight: 600;">
+                                <button  type="button" class="btn btn-primary" id="btn-next-{{ $qIndex }}" onclick="goToQuestion({{ $qIndex + 1 }})" style="padding: 11px 32px; font-weight: 800; font-size: 15px;">
                                     ← Câu trước
                                 </button>
                             @else
@@ -878,11 +884,130 @@
         updateCounters();
     }
 
+    // Xử lý khi người dùng gõ bài viết (Writing) hoặc văn bản: Tức thì cập nhật số câu đã làm trên phiếu
+    function handleTextInputChange(qIndex, qId, textarea) {
+        const val = textarea.value.trim();
+        const numId = Number(qId);
+        const paletteBtn = document.getElementById('palette-btn-' + qIndex);
+
+        if (val.length > 0) {
+            answeredQuestions.add(numId);
+            if (paletteBtn && !paletteBtn.classList.contains('answered-wrong')) {
+                paletteBtn.classList.add('answered-correct');
+            }
+        } else {
+            answeredQuestions.delete(numId);
+            answeredQuestions.delete(qId);
+            if (paletteBtn && !paletteBtn.classList.contains('answered-wrong')) {
+                paletteBtn.classList.remove('answered-correct');
+            }
+        }
+        updateCounters();
+    }
+
+    // Xử lý khi người dùng chọn/nộp file âm thanh (Speaking): Tức thì cập nhật số câu đã làm trên phiếu
+    function handleAudioFileChange(qIndex, qId, fileInput) {
+        const numId = Number(qId);
+        const paletteBtn = document.getElementById('palette-btn-' + qIndex);
+        const fileInfo = document.getElementById('file-info-' + qId);
+        const fileName = document.getElementById('file-name-' + qId);
+        const hasFile = fileInput.files && fileInput.files.length > 0;
+
+        if (hasFile) {
+            answeredQuestions.add(numId);
+            if (paletteBtn && !paletteBtn.classList.contains('answered-wrong')) {
+                paletteBtn.classList.add('answered-correct');
+            }
+            if (fileName) fileName.textContent = fileInput.files[0].name;
+            if (fileInfo) fileInfo.style.display = 'block';
+        } else {
+            answeredQuestions.delete(numId);
+            answeredQuestions.delete(qId);
+            if (paletteBtn && !paletteBtn.classList.contains('answered-wrong')) {
+                paletteBtn.classList.remove('answered-correct');
+            }
+            if (fileInfo) fileInfo.style.display = 'none';
+        }
+        updateCounters();
+    }
+
+    // Xử lý khi người dùng gõ câu trả lời con dạng text
+    function handleSubTextInputChange(qIndex, qId, subId, input) {
+        const val = input.value.trim();
+        const numId = Number(qId);
+        const paletteBtn = document.getElementById('palette-btn-' + qIndex);
+
+        if (val.length > 0) {
+            answeredQuestions.add('sub_' + subId);
+            answeredQuestions.add(numId);
+            if (paletteBtn && !paletteBtn.classList.contains('answered-wrong')) {
+                paletteBtn.classList.add('answered-correct');
+            }
+        } else {
+            answeredQuestions.delete('sub_' + subId);
+            const anyOtherSub = Array.from(answeredQuestions).some(k => typeof k === 'string' && k.startsWith('sub_') && k !== 'sub_' + subId);
+            if (!anyOtherSub) {
+                answeredQuestions.delete(numId);
+                answeredQuestions.delete(qId);
+                if (paletteBtn && !paletteBtn.classList.contains('answered-wrong')) {
+                    paletteBtn.classList.remove('answered-correct');
+                }
+            }
+        }
+        updateCounters();
+    }
+
+    // Kiểm tra câu hỏi Viết (Writing) và hiển thị Bài mẫu chuẩn DET
+    function checkWritingAnswer(qIndex, qId, correctAnswer) {
+        const numId = Number(qId);
+        const textarea = document.getElementById('text-ans-' + qId);
+        const feedbackBox = document.getElementById('feedback-box-' + qId);
+        const paletteBtn = document.getElementById('palette-btn-' + qIndex);
+        if (!feedbackBox) return;
+
+        const val = (textarea ? textarea.value : '').trim();
+        const fbIcon = feedbackBox.querySelector('.fb-icon');
+        const fbText = feedbackBox.querySelector('.fb-text');
+
+        if (val.length === 0) {
+            if (textarea) {
+                textarea.style.borderColor = '#dc2626';
+                textarea.focus();
+            }
+            feedbackBox.className = 'feedback-box wrong';
+            if (fbIcon) fbIcon.textContent = '⚠️';
+            if (fbText) fbText.textContent = 'Vui lòng nhập nội dung bài viết trước khi kiểm tra!';
+            feedbackBox.style.display = 'block';
+            return;
+        }
+
+        if (textarea) {
+            textarea.style.borderColor = '#16a34a';
+            textarea.style.backgroundColor = '#f0fdf4';
+        }
+
+        feedbackBox.className = 'feedback-box correct';
+        if (fbIcon) fbIcon.textContent = '✓';
+        if (fbText) fbText.textContent = 'Đã ghi nhận bài viết! Hãy đối chiếu với Bài mẫu chuẩn DET và tiêu chí AI bên dưới:';
+        if (paletteBtn) {
+            paletteBtn.classList.remove('answered-wrong');
+            paletteBtn.classList.add('answered-correct');
+        }
+
+        answeredQuestions.add(numId);
+        updateCounters();
+        feedbackBox.style.display = 'block';
+    }
+
     // Cập nhật các chỉ số thống kê
     function updateCounters() {
         const counterEl = document.getElementById('counter-answered');
         if (counterEl) {
-            const count = Array.from(answeredQuestions).filter(k => typeof k === 'number').length;
+            const count = Array.from(answeredQuestions).filter(k => {
+                if (typeof k === 'number') return !isNaN(k);
+                if (typeof k === 'string') return !k.startsWith('sub_') && !isNaN(Number(k));
+                return false;
+            }).length;
             counterEl.textContent = count + ' / ' + totalQuestions;
         }
 
@@ -892,6 +1017,66 @@
         const statWrong = document.getElementById('stat-wrong');
         if (statWrong) statWrong.textContent = wrongCount;
     }
+
+    // Tự động đồng bộ số câu đã làm khi vừa tải trang
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. Quét các ô nhập bài viết Writing / ô gõ đáp án Listening
+        document.querySelectorAll('textarea[name^="answers["]').forEach((textarea) => {
+            const match = textarea.name.match(/answers\[(\d+)\]/);
+            if (match && textarea.value.trim().length > 0) {
+                const qId = Number(match[1]);
+                const container = textarea.closest('[id^="q-container-"]');
+                if (container) {
+                    const qIndex = Number(container.id.replace('q-container-', ''));
+                    const paletteBtn = document.getElementById('palette-btn-' + qIndex);
+                    if (paletteBtn && !paletteBtn.classList.contains('answered-wrong')) {
+                        paletteBtn.classList.add('answered-correct');
+                    }
+                    answeredQuestions.add(qId);
+                }
+            }
+        });
+
+        // 2. Quét các ô tải file ghi âm Speaking
+        document.querySelectorAll('input[type="file"][name^="audio_files["]').forEach((fileInput) => {
+            const match = fileInput.name.match(/audio_files\[(\d+)\]/);
+            if (match && fileInput.files && fileInput.files.length > 0) {
+                const qId = Number(match[1]);
+                const container = fileInput.closest('[id^="q-container-"]');
+                if (container) {
+                    const qIndex = Number(container.id.replace('q-container-', ''));
+                    const paletteBtn = document.getElementById('palette-btn-' + qIndex);
+                    if (paletteBtn && !paletteBtn.classList.contains('answered-wrong')) {
+                        paletteBtn.classList.add('answered-correct');
+                    }
+                    answeredQuestions.add(qId);
+                    const fileInfo = document.getElementById('file-info-' + qId);
+                    const fileName = document.getElementById('file-name-' + qId);
+                    if (fileName) fileName.textContent = fileInput.files[0].name;
+                    if (fileInfo) fileInfo.style.display = 'block';
+                }
+            }
+        });
+
+        // 3. Quét các câu trắc nghiệm đã được chọn
+        document.querySelectorAll('input[type="radio"]:checked').forEach((radio) => {
+            const match = radio.name.match(/answers\[(\d+)\]/);
+            if (match) {
+                const qId = Number(match[1]);
+                const container = radio.closest('[id^="q-container-"]');
+                if (container) {
+                    const qIndex = Number(container.id.replace('q-container-', ''));
+                    const paletteBtn = document.getElementById('palette-btn-' + qIndex);
+                    if (paletteBtn && !paletteBtn.classList.contains('answered-wrong')) {
+                        paletteBtn.classList.add('answered-correct');
+                    }
+                    answeredQuestions.add(qId);
+                }
+            }
+        });
+
+        updateCounters();
+    });
 
     // Nộp bài
     function submitPracticeNow() {
