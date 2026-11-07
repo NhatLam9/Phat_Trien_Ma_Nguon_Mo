@@ -67,9 +67,35 @@ Route::middleware('admin')
         Route::delete('categories/{danhmuc}', [CategoryController::class, 'destroy'])
             ->name('categories.destroy');
 
-        // AD07 - Đề thi: xem danh sách và chi tiết đề đã tạo.
+        // AD07 - Đề thi: xem danh sách, tạo mới bằng giao diện và quản lý câu hỏi.
         Route::get('exams', [ExamController::class, 'index'])
             ->name('exams.index');
+
+        // Đặt trước nhóm {exam} để "create" không bị route model binding nuốt.
+        Route::get('exams/create', [ExamController::class, 'create'])
+            ->name('exams.create');
+        Route::post('exams', [ExamController::class, 'store'])
+            ->name('exams.store');
+
+        Route::get('exams/{exam}/edit', [ExamController::class, 'edit'])
+            ->whereNumber('exam')
+            ->name('exams.edit');
+        Route::patch('exams/{exam}', [ExamController::class, 'update'])
+            ->whereNumber('exam')
+            ->name('exams.update');
+
+        Route::post('exams/{exam}/questions', [ExamController::class, 'addQuestions'])
+            ->whereNumber('exam')
+            ->name('exams.questions.add');
+        Route::delete('exams/{exam}/questions/{question}', [ExamController::class, 'removeQuestion'])
+            ->whereNumber('exam')
+            ->whereNumber('question')
+            ->name('exams.questions.remove');
+        Route::patch('exams/{exam}/questions/{question}/move', [ExamController::class, 'moveQuestion'])
+            ->whereNumber('exam')
+            ->whereNumber('question')
+            ->name('exams.questions.move');
+
         Route::get('exams/{exam}', [ExamController::class, 'show'])
             ->whereNumber('exam')
             ->name('exams.show');

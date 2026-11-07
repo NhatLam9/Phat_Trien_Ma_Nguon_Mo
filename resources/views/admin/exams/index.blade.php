@@ -23,13 +23,18 @@
             <div>
                 <h2>Tìm kiếm và lọc đề thi</h2>
                 <p class="admin-muted">
-                    Đề thi được tạo từ chức năng Nhập câu hỏi từ JSON hoặc từ dữ liệu mẫu.
+                    Đề thi có thể được tạo trực tiếp bằng giao diện hoặc nhập từ JSON / dữ liệu mẫu.
                     Trang này giúp rà soát cấu trúc đề trước khi mở cho học viên làm bài.
                 </p>
             </div>
-            <a href="{{ route('admin.questions.import.create') }}" class="admin-btn">
-                Nhập đề từ JSON
-            </a>
+            <div class="admin-row-actions">
+                <a href="{{ route('admin.exams.create') }}" class="admin-btn">
+                    Tạo đề thi
+                </a>
+                <a href="{{ route('admin.questions.import.create') }}" class="admin-btn admin-btn--ghost">
+                    Nhập đề từ JSON
+                </a>
+            </div>
         </div>
 
         <div class="admin-tags">
@@ -144,9 +149,14 @@
                                     {{ $dethi->ngaycapnhat?->format('d/m/Y H:i') ?? '—' }}
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.exams.show', $dethi) }}" class="admin-btn admin-btn--small admin-btn--ghost">
-                                        Xem
-                                    </a>
+                                    <div class="admin-row-actions">
+                                        <a href="{{ route('admin.exams.show', $dethi) }}" class="admin-btn admin-btn--small admin-btn--ghost">
+                                            Xem
+                                        </a>
+                                        <a href="{{ route('admin.exams.edit', $dethi) }}" class="admin-btn admin-btn--small">
+                                            Sửa
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
@@ -157,8 +167,11 @@
             {{ $dethis->links('admin.partials.pagination') }}
         @else
             <div class="admin-empty">
-                <p>Chưa có đề thi nào. Hãy nhập đề từ file JSON để bắt đầu.</p>
-                <a href="{{ route('admin.questions.import.create') }}">Đi tới Nhập câu hỏi</a>
+                <p>Chưa có đề thi nào. Hãy tạo đề bằng giao diện hoặc nhập từ file JSON để bắt đầu.</p>
+                <p class="admin-row-actions" style="justify-content: center;">
+                    <a href="{{ route('admin.exams.create') }}">Tạo đề thi</a>
+                    <a href="{{ route('admin.questions.import.create') }}">Nhập câu hỏi từ JSON</a>
+                </p>
             </div>
         @endif
     </div>
