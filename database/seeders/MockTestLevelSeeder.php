@@ -17,11 +17,17 @@ class MockTestLevelSeeder extends Seeder
         DB::transaction(function () use ($levels, $bank): void {
             $types = $this->questionTypes();
 
+            $examIds = [];
             foreach ($levels as $index => [$name, $audio, $reading, $options, $writing, $speaking, $listeningInference]) {
                 $level = $index + 1;
-                $exam = DB::table('dethi')->where('capdo', $level)->first();
+                $title = sprintf('DET Practice %02d – %s', $level, $name);
+                $exam = DB::table('dethi')->where('ten', $title)->first();
                 if ($exam) {
-                    DB::table('dethi')->where('id', $exam->id)->update(['trangthai' => 'published']);
+                    DB::table('dethi')->where('id', $exam->id)->update([
+                        'trangthai' => 'published',
+                        'mota' => 'Đề tổng hợp Nghe, Nói, Đọc, Viết.',
+                    ]);
+                    $examIds[] = $exam->id;
                     continue;
                 }
 
@@ -59,8 +65,7 @@ class MockTestLevelSeeder extends Seeder
                 ];
 
                 $examId = DB::table('dethi')->insertGetId([
-                    'capdo' => $level,
-                    'ten' => sprintf('DET Practice %02d – %s', $level, $name),
+                    'ten' => $title,
                     'mota' => 'Đề tổng hợp Nghe, Nói, Đọc, Viết.',
                     'chedo' => 'full',
                     'kieu' => 'fixed',
@@ -68,6 +73,8 @@ class MockTestLevelSeeder extends Seeder
                     'tongdiem' => count($questions),
                     'trangthai' => 'published',
                 ]);
+
+                $examIds[] = $examId;
 
                 foreach ($questions as $position => $questionId) {
                     DB::table('dethicauhoi')->insert([
@@ -80,9 +87,9 @@ class MockTestLevelSeeder extends Seeder
             }
 
             // Lưu đề đã có lượt thi để lịch sử và chứng chỉ vẫn truy cập được.
-            DB::table('dethi')->whereNull('capdo')->update(['trangthai' => 'hidden']);
+            DB::table('dethi')->whereNotIn('id', $examIds)->update(['trangthai' => 'hidden']);
 
-            DB::table('dethi')->whereNull('capdo')->whereNotExists(function ($query) {
+            DB::table('dethi')->whereNotIn('id', $examIds)->whereNotExists(function ($query) {
                 $query->selectRaw('1')->from('lanthi')->whereColumn('lanthi.dethi_id', 'dethi.id');
             })->delete();
         }, 3);

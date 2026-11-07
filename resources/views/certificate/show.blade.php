@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@php($tieude = $chungChi->tieude ?? ($tenDe ? 'Chứng nhận hoàn thành – '.$tenDe : 'Chứng nhận hoàn thành bài thi thử'))
+@php($tieude = $tenDe ? 'Chứng nhận hoàn thành – '.$tenDe : 'Chứng nhận hoàn thành bài thi thử')
 @section('title', $tieude.' | DET Practice')
 
 @section('content')
@@ -31,7 +31,7 @@
 
             <p class="certificate-code">Mã chứng chỉ: {{ $chungChi->ma }}</p>
 
-            @if ($chungChi->tongdiem !== null)
+            @if ($chungChi->tongdiem > 0)
                 <div class="certificate-score">
                     {{ $chungChi->tongdiem }} / 160
                     <small>Điểm DET đã được lưu cho lượt thi</small>

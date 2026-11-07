@@ -49,10 +49,10 @@ class MockTestIntegrationTest extends TestCase
 
         $this->assertDatabaseHas('dethi', ['id' => $oldExam, 'trangthai' => 'hidden']);
         $this->assertDatabaseMissing('dethi', ['id' => $unusedExam]);
-        $exams = DB::table('dethi')->where('trangthai', 'published')->orderBy('capdo')->get();
-        $this->assertEquals(range(1, 8), $exams->pluck('capdo')->all());
+        $exams = DB::table('dethi')->where('trangthai', 'published')->orderBy('ten')->get();
+        $this->assertCount(8, $exams);
 
-        foreach ($exams as $exam) {
+        foreach ($exams as $index => $exam) {
             $questions = DB::table('dethicauhoi as dc')
                 ->join('cauhoi as ch', 'ch.id', '=', 'dc.cauhoi_id')
                 ->join('loaicauhoi as lc', 'lc.id', '=', 'ch.loai_id')
@@ -61,7 +61,7 @@ class MockTestIntegrationTest extends TestCase
                 ->get(['ch.dokho', 'lc.kynang']);
 
             $this->assertSame(['reading', 'listening', 'writing', 'speaking'], $questions->pluck('kynang')->all());
-            $this->assertEquals([$exam->capdo], $questions->pluck('dokho')->unique()->values()->all());
+            $this->assertEquals([$index + 1], $questions->pluck('dokho')->unique()->values()->all());
         }
 
         $attempt = $service->batDauThi($user->id, $exams->first()->id);
@@ -71,17 +71,16 @@ class MockTestIntegrationTest extends TestCase
         $service->chotBaiThi($attempt->id, $user->id, true);
         $this->assertDatabaseCount('chungchi', 1);
         $certificate = $attempt->chungChi()->firstOrFail();
-        $this->assertNull($certificate->tongdiem);
-        $this->assertSame('Chứng nhận hoàn thành – '.$exams->first()->ten, $certificate->tieude);
+        $this->assertSame($attempt->fresh()->tongdiem, $certificate->tongdiem);
         $this->actingAs($user)->get(route('certificate.show', $certificate->id))
-            ->assertOk()->assertSee($certificate->tieude);
+            ->assertOk()->assertSee('Chứng nhận hoàn thành – '.$exams->first()->ten);
 
         $timedAttempt = $service->batDauThi($user->id, $exams->last()->id);
         $this->travel(901)->seconds();
         $service->kiemTraHetHan($timedAttempt->id, $user->id);
         $this->assertDatabaseHas('chungchi', [
             'lanthi_id' => $timedAttempt->id,
-            'tieude' => 'Chứng nhận hoàn thành – '.$exams->last()->ten,
+            'tongdiem' => $timedAttempt->fresh()->tongdiem,
         ]);
     }
 

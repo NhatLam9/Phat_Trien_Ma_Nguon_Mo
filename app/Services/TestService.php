@@ -542,6 +542,7 @@ class TestService
 
             $this->ganDiemBaiThi($lanThi);
             $lanThi->save();
+            $this->capChungNhanHoanThanh($lanThi);
 
             return $lanThi->refresh();
         }, 3);
@@ -647,22 +648,34 @@ class TestService
         return true;
     }
 
+    private function laDeCoChungNhanHoanThanh(Lanthi $lanThi): bool
+    {
+        return DB::table('dethicauhoi as dc')
+            ->join('cauhoi as ch', 'ch.id', '=', 'dc.cauhoi_id')
+            ->where('dc.dethi_id', $lanThi->dethi_id)
+            ->whereIn('ch.ma', array_map(fn ($level) => "det-level-{$level}-reading", range(1, 8)))
+            ->exists();
+    }
+
     private function capChungNhanHoanThanh(Lanthi $lanThi): void
     {
-        $tenDe = DB::table('dethi')->where('id', $lanThi->dethi_id)
-            ->whereNotNull('capdo')
-            ->value('ten');
-
-        if ($tenDe === null) {
+        if (! $this->laDeCoChungNhanHoanThanh($lanThi)) {
             return;
         }
 
-        $lanThi->chungChi()->firstOrCreate([], [
+        $chungChi = $lanThi->chungChi()->firstOrNew([], [
             'nguoidung_id' => $lanThi->nguoidung_id,
             'ma' => 'DET-'.now()->format('Ymd').'-'.Str::upper(Str::random(10)),
-            'tieude' => 'Chứng nhận hoàn thành – '.$tenDe,
             'ngaycap' => now(),
         ]);
+
+        $chungChi->fill([
+            'tongdiem' => $lanThi->tongdiem ?? 0,
+            'literacy' => $lanThi->literacy,
+            'comprehension' => $lanThi->comprehension,
+            'conversation' => $lanThi->conversation,
+            'production' => $lanThi->production,
+        ])->save();
     }
 
     private function chamInteractive(
@@ -1045,7 +1058,7 @@ class TestService
                 );
             }
 
-            if ($lanThi->chungChi()->whereNull('tieude')->exists()) {
+            if ($lanThi->chungChi()->exists() && ! $this->laDeCoChungNhanHoanThanh($lanThi)) {
                 $this->baoLoi('certificate', 'Không đổi điểm của lượt thi đã cấp chứng chỉ.');
             }
 
@@ -1069,6 +1082,7 @@ class TestService
             if ($lanThi->trangthai === 'completed') {
                 $this->ganDiemBaiThi($lanThi);
                 $lanThi->save();
+                $this->capChungNhanHoanThanh($lanThi);
             }
 
             return $lanThi->refresh();

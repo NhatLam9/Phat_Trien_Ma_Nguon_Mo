@@ -15,7 +15,6 @@ class Chungchi extends Model
         'nguoidung_id',
         'lanthi_id',
         'ma',
-        'tieude',
         'tongdiem',
         'literacy',
         'comprehension',
